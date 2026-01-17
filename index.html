@@ -1,0 +1,1322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>QuiddleBot</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --primary: #4a90d9;
+            --primary-dark: #357abd;
+            --success: #5cb85c;
+            --warning: #f0ad4e;
+            --danger: #d9534f;
+            --bg: #1a1a2e;
+            --bg-card: #16213e;
+            --bg-input: #0f3460;
+            --text: #eaeaea;
+            --text-muted: #a0a0a0;
+            --border: #3a3a5e;
+            --bonus: #ffd700;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            line-height: 1.4;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 16px;
+            padding-bottom: 100px;
+        }
+
+        h1 {
+            text-align: center;
+            margin: 0 0 20px 0;
+            font-size: 28px;
+            color: var(--primary);
+        }
+
+        h2 {
+            margin: 0 0 16px 0;
+            font-size: 20px;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+            border: 1px solid var(--border);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Setup Screen */
+        .setup-section {
+            margin-bottom: 24px;
+        }
+
+        .setup-section label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .player-count-buttons {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .player-count-btn {
+            flex: 1;
+            padding: 16px;
+            font-size: 18px;
+            font-weight: 600;
+            border: 2px solid var(--border);
+            background: var(--bg-input);
+            color: var(--text);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .player-count-btn.selected {
+            border-color: var(--primary);
+            background: var(--primary);
+        }
+
+        .player-name-inputs {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .player-name-input {
+            width: 100%;
+            padding: 14px 16px;
+            font-size: 18px;
+            border: 2px solid var(--border);
+            background: var(--bg-input);
+            color: var(--text);
+            border-radius: 10px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .player-name-input:focus {
+            border-color: var(--primary);
+        }
+
+        .player-name-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px;
+            background: var(--bg-input);
+            border-radius: 10px;
+            margin-top: 16px;
+        }
+
+        .toggle-label {
+            font-size: 16px;
+        }
+
+        .toggle-sublabel {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .toggle {
+            position: relative;
+            width: 56px;
+            height: 32px;
+            flex-shrink: 0;
+        }
+
+        .toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--border);
+            border-radius: 32px;
+            transition: 0.3s;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 3px;
+            bottom: 3px;
+            background: white;
+            border-radius: 50%;
+            transition: 0.3s;
+        }
+
+        .toggle input:checked + .toggle-slider {
+            background: var(--primary);
+        }
+
+        .toggle input:checked + .toggle-slider:before {
+            transform: translateX(24px);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 18px;
+            font-size: 18px;
+            font-weight: 600;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover, .btn-primary:active {
+            background: var(--primary-dark);
+        }
+
+        .btn-primary:disabled {
+            background: var(--border);
+            cursor: not-allowed;
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: var(--bg-input);
+            color: var(--text);
+            border: 2px solid var(--border);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        /* Game Screen */
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .round-indicator {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .menu-btn {
+            padding: 8px 16px;
+            font-size: 14px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            color: var(--text);
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        /* Scoreboard */
+        .scoreboard {
+            display: grid;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .scoreboard-row {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            align-items: center;
+            padding: 12px 16px;
+            background: var(--bg-input);
+            border-radius: 10px;
+            border: 2px solid transparent;
+        }
+
+        .scoreboard-row.leading {
+            border-color: var(--bonus);
+        }
+
+        .player-name {
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .player-total {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        /* Round Entry */
+        .round-entry-section h3 {
+            margin: 0 0 16px 0;
+            font-size: 18px;
+            color: var(--text-muted);
+        }
+
+        .score-inputs {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .score-input-row {
+            display: grid;
+            grid-template-columns: 1fr 100px;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .score-input-label {
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .score-input {
+            width: 100%;
+            padding: 14px;
+            font-size: 20px;
+            font-weight: 600;
+            text-align: center;
+            border: 2px solid var(--border);
+            background: var(--bg-input);
+            color: var(--text);
+            border-radius: 10px;
+            outline: none;
+        }
+
+        .score-input:focus {
+            border-color: var(--primary);
+        }
+
+        /* Bonus Selection */
+        .bonus-section {
+            margin-bottom: 24px;
+        }
+
+        .bonus-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .bonus-icon {
+            color: var(--bonus);
+        }
+
+        .bonus-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .bonus-btn {
+            flex: 1;
+            min-width: calc(50% - 4px);
+            padding: 14px 8px;
+            font-size: 14px;
+            font-weight: 600;
+            border: 2px solid var(--border);
+            background: var(--bg-input);
+            color: var(--text);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .bonus-btn.selected {
+            border-color: var(--bonus);
+            background: rgba(255, 215, 0, 0.15);
+            color: var(--bonus);
+        }
+
+        .bonus-btn.tie-none {
+            min-width: 100%;
+            background: var(--bg);
+        }
+
+        .bonus-btn.tie-none.selected {
+            background: rgba(255, 215, 0, 0.1);
+        }
+
+        /* Round Navigation */
+        .round-nav {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+
+        .round-nav-btn {
+            width: 40px;
+            height: 40px;
+            font-size: 16px;
+            font-weight: 600;
+            border: 2px solid var(--border);
+            background: var(--bg-input);
+            color: var(--text);
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .round-nav-btn.current {
+            border-color: var(--primary);
+            background: var(--primary);
+        }
+
+        .round-nav-btn.completed {
+            border-color: var(--success);
+            color: var(--success);
+        }
+
+        .round-nav-btn.editing {
+            border-color: var(--warning);
+            background: var(--warning);
+            color: var(--bg);
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        /* Game Over Screen */
+        .game-over-title {
+            text-align: center;
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .winner-name {
+            text-align: center;
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--bonus);
+            margin-bottom: 24px;
+        }
+
+        .final-scores {
+            margin-bottom: 24px;
+        }
+
+        .final-score-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            background: var(--bg-input);
+            border-radius: 10px;
+            margin-bottom: 8px;
+        }
+
+        .final-score-row.winner {
+            border: 2px solid var(--bonus);
+        }
+
+        .final-rank {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-muted);
+            width: 30px;
+        }
+
+        .final-score-row.winner .final-rank {
+            color: var(--bonus);
+        }
+
+        .final-player-name {
+            flex: 1;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .final-score {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .margin-victory {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 16px;
+            margin-bottom: 24px;
+        }
+
+        /* Round Summary */
+        .round-summary {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+        }
+
+        .round-summary-title {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .round-summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            font-size: 14px;
+        }
+
+        .round-bonus-awarded {
+            color: var(--bonus);
+            font-size: 12px;
+        }
+
+        /* Menu Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .modal {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 24px;
+            width: 100%;
+            max-width: 400px;
+            border: 1px solid var(--border);
+        }
+
+        .modal h3 {
+            margin: 0 0 20px 0;
+            text-align: center;
+        }
+
+        .modal-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        /* History View */
+        .history-section {
+            margin-top: 24px;
+        }
+
+        .history-round {
+            background: var(--bg-input);
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .history-round-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .history-round-title {
+            font-weight: 600;
+        }
+
+        .history-edit-btn {
+            padding: 6px 12px;
+            font-size: 13px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            color: var(--text);
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .history-scores {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            font-size: 14px;
+        }
+
+        .history-score-row {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .history-bonus {
+            color: var(--bonus);
+            font-size: 12px;
+            margin-top: 8px;
+        }
+
+        /* Keyboard navigation hint */
+        .keyboard-hint {
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 8px;
+        }
+
+        @media (min-width: 400px) {
+            .bonus-btn {
+                min-width: auto;
+                flex: 1;
+            }
+            .bonus-btn.tie-none {
+                min-width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Setup Screen -->
+        <div id="setup-screen">
+            <h1>QuiddleBot</h1>
+
+            <div class="card">
+                <div class="setup-section">
+                    <label>Number of Players</label>
+                    <div class="player-count-buttons">
+                        <button class="player-count-btn selected" data-count="2">2</button>
+                        <button class="player-count-btn" data-count="3">3</button>
+                        <button class="player-count-btn" data-count="4">4</button>
+                    </div>
+                </div>
+
+                <div class="setup-section">
+                    <label>Player Names</label>
+                    <div class="player-name-inputs" id="player-name-inputs">
+                        <input type="text" class="player-name-input" placeholder="Player 1" data-player="0" maxlength="20">
+                        <input type="text" class="player-name-input" placeholder="Player 2" data-player="1" maxlength="20">
+                    </div>
+                </div>
+
+                <div class="toggle-container hidden" id="most-words-toggle-container">
+                    <div>
+                        <div class="toggle-label">Enable "Most Words" Bonus</div>
+                        <div class="toggle-sublabel">Optional for 2-player games</div>
+                    </div>
+                    <label class="toggle">
+                        <input type="checkbox" id="most-words-toggle">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <button class="btn btn-primary" id="start-game-btn">Start Game</button>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="game-screen" class="hidden">
+            <div class="game-header">
+                <div class="round-indicator">Round <span id="current-round">1</span>/8</div>
+                <button class="menu-btn" id="menu-btn">Menu</button>
+            </div>
+
+            <!-- Round Navigation -->
+            <div class="round-nav" id="round-nav"></div>
+
+            <!-- Scoreboard -->
+            <div class="card">
+                <div class="scoreboard" id="scoreboard"></div>
+            </div>
+
+            <!-- Round Entry -->
+            <div class="card" id="round-entry">
+                <h3 id="round-entry-title">Enter Round 1 Scores</h3>
+
+                <div class="score-inputs" id="score-inputs"></div>
+
+                <div class="bonus-section" id="longest-word-section">
+                    <div class="bonus-title">
+                        <span class="bonus-icon">★</span> Longest Word (+10)
+                    </div>
+                    <div class="bonus-buttons" id="longest-word-buttons"></div>
+                </div>
+
+                <div class="bonus-section hidden" id="most-words-section">
+                    <div class="bonus-title">
+                        <span class="bonus-icon">★</span> Most Words (+10)
+                    </div>
+                    <div class="bonus-buttons" id="most-words-buttons"></div>
+                </div>
+
+                <p class="keyboard-hint">Press Tab/Enter to move between fields</p>
+
+                <div class="action-buttons">
+                    <button class="btn btn-success hidden" id="next-round-btn">Next Round →</button>
+                    <button class="btn btn-primary hidden" id="save-edit-btn">Save Changes</button>
+                    <button class="btn btn-secondary hidden" id="cancel-edit-btn">Cancel Edit</button>
+                    <button class="btn btn-success hidden" id="finish-game-btn">Finish Game</button>
+                </div>
+            </div>
+
+            <!-- Round History -->
+            <div class="history-section hidden" id="history-section">
+                <h3>Round History</h3>
+                <div id="history-list"></div>
+            </div>
+        </div>
+
+        <!-- Game Over Screen -->
+        <div id="game-over-screen" class="hidden">
+            <div class="card">
+                <div class="game-over-title">Game Over!</div>
+                <div class="winner-name" id="winner-name"></div>
+
+                <div class="final-scores" id="final-scores"></div>
+                <div class="margin-victory" id="margin-victory"></div>
+
+                <div class="action-buttons">
+                    <button class="btn btn-primary" id="new-game-btn">New Game</button>
+                    <button class="btn btn-secondary" id="view-history-btn">View Round History</button>
+                </div>
+            </div>
+
+            <div class="history-section hidden" id="final-history-section">
+                <h3>Round History</h3>
+                <div id="final-history-list"></div>
+            </div>
+        </div>
+
+        <!-- Menu Modal -->
+        <div class="modal-overlay hidden" id="menu-modal">
+            <div class="modal">
+                <h3>Game Menu</h3>
+                <div class="modal-buttons">
+                    <button class="btn btn-secondary" id="view-all-rounds-btn">View All Rounds</button>
+                    <button class="btn btn-danger" id="end-game-btn">End Game Early</button>
+                    <button class="btn btn-danger" id="new-game-menu-btn">Start New Game</button>
+                    <button class="btn btn-secondary" id="close-menu-btn">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Game State
+        let gameState = {
+            players: [],
+            playerCount: 2,
+            mostWordsEnabled: false,
+            currentRound: 1,
+            rounds: [], // Array of round data: { scores: [], longestWord: null, mostWords: null }
+            isEditing: false,
+            editingRound: null
+        };
+
+        // DOM Elements
+        const setupScreen = document.getElementById('setup-screen');
+        const gameScreen = document.getElementById('game-screen');
+        const gameOverScreen = document.getElementById('game-over-screen');
+        const playerCountBtns = document.querySelectorAll('.player-count-btn');
+        const playerNameInputsContainer = document.getElementById('player-name-inputs');
+        const mostWordsToggleContainer = document.getElementById('most-words-toggle-container');
+        const mostWordsToggle = document.getElementById('most-words-toggle');
+        const startGameBtn = document.getElementById('start-game-btn');
+        const currentRoundEl = document.getElementById('current-round');
+        const roundNavEl = document.getElementById('round-nav');
+        const scoreboardEl = document.getElementById('scoreboard');
+        const scoreInputsEl = document.getElementById('score-inputs');
+        const longestWordSection = document.getElementById('longest-word-section');
+        const longestWordButtons = document.getElementById('longest-word-buttons');
+        const mostWordsSection = document.getElementById('most-words-section');
+        const mostWordsButtonsEl = document.getElementById('most-words-buttons');
+        const roundEntryTitle = document.getElementById('round-entry-title');
+        const nextRoundBtn = document.getElementById('next-round-btn');
+        const saveEditBtn = document.getElementById('save-edit-btn');
+        const cancelEditBtn = document.getElementById('cancel-edit-btn');
+        const finishGameBtn = document.getElementById('finish-game-btn');
+        const historySection = document.getElementById('history-section');
+        const historyList = document.getElementById('history-list');
+        const menuBtn = document.getElementById('menu-btn');
+        const menuModal = document.getElementById('menu-modal');
+        const closeMenuBtn = document.getElementById('close-menu-btn');
+        const viewAllRoundsBtn = document.getElementById('view-all-rounds-btn');
+        const endGameBtn = document.getElementById('end-game-btn');
+        const newGameMenuBtn = document.getElementById('new-game-menu-btn');
+        const winnerNameEl = document.getElementById('winner-name');
+        const finalScoresEl = document.getElementById('final-scores');
+        const marginVictoryEl = document.getElementById('margin-victory');
+        const newGameBtn = document.getElementById('new-game-btn');
+        const viewHistoryBtn = document.getElementById('view-history-btn');
+        const finalHistorySection = document.getElementById('final-history-section');
+        const finalHistoryList = document.getElementById('final-history-list');
+
+        // Initialize
+        function init() {
+            loadGameState();
+            setupEventListeners();
+
+            if (gameState.players.length > 0) {
+                showGameScreen();
+            }
+        }
+
+        function setupEventListeners() {
+            // Player count selection
+            playerCountBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    playerCountBtns.forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                    gameState.playerCount = parseInt(btn.dataset.count);
+                    updatePlayerInputs();
+                });
+            });
+
+            // Start game
+            startGameBtn.addEventListener('click', startGame);
+
+            // Menu
+            menuBtn.addEventListener('click', () => menuModal.classList.remove('hidden'));
+            closeMenuBtn.addEventListener('click', () => menuModal.classList.add('hidden'));
+            menuModal.addEventListener('click', (e) => {
+                if (e.target === menuModal) menuModal.classList.add('hidden');
+            });
+
+            viewAllRoundsBtn.addEventListener('click', () => {
+                menuModal.classList.add('hidden');
+                historySection.classList.toggle('hidden');
+            });
+
+            endGameBtn.addEventListener('click', () => {
+                if (confirm('End game early and see final scores?')) {
+                    menuModal.classList.add('hidden');
+                    showGameOver();
+                }
+            });
+
+            newGameMenuBtn.addEventListener('click', () => {
+                if (confirm('Start a new game? Current progress will be lost.')) {
+                    menuModal.classList.add('hidden');
+                    resetGame();
+                }
+            });
+
+            // Round actions
+            nextRoundBtn.addEventListener('click', submitRound);
+            saveEditBtn.addEventListener('click', saveEdit);
+            cancelEditBtn.addEventListener('click', cancelEdit);
+            finishGameBtn.addEventListener('click', () => showGameOver());
+
+            // Game over
+            newGameBtn.addEventListener('click', resetGame);
+            viewHistoryBtn.addEventListener('click', () => {
+                finalHistorySection.classList.toggle('hidden');
+                renderFinalHistory();
+            });
+        }
+
+        function updatePlayerInputs() {
+            const count = gameState.playerCount;
+            let html = '';
+            for (let i = 0; i < count; i++) {
+                const existingName = gameState.players[i] || '';
+                html += `<input type="text" class="player-name-input" placeholder="Player ${i + 1}" data-player="${i}" maxlength="20" value="${existingName}">`;
+            }
+            playerNameInputsContainer.innerHTML = html;
+
+            // Show/hide Most Words toggle for 2-player games
+            if (count === 2) {
+                mostWordsToggleContainer.classList.remove('hidden');
+            } else {
+                mostWordsToggleContainer.classList.add('hidden');
+                mostWordsToggle.checked = false;
+            }
+
+            // Add enter key navigation
+            const inputs = playerNameInputsContainer.querySelectorAll('input');
+            inputs.forEach((input, idx) => {
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        if (idx < inputs.length - 1) {
+                            inputs[idx + 1].focus();
+                        } else {
+                            startGame();
+                        }
+                    }
+                });
+            });
+        }
+
+        function startGame() {
+            const inputs = playerNameInputsContainer.querySelectorAll('input');
+            const players = [];
+            inputs.forEach((input, idx) => {
+                players.push(input.value.trim() || `Player ${idx + 1}`);
+            });
+
+            gameState.players = players;
+            gameState.mostWordsEnabled = gameState.playerCount > 2 || mostWordsToggle.checked;
+            gameState.currentRound = 1;
+            gameState.rounds = [];
+            gameState.isEditing = false;
+            gameState.editingRound = null;
+
+            saveGameState();
+            showGameScreen();
+        }
+
+        function showGameScreen() {
+            setupScreen.classList.add('hidden');
+            gameOverScreen.classList.add('hidden');
+            gameScreen.classList.remove('hidden');
+            renderGame();
+        }
+
+        function renderGame() {
+            currentRoundEl.textContent = gameState.currentRound;
+            renderRoundNav();
+            renderScoreboard();
+            renderRoundEntry();
+            renderHistory();
+            updateActionButtons();
+        }
+
+        function renderRoundNav() {
+            let html = '';
+            for (let i = 1; i <= 8; i++) {
+                let className = 'round-nav-btn';
+                if (i === gameState.currentRound && !gameState.isEditing) {
+                    className += ' current';
+                } else if (gameState.isEditing && i === gameState.editingRound) {
+                    className += ' editing';
+                } else if (i < gameState.currentRound || gameState.rounds[i - 1]) {
+                    className += ' completed';
+                }
+                html += `<button class="${className}" data-round="${i}">${i}</button>`;
+            }
+            roundNavEl.innerHTML = html;
+
+            // Add click handlers
+            roundNavEl.querySelectorAll('.round-nav-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const round = parseInt(btn.dataset.round);
+                    if (round < gameState.currentRound && gameState.rounds[round - 1]) {
+                        editRound(round);
+                    }
+                });
+            });
+        }
+
+        function renderScoreboard() {
+            const totals = calculateTotals();
+            const maxScore = Math.max(...totals);
+
+            let html = '';
+            gameState.players.forEach((player, idx) => {
+                const isLeading = totals[idx] === maxScore && maxScore > 0;
+                html += `
+                    <div class="scoreboard-row ${isLeading ? 'leading' : ''}">
+                        <span class="player-name">${escapeHtml(player)}</span>
+                        <span class="player-total">${totals[idx]}</span>
+                    </div>
+                `;
+            });
+            scoreboardEl.innerHTML = html;
+        }
+
+        function renderRoundEntry() {
+            const roundNum = gameState.isEditing ? gameState.editingRound : gameState.currentRound;
+            const existingData = gameState.rounds[roundNum - 1] || null;
+
+            roundEntryTitle.textContent = gameState.isEditing
+                ? `Editing Round ${roundNum}`
+                : `Enter Round ${roundNum} Scores`;
+
+            // Score inputs
+            let inputsHtml = '';
+            gameState.players.forEach((player, idx) => {
+                const value = existingData ? existingData.scores[idx] : '';
+                inputsHtml += `
+                    <div class="score-input-row">
+                        <span class="score-input-label">${escapeHtml(player)}</span>
+                        <input type="number" class="score-input" data-player="${idx}"
+                               value="${value}" inputmode="numeric" pattern="-?[0-9]*">
+                    </div>
+                `;
+            });
+            scoreInputsEl.innerHTML = inputsHtml;
+
+            // Bonus buttons
+            renderBonusButtons('longest-word', longestWordButtons, existingData?.longestWord);
+
+            if (gameState.mostWordsEnabled) {
+                mostWordsSection.classList.remove('hidden');
+                renderBonusButtons('most-words', mostWordsButtonsEl, existingData?.mostWords);
+            } else {
+                mostWordsSection.classList.add('hidden');
+            }
+
+            // Add keyboard navigation
+            const inputs = scoreInputsEl.querySelectorAll('input');
+            inputs.forEach((input, idx) => {
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === 'Tab') {
+                        if (!e.shiftKey && idx < inputs.length - 1) {
+                            e.preventDefault();
+                            inputs[idx + 1].focus();
+                        }
+                    }
+                });
+            });
+
+            // Auto-focus first input
+            setTimeout(() => {
+                const firstInput = scoreInputsEl.querySelector('input');
+                if (firstInput) firstInput.focus();
+            }, 100);
+        }
+
+        function renderBonusButtons(type, container, selectedValue) {
+            let html = '';
+            gameState.players.forEach((player, idx) => {
+                const selected = selectedValue === idx ? 'selected' : '';
+                html += `<button class="bonus-btn ${selected}" data-type="${type}" data-value="${idx}">${escapeHtml(player)}</button>`;
+            });
+            const tieSelected = selectedValue === 'tie' ? 'selected' : '';
+            html += `<button class="bonus-btn tie-none ${tieSelected}" data-type="${type}" data-value="tie">Tie / None</button>`;
+            container.innerHTML = html;
+
+            // Add click handlers
+            container.querySelectorAll('.bonus-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    container.querySelectorAll('.bonus-btn').forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                    updateActionButtons();
+                });
+            });
+        }
+
+        function updateActionButtons() {
+            const allFilled = isRoundComplete();
+
+            nextRoundBtn.classList.add('hidden');
+            saveEditBtn.classList.add('hidden');
+            cancelEditBtn.classList.add('hidden');
+            finishGameBtn.classList.add('hidden');
+
+            if (gameState.isEditing) {
+                saveEditBtn.classList.remove('hidden');
+                cancelEditBtn.classList.remove('hidden');
+                if (!allFilled) {
+                    saveEditBtn.disabled = true;
+                } else {
+                    saveEditBtn.disabled = false;
+                }
+            } else if (gameState.currentRound === 8) {
+                if (allFilled) {
+                    finishGameBtn.classList.remove('hidden');
+                }
+            } else {
+                if (allFilled) {
+                    nextRoundBtn.classList.remove('hidden');
+                }
+            }
+        }
+
+        function isRoundComplete() {
+            const inputs = scoreInputsEl.querySelectorAll('input');
+            let allFilled = true;
+            inputs.forEach(input => {
+                if (input.value === '') allFilled = false;
+            });
+
+            const longestSelected = longestWordButtons.querySelector('.bonus-btn.selected');
+            if (!longestSelected) allFilled = false;
+
+            if (gameState.mostWordsEnabled) {
+                const mostWordsSelected = mostWordsButtonsEl.querySelector('.bonus-btn.selected');
+                if (!mostWordsSelected) allFilled = false;
+            }
+
+            return allFilled;
+        }
+
+        function getRoundData() {
+            const scores = [];
+            scoreInputsEl.querySelectorAll('input').forEach(input => {
+                scores.push(parseInt(input.value) || 0);
+            });
+
+            const longestWordBtn = longestWordButtons.querySelector('.bonus-btn.selected');
+            let longestWord = longestWordBtn?.dataset.value;
+            longestWord = longestWord === 'tie' ? 'tie' : (longestWord !== undefined ? parseInt(longestWord) : null);
+
+            let mostWords = null;
+            if (gameState.mostWordsEnabled) {
+                const mostWordsBtn = mostWordsButtonsEl.querySelector('.bonus-btn.selected');
+                mostWords = mostWordsBtn?.dataset.value;
+                mostWords = mostWords === 'tie' ? 'tie' : (mostWords !== undefined ? parseInt(mostWords) : null);
+            }
+
+            return { scores, longestWord, mostWords };
+        }
+
+        function submitRound() {
+            const data = getRoundData();
+            gameState.rounds[gameState.currentRound - 1] = data;
+            gameState.currentRound++;
+            saveGameState();
+            renderGame();
+        }
+
+        function editRound(roundNum) {
+            gameState.isEditing = true;
+            gameState.editingRound = roundNum;
+            renderGame();
+        }
+
+        function saveEdit() {
+            const data = getRoundData();
+            gameState.rounds[gameState.editingRound - 1] = data;
+            gameState.isEditing = false;
+            gameState.editingRound = null;
+            saveGameState();
+            renderGame();
+        }
+
+        function cancelEdit() {
+            gameState.isEditing = false;
+            gameState.editingRound = null;
+            renderGame();
+        }
+
+        function renderHistory() {
+            if (gameState.rounds.length === 0) {
+                historySection.classList.add('hidden');
+                return;
+            }
+
+            let html = '';
+            gameState.rounds.forEach((round, idx) => {
+                if (!round) return;
+                html += renderHistoryRound(round, idx + 1, true);
+            });
+            historyList.innerHTML = html;
+
+            // Add edit handlers
+            historyList.querySelectorAll('.history-edit-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const round = parseInt(btn.dataset.round);
+                    editRound(round);
+                });
+            });
+        }
+
+        function renderHistoryRound(round, roundNum, showEditBtn = false) {
+            let scoresHtml = '';
+            gameState.players.forEach((player, idx) => {
+                const baseScore = round.scores[idx];
+                const bonus = (round.longestWord === idx ? 10 : 0) + (round.mostWords === idx ? 10 : 0);
+                const total = baseScore + bonus;
+                scoresHtml += `
+                    <div class="history-score-row">
+                        <span>${escapeHtml(player)}</span>
+                        <span>${baseScore}${bonus > 0 ? ` + ${bonus} = ${total}` : ''}</span>
+                    </div>
+                `;
+            });
+
+            let bonusText = '';
+            if (round.longestWord !== 'tie' && round.longestWord !== null) {
+                bonusText += `Longest Word: ${gameState.players[round.longestWord]}`;
+            }
+            if (round.mostWords !== 'tie' && round.mostWords !== null) {
+                if (bonusText) bonusText += ' | ';
+                bonusText += `Most Words: ${gameState.players[round.mostWords]}`;
+            }
+
+            return `
+                <div class="history-round">
+                    <div class="history-round-header">
+                        <span class="history-round-title">Round ${roundNum}</span>
+                        ${showEditBtn ? `<button class="history-edit-btn" data-round="${roundNum}">Edit</button>` : ''}
+                    </div>
+                    <div class="history-scores">${scoresHtml}</div>
+                    ${bonusText ? `<div class="history-bonus">${bonusText}</div>` : ''}
+                </div>
+            `;
+        }
+
+        function calculateTotals() {
+            const totals = gameState.players.map(() => 0);
+
+            gameState.rounds.forEach(round => {
+                if (!round) return;
+                round.scores.forEach((score, idx) => {
+                    totals[idx] += score;
+                    if (round.longestWord === idx) totals[idx] += 10;
+                    if (round.mostWords === idx) totals[idx] += 10;
+                });
+            });
+
+            return totals;
+        }
+
+        function showGameOver() {
+            gameScreen.classList.add('hidden');
+            gameOverScreen.classList.remove('hidden');
+
+            const totals = calculateTotals();
+            const maxScore = Math.max(...totals);
+            const winners = totals.filter(t => t === maxScore).length;
+
+            // Sort players by score
+            const sorted = gameState.players.map((name, idx) => ({
+                name,
+                score: totals[idx],
+                idx
+            })).sort((a, b) => b.score - a.score);
+
+            if (winners > 1) {
+                winnerNameEl.textContent = "It's a Tie!";
+            } else {
+                winnerNameEl.textContent = sorted[0].name + " Wins!";
+            }
+
+            let scoresHtml = '';
+            sorted.forEach((player, rank) => {
+                const isWinner = player.score === maxScore;
+                scoresHtml += `
+                    <div class="final-score-row ${isWinner ? 'winner' : ''}">
+                        <span class="final-rank">${rank + 1}</span>
+                        <span class="final-player-name">${escapeHtml(player.name)}</span>
+                        <span class="final-score">${player.score}</span>
+                    </div>
+                `;
+            });
+            finalScoresEl.innerHTML = scoresHtml;
+
+            if (sorted.length > 1 && winners === 1) {
+                const margin = sorted[0].score - sorted[1].score;
+                marginVictoryEl.textContent = `Margin of victory: ${margin} points`;
+            } else {
+                marginVictoryEl.textContent = '';
+            }
+
+            saveGameState();
+        }
+
+        function renderFinalHistory() {
+            let html = '';
+            gameState.rounds.forEach((round, idx) => {
+                if (!round) return;
+                html += renderHistoryRound(round, idx + 1, false);
+            });
+            finalHistoryList.innerHTML = html;
+        }
+
+        function resetGame() {
+            gameState = {
+                players: [],
+                playerCount: 2,
+                mostWordsEnabled: false,
+                currentRound: 1,
+                rounds: [],
+                isEditing: false,
+                editingRound: null
+            };
+            localStorage.removeItem('quiddlebot_game');
+
+            gameScreen.classList.add('hidden');
+            gameOverScreen.classList.add('hidden');
+            setupScreen.classList.remove('hidden');
+
+            // Reset UI
+            playerCountBtns.forEach(btn => {
+                btn.classList.toggle('selected', btn.dataset.count === '2');
+            });
+            mostWordsToggle.checked = false;
+            updatePlayerInputs();
+            finalHistorySection.classList.add('hidden');
+            historySection.classList.add('hidden');
+        }
+
+        function saveGameState() {
+            localStorage.setItem('quiddlebot_game', JSON.stringify(gameState));
+        }
+
+        function loadGameState() {
+            const saved = localStorage.getItem('quiddlebot_game');
+            if (saved) {
+                try {
+                    const parsed = JSON.parse(saved);
+                    gameState = { ...gameState, ...parsed };
+                } catch (e) {
+                    console.error('Failed to load game state:', e);
+                }
+            }
+            updatePlayerInputs();
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Initialize on load
+        init();
+    </script>
+</body>
+</html>
