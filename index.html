@@ -5,155 +5,327 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
-    <title>QuiddleBot</title>
+    <meta name="theme-color" content="#2D1B4E">
+    <title>QuiddleBot - Quiddler Scorekeeper</title>
+
+    <!-- Google Fonts - Celtic-inspired typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
     <style>
+        /* ========================================
+           CELTIC ILLUMINATED MANUSCRIPT THEME
+           QuiddleBot - Quiddler Scorekeeper
+           ======================================== */
+
         * {
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
         }
 
         :root {
-            --primary: #4a90d9;
-            --primary-dark: #357abd;
-            --success: #5cb85c;
-            --warning: #f0ad4e;
-            --danger: #d9534f;
-            --bg: #1a1a2e;
-            --bg-card: #16213e;
-            --bg-input: #0f3460;
-            --text: #eaeaea;
-            --text-muted: #a0a0a0;
-            --border: #3a3a5e;
-            --bonus: #ffd700;
+            /* Celtic Jewel Tones */
+            --celtic-purple: #5B2E8C;
+            --celtic-purple-deep: #2D1B4E;
+            --celtic-purple-light: #7B4BAD;
+            --celtic-red: #8B2942;
+            --celtic-red-light: #B83B5E;
+            --celtic-green: #1E5631;
+            --celtic-green-light: #2E8B57;
+            --celtic-blue: #1B4D89;
+            --celtic-blue-light: #2E6EB5;
+            --celtic-teal: #1D6F6F;
+
+            /* Gold & Metallic */
+            --gold: #D4A84B;
+            --gold-light: #E8C86E;
+            --gold-dark: #B8923D;
+            --gold-glow: rgba(212, 168, 75, 0.4);
+
+            /* Parchment & Backgrounds */
+            --parchment: #F5ECD7;
+            --parchment-dark: #E8DCC4;
+            --parchment-light: #FBF7EE;
+            --vellum: #EDE4CF;
+
+            /* Text */
+            --ink-dark: #2C1810;
+            --ink-medium: #4A3728;
+            --ink-light: #6B5344;
+
+            /* Shadows & Effects */
+            --shadow-soft: 0 4px 12px rgba(45, 27, 78, 0.15);
+            --shadow-medium: 0 6px 20px rgba(45, 27, 78, 0.2);
+            --shadow-lifted: 0 8px 30px rgba(45, 27, 78, 0.25);
+            --shadow-inset: inset 0 2px 4px rgba(45, 27, 78, 0.1);
+
+            /* Borders */
+            --border-ornate: 2px solid var(--celtic-purple);
+            --border-gold: 2px solid var(--gold);
+
+            /* Animation */
+            --bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            --smooth: cubic-bezier(0.4, 0, 0.2, 1);
         }
 
+        /* ========================================
+           BASE STYLES
+           ======================================== */
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--bg);
-            color: var(--text);
+            font-family: 'Crimson Pro', Georgia, serif;
+            background: var(--parchment);
+            background-image:
+                radial-gradient(ellipse at top, var(--parchment-light) 0%, transparent 70%),
+                radial-gradient(ellipse at bottom, var(--vellum) 0%, transparent 70%),
+                url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+            color: var(--ink-dark);
             margin: 0;
             padding: 0;
             min-height: 100vh;
-            line-height: 1.4;
+            line-height: 1.5;
         }
 
         .container {
-            max-width: 500px;
+            max-width: 520px;
             margin: 0 auto;
-            padding: 16px;
-            padding-bottom: 100px;
+            padding: 20px;
+            padding-bottom: 120px;
+        }
+
+        /* ========================================
+           TYPOGRAPHY
+           ======================================== */
+
+        h1, h2, h3 {
+            font-family: 'Cinzel', Georgia, serif;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            color: var(--celtic-purple-deep);
         }
 
         h1 {
             text-align: center;
-            margin: 0 0 20px 0;
-            font-size: 28px;
-            color: var(--primary);
+            font-size: 2.2rem;
+            margin: 0 0 8px 0;
+            background: linear-gradient(135deg, var(--celtic-purple-deep) 0%, var(--celtic-purple) 50%, var(--gold) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
-        h2 {
-            margin: 0 0 16px 0;
-            font-size: 20px;
+        .tagline {
+            text-align: center;
+            font-size: 0.95rem;
+            color: var(--ink-light);
+            margin-bottom: 24px;
+            font-style: italic;
         }
+
+        /* ========================================
+           CELTIC KNOTWORK DECORATIONS
+           ======================================== */
+
+        .celtic-border {
+            position: relative;
+            padding: 24px;
+            background: var(--parchment-light);
+            border-radius: 16px;
+            box-shadow: var(--shadow-medium);
+        }
+
+        .celtic-border::before {
+            content: '';
+            position: absolute;
+            inset: 4px;
+            border: 2px solid var(--celtic-purple);
+            border-radius: 12px;
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        .celtic-divider {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin: 20px 0;
+            color: var(--celtic-purple);
+            opacity: 0.5;
+        }
+
+        .celtic-divider::before,
+        .celtic-divider::after {
+            content: '';
+            flex: 1;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--celtic-purple), transparent);
+        }
+
+        .celtic-knot {
+            width: 24px;
+            height: 24px;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%235B2E8C' d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14c-2.33 0-4.32-1.45-5.12-3.5h1.67c.69 1.19 1.97 2 3.45 2s2.75-.81 3.45-2h1.67c-.8 2.05-2.79 3.5-5.12 3.5z'/%3E%3C/svg%3E");
+        }
+
+        /* ========================================
+           CARDS & CONTAINERS
+           ======================================== */
 
         .card {
-            background: var(--bg-card);
-            border-radius: 12px;
+            background: var(--parchment-light);
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-medium);
+            border: 1px solid rgba(91, 46, 140, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--celtic-purple), var(--gold), var(--celtic-purple));
+            opacity: 0.6;
+        }
+
+        .card-plain {
+            background: var(--parchment-light);
+            border-radius: 16px;
             padding: 20px;
             margin-bottom: 16px;
-            border: 1px solid var(--border);
+            box-shadow: var(--shadow-soft);
+            border: 1px solid rgba(91, 46, 140, 0.08);
         }
 
         .hidden {
             display: none !important;
         }
 
-        /* Setup Screen */
+        /* ========================================
+           SETUP SCREEN
+           ======================================== */
+
         .setup-section {
-            margin-bottom: 24px;
+            margin-bottom: 28px;
         }
 
         .setup-section label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
+            font-family: 'Cinzel', serif;
             font-weight: 600;
-            color: var(--text-muted);
+            font-size: 1rem;
+            color: var(--celtic-purple-deep);
+            letter-spacing: 0.03em;
         }
 
         .player-count-buttons {
             display: flex;
             gap: 12px;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
         }
 
         .player-count-btn {
             flex: 1;
-            padding: 16px;
-            font-size: 18px;
-            font-weight: 600;
-            border: 2px solid var(--border);
-            background: var(--bg-input);
-            color: var(--text);
-            border-radius: 10px;
+            padding: 18px 16px;
+            font-family: 'Cinzel', serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            border: 2px solid var(--celtic-purple);
+            background: var(--parchment);
+            color: var(--celtic-purple);
+            border-radius: 14px;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s var(--bounce);
+            box-shadow: var(--shadow-soft);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .player-count-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lifted);
+        }
+
+        .player-count-btn:active {
+            transform: translateY(0) scale(0.98);
         }
 
         .player-count-btn.selected {
-            border-color: var(--primary);
-            background: var(--primary);
+            background: linear-gradient(135deg, var(--celtic-purple) 0%, var(--celtic-purple-light) 100%);
+            color: var(--parchment-light);
+            border-color: var(--celtic-purple);
+            box-shadow: var(--shadow-medium), 0 0 20px rgba(91, 46, 140, 0.3);
         }
 
         .player-name-inputs {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 14px;
         }
 
         .player-name-input {
             width: 100%;
-            padding: 14px 16px;
-            font-size: 18px;
-            border: 2px solid var(--border);
-            background: var(--bg-input);
-            color: var(--text);
-            border-radius: 10px;
+            padding: 16px 20px;
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.15rem;
+            border: 2px solid rgba(91, 46, 140, 0.2);
+            background: var(--parchment);
+            color: var(--ink-dark);
+            border-radius: 12px;
             outline: none;
-            transition: border-color 0.2s;
+            transition: all 0.3s var(--smooth);
+            box-shadow: var(--shadow-inset);
         }
 
         .player-name-input:focus {
-            border-color: var(--primary);
+            border-color: var(--celtic-purple);
+            box-shadow: var(--shadow-inset), 0 0 0 4px rgba(91, 46, 140, 0.15);
         }
 
         .player-name-input::placeholder {
-            color: var(--text-muted);
+            color: var(--ink-light);
+            opacity: 0.7;
         }
 
+        /* Toggle Switch */
         .toggle-container {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 16px;
-            background: var(--bg-input);
-            border-radius: 10px;
-            margin-top: 16px;
+            padding: 18px 20px;
+            background: var(--parchment);
+            border-radius: 14px;
+            margin-top: 20px;
+            box-shadow: var(--shadow-inset);
+            border: 1px solid rgba(91, 46, 140, 0.1);
         }
 
         .toggle-label {
-            font-size: 16px;
+            font-family: 'Cinzel', serif;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--celtic-purple-deep);
         }
 
         .toggle-sublabel {
-            font-size: 13px;
-            color: var(--text-muted);
+            font-size: 0.85rem;
+            color: var(--ink-light);
             margin-top: 4px;
+            font-style: italic;
         }
 
         .toggle {
             position: relative;
-            width: 56px;
-            height: 32px;
+            width: 60px;
+            height: 34px;
             flex-shrink: 0;
         }
 
@@ -166,13 +338,11 @@
         .toggle-slider {
             position: absolute;
             cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: var(--border);
-            border-radius: 32px;
-            transition: 0.3s;
+            inset: 0;
+            background: var(--parchment-dark);
+            border-radius: 34px;
+            transition: 0.4s var(--smooth);
+            border: 2px solid rgba(91, 46, 140, 0.2);
         }
 
         .toggle-slider:before {
@@ -180,373 +350,788 @@
             content: "";
             height: 26px;
             width: 26px;
-            left: 3px;
-            bottom: 3px;
+            left: 2px;
+            bottom: 2px;
             background: white;
             border-radius: 50%;
-            transition: 0.3s;
+            transition: 0.4s var(--bounce);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
         .toggle input:checked + .toggle-slider {
-            background: var(--primary);
+            background: linear-gradient(135deg, var(--celtic-purple) 0%, var(--celtic-purple-light) 100%);
+            border-color: var(--celtic-purple);
         }
 
         .toggle input:checked + .toggle-slider:before {
-            transform: translateX(24px);
+            transform: translateX(26px);
+            background: var(--gold-light);
+            box-shadow: 0 0 8px var(--gold-glow);
         }
+
+        /* ========================================
+           BUTTONS
+           ======================================== */
 
         .btn {
             width: 100%;
-            padding: 18px;
-            font-size: 18px;
+            padding: 18px 24px;
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
             font-weight: 600;
             border: none;
-            border-radius: 12px;
+            border-radius: 14px;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s var(--bounce);
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 0.03em;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
         }
 
         .btn-primary {
-            background: var(--primary);
-            color: white;
+            background: linear-gradient(135deg, var(--celtic-purple) 0%, var(--celtic-purple-light) 100%);
+            color: var(--parchment-light);
+            box-shadow: var(--shadow-medium), 0 4px 15px rgba(91, 46, 140, 0.3);
         }
 
-        .btn-primary:hover, .btn-primary:active {
-            background: var(--primary-dark);
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lifted), 0 6px 20px rgba(91, 46, 140, 0.4);
         }
 
         .btn-primary:disabled {
-            background: var(--border);
+            background: var(--parchment-dark);
+            color: var(--ink-light);
             cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
         }
 
         .btn-success {
-            background: var(--success);
-            color: white;
+            background: linear-gradient(135deg, var(--celtic-green) 0%, var(--celtic-green-light) 100%);
+            color: var(--parchment-light);
+            box-shadow: var(--shadow-medium), 0 4px 15px rgba(30, 86, 49, 0.3);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lifted), 0 6px 20px rgba(30, 86, 49, 0.4);
         }
 
         .btn-secondary {
-            background: var(--bg-input);
-            color: var(--text);
-            border: 2px solid var(--border);
+            background: var(--parchment);
+            color: var(--celtic-purple);
+            border: 2px solid var(--celtic-purple);
+            box-shadow: var(--shadow-soft);
+        }
+
+        .btn-secondary:hover {
+            background: var(--celtic-purple);
+            color: var(--parchment-light);
         }
 
         .btn-danger {
-            background: var(--danger);
-            color: white;
+            background: linear-gradient(135deg, var(--celtic-red) 0%, var(--celtic-red-light) 100%);
+            color: var(--parchment-light);
+            box-shadow: var(--shadow-medium), 0 4px 15px rgba(139, 41, 66, 0.3);
         }
 
-        /* Game Screen */
+        .btn-gold {
+            background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold) 50%, var(--gold-light) 100%);
+            color: var(--ink-dark);
+            box-shadow: var(--shadow-medium), 0 4px 15px var(--gold-glow);
+        }
+
+        .btn-gold:hover {
+            box-shadow: var(--shadow-lifted), 0 6px 25px var(--gold-glow);
+        }
+
+        /* ========================================
+           GAME HEADER
+           ======================================== */
+
         .game-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 16px;
+            margin-bottom: 20px;
+            padding: 0 4px;
         }
 
         .round-indicator {
-            font-size: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .round-number {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 52px;
+            height: 52px;
+            background: linear-gradient(135deg, var(--celtic-purple) 0%, var(--celtic-purple-light) 100%);
+            border-radius: 50%;
+            font-family: 'Cinzel', serif;
+            font-size: 1.5rem;
             font-weight: 700;
-            color: var(--primary);
+            color: var(--gold-light);
+            box-shadow: var(--shadow-medium), 0 0 20px rgba(91, 46, 140, 0.3);
+            position: relative;
+        }
+
+        .round-number::before {
+            content: '';
+            position: absolute;
+            inset: 3px;
+            border: 2px solid var(--gold);
+            border-radius: 50%;
+            opacity: 0.5;
+        }
+
+        .round-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            color: var(--celtic-purple-deep);
+        }
+
+        .round-subtitle {
+            font-size: 0.85rem;
+            color: var(--ink-light);
+            font-style: italic;
         }
 
         .menu-btn {
-            padding: 8px 16px;
-            font-size: 14px;
-            background: var(--bg-input);
-            border: 1px solid var(--border);
-            color: var(--text);
-            border-radius: 8px;
+            padding: 12px 18px;
+            font-family: 'Crimson Pro', serif;
+            font-size: 0.95rem;
+            font-weight: 600;
+            background: var(--parchment);
+            border: 2px solid var(--celtic-purple);
+            color: var(--celtic-purple);
+            border-radius: 10px;
             cursor: pointer;
+            transition: all 0.3s var(--smooth);
+            box-shadow: var(--shadow-soft);
         }
 
-        /* Scoreboard */
-        .scoreboard {
-            display: grid;
+        .menu-btn:hover {
+            background: var(--celtic-purple);
+            color: var(--parchment-light);
+        }
+
+        /* ========================================
+           ROUND NAVIGATION
+           ======================================== */
+
+        .round-nav {
+            display: flex;
             gap: 8px;
+            flex-wrap: wrap;
             margin-bottom: 20px;
+            justify-content: center;
+        }
+
+        .round-nav-btn {
+            width: 44px;
+            height: 44px;
+            font-family: 'Cinzel', serif;
+            font-size: 1rem;
+            font-weight: 600;
+            border: 2px solid var(--celtic-purple);
+            background: var(--parchment);
+            color: var(--celtic-purple);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s var(--bounce);
+            box-shadow: var(--shadow-soft);
+        }
+
+        .round-nav-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .round-nav-btn.current {
+            background: linear-gradient(135deg, var(--celtic-purple) 0%, var(--celtic-purple-light) 100%);
+            color: var(--gold-light);
+            border-color: var(--celtic-purple);
+            box-shadow: var(--shadow-medium), 0 0 15px rgba(91, 46, 140, 0.3);
+        }
+
+        .round-nav-btn.completed {
+            background: var(--parchment);
+            border-color: var(--celtic-green);
+            color: var(--celtic-green);
+        }
+
+        .round-nav-btn.completed::after {
+            content: '';
+            position: absolute;
+            bottom: 4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 6px;
+            background: var(--celtic-green);
+            border-radius: 50%;
+        }
+
+        .round-nav-btn.editing {
+            background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold) 100%);
+            color: var(--ink-dark);
+            border-color: var(--gold);
+            box-shadow: var(--shadow-medium), 0 0 15px var(--gold-glow);
+        }
+
+        /* ========================================
+           SCOREBOARD
+           ======================================== */
+
+        .scoreboard {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
         }
 
         .scoreboard-row {
-            display: grid;
-            grid-template-columns: 1fr auto;
+            display: flex;
             align-items: center;
-            padding: 12px 16px;
-            background: var(--bg-input);
-            border-radius: 10px;
+            justify-content: space-between;
+            padding: 16px 20px;
+            background: var(--parchment);
+            border-radius: 14px;
             border: 2px solid transparent;
+            box-shadow: var(--shadow-soft);
+            transition: all 0.4s var(--smooth);
         }
 
         .scoreboard-row.leading {
-            border-color: var(--bonus);
+            border-color: var(--gold);
+            background: linear-gradient(135deg, var(--parchment) 0%, rgba(212, 168, 75, 0.1) 100%);
+            box-shadow: var(--shadow-medium), 0 0 20px var(--gold-glow);
         }
 
+        .scoreboard-row.leading .player-name::before {
+            content: '★ ';
+            color: var(--gold);
+        }
+
+        .player-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .player-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: var(--parchment-light);
+        }
+
+        .player-avatar.p0 { background: var(--celtic-purple); }
+        .player-avatar.p1 { background: var(--celtic-green); }
+        .player-avatar.p2 { background: var(--celtic-blue); }
+        .player-avatar.p3 { background: var(--celtic-red); }
+
         .player-name {
+            font-family: 'Crimson Pro', serif;
             font-weight: 600;
-            font-size: 16px;
+            font-size: 1.1rem;
+            color: var(--ink-dark);
         }
 
         .player-total {
-            font-size: 24px;
+            font-family: 'Cinzel', serif;
+            font-size: 1.6rem;
             font-weight: 700;
-            color: var(--primary);
+            color: var(--celtic-purple);
+            min-width: 60px;
+            text-align: right;
         }
 
-        /* Round Entry */
-        .round-entry-section h3 {
-            margin: 0 0 16px 0;
-            font-size: 18px;
-            color: var(--text-muted);
+        .scoreboard-row.leading .player-total {
+            color: var(--gold-dark);
+        }
+
+        /* ========================================
+           ROUND ENTRY
+           ======================================== */
+
+        .round-entry-header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .round-entry-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.3rem;
+            color: var(--celtic-purple-deep);
+            margin: 0 0 6px 0;
+        }
+
+        .round-entry-subtitle {
+            font-size: 0.9rem;
+            color: var(--ink-light);
+            font-style: italic;
         }
 
         .score-inputs {
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            margin-bottom: 24px;
+            gap: 14px;
+            margin-bottom: 28px;
         }
 
         .score-input-row {
-            display: grid;
-            grid-template-columns: 1fr 100px;
+            display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 16px;
         }
 
         .score-input-label {
-            font-size: 16px;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .score-input-label .player-avatar {
+            width: 32px;
+            height: 32px;
+            font-size: 0.8rem;
+        }
+
+        .score-input-name {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.05rem;
             font-weight: 500;
+            color: var(--ink-dark);
         }
 
         .score-input {
-            width: 100%;
-            padding: 14px;
-            font-size: 20px;
+            width: 100px;
+            padding: 14px 12px;
+            font-family: 'Cinzel', serif;
+            font-size: 1.3rem;
             font-weight: 600;
             text-align: center;
-            border: 2px solid var(--border);
-            background: var(--bg-input);
-            color: var(--text);
-            border-radius: 10px;
+            border: 2px solid rgba(91, 46, 140, 0.2);
+            background: var(--parchment);
+            color: var(--celtic-purple-deep);
+            border-radius: 12px;
             outline: none;
+            transition: all 0.3s var(--smooth);
+            box-shadow: var(--shadow-inset);
         }
 
         .score-input:focus {
-            border-color: var(--primary);
+            border-color: var(--celtic-purple);
+            box-shadow: var(--shadow-inset), 0 0 0 4px rgba(91, 46, 140, 0.15);
         }
 
-        /* Bonus Selection */
+        .score-input::-webkit-inner-spin-button,
+        .score-input::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        /* ========================================
+           BONUS SECTIONS
+           ======================================== */
+
         .bonus-section {
             margin-bottom: 24px;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(212, 168, 75, 0.08) 0%, rgba(212, 168, 75, 0.15) 100%);
+            border-radius: 16px;
+            border: 1px solid rgba(212, 168, 75, 0.3);
         }
 
         .bonus-title {
             display: flex;
             align-items: center;
-            gap: 8px;
-            margin-bottom: 12px;
-            font-size: 16px;
+            gap: 10px;
+            margin-bottom: 14px;
+            font-family: 'Cinzel', serif;
+            font-size: 1rem;
             font-weight: 600;
+            color: var(--gold-dark);
         }
 
         .bonus-icon {
-            color: var(--bonus);
+            font-size: 1.2rem;
+            filter: drop-shadow(0 0 4px var(--gold-glow));
+        }
+
+        .bonus-points {
+            font-size: 0.85rem;
+            color: var(--ink-light);
+            font-family: 'Crimson Pro', serif;
+            font-weight: 400;
         }
 
         .bonus-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
         }
 
         .bonus-btn {
-            flex: 1;
-            min-width: calc(50% - 4px);
-            padding: 14px 8px;
-            font-size: 14px;
+            padding: 14px 12px;
+            font-family: 'Crimson Pro', serif;
+            font-size: 0.95rem;
             font-weight: 600;
-            border: 2px solid var(--border);
-            background: var(--bg-input);
-            color: var(--text);
-            border-radius: 10px;
+            border: 2px solid rgba(91, 46, 140, 0.2);
+            background: var(--parchment);
+            color: var(--ink-dark);
+            border-radius: 12px;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s var(--bounce);
+            box-shadow: var(--shadow-soft);
+        }
+
+        .bonus-btn:hover {
+            transform: translateY(-2px);
+            border-color: var(--celtic-purple);
+        }
+
+        .bonus-btn:active {
+            transform: scale(0.98);
         }
 
         .bonus-btn.selected {
-            border-color: var(--bonus);
-            background: rgba(255, 215, 0, 0.15);
-            color: var(--bonus);
+            background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold) 100%);
+            color: var(--ink-dark);
+            border-color: var(--gold);
+            box-shadow: var(--shadow-medium), 0 0 15px var(--gold-glow);
+        }
+
+        .bonus-btn.selected::before {
+            content: '★ ';
         }
 
         .bonus-btn.tie-none {
-            min-width: 100%;
-            background: var(--bg);
+            grid-column: span 2;
+            background: var(--parchment-dark);
+            border-style: dashed;
         }
 
         .bonus-btn.tie-none.selected {
-            background: rgba(255, 215, 0, 0.1);
+            background: var(--parchment-dark);
+            border-color: var(--ink-light);
+            border-style: solid;
+            box-shadow: var(--shadow-soft);
         }
 
-        /* Round Navigation */
-        .round-nav {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            margin-bottom: 16px;
+        .bonus-btn.tie-none.selected::before {
+            content: '';
         }
 
-        .round-nav-btn {
-            width: 40px;
-            height: 40px;
-            font-size: 16px;
-            font-weight: 600;
-            border: 2px solid var(--border);
-            background: var(--bg-input);
-            color: var(--text);
-            border-radius: 8px;
-            cursor: pointer;
-        }
+        /* ========================================
+           ACTION BUTTONS
+           ======================================== */
 
-        .round-nav-btn.current {
-            border-color: var(--primary);
-            background: var(--primary);
-        }
-
-        .round-nav-btn.completed {
-            border-color: var(--success);
-            color: var(--success);
-        }
-
-        .round-nav-btn.editing {
-            border-color: var(--warning);
-            background: var(--warning);
-            color: var(--bg);
-        }
-
-        /* Action Buttons */
         .action-buttons {
             display: flex;
             flex-direction: column;
             gap: 12px;
-            margin-top: 24px;
+            margin-top: 28px;
         }
 
-        /* Game Over Screen */
-        .game-over-title {
+        .keyboard-hint {
             text-align: center;
-            font-size: 28px;
+            font-size: 0.85rem;
+            color: var(--ink-light);
+            margin-top: 16px;
+            font-style: italic;
+        }
+
+        /* ========================================
+           GAME OVER SCREEN
+           ======================================== */
+
+        .game-over-card {
+            text-align: center;
+            padding: 32px 24px;
+        }
+
+        .victory-banner {
+            margin-bottom: 24px;
+        }
+
+        .game-over-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.4rem;
+            color: var(--ink-light);
             margin-bottom: 8px;
         }
 
         .winner-name {
-            text-align: center;
-            font-size: 36px;
+            font-family: 'Cinzel', serif;
+            font-size: 2rem;
             font-weight: 700;
-            color: var(--bonus);
-            margin-bottom: 24px;
+            background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold) 50%, var(--gold-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 2px 4px var(--gold-glow));
+            animation: victoryGlow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes victoryGlow {
+            from { filter: drop-shadow(0 2px 4px var(--gold-glow)); }
+            to { filter: drop-shadow(0 4px 12px var(--gold-glow)); }
+        }
+
+        .winner-subtitle {
+            font-size: 1rem;
+            color: var(--ink-light);
+            font-style: italic;
+            margin-top: 4px;
         }
 
         .final-scores {
-            margin-bottom: 24px;
+            margin: 24px 0;
         }
 
         .final-score-row {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            padding: 16px;
-            background: var(--bg-input);
-            border-radius: 10px;
-            margin-bottom: 8px;
+            padding: 16px 20px;
+            background: var(--parchment);
+            border-radius: 14px;
+            margin-bottom: 10px;
+            box-shadow: var(--shadow-soft);
+            transition: all 0.3s var(--smooth);
         }
 
         .final-score-row.winner {
-            border: 2px solid var(--bonus);
+            background: linear-gradient(135deg, var(--parchment) 0%, rgba(212, 168, 75, 0.15) 100%);
+            border: 2px solid var(--gold);
+            box-shadow: var(--shadow-medium), 0 0 20px var(--gold-glow);
         }
 
         .final-rank {
-            font-size: 20px;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
             font-weight: 700;
-            color: var(--text-muted);
-            width: 30px;
+            color: var(--ink-light);
+            background: var(--parchment-dark);
+            border-radius: 50%;
+            margin-right: 16px;
         }
 
         .final-score-row.winner .final-rank {
-            color: var(--bonus);
+            background: var(--gold);
+            color: var(--ink-dark);
         }
 
         .final-player-name {
             flex: 1;
-            font-size: 18px;
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.1rem;
             font-weight: 600;
+            color: var(--ink-dark);
+            text-align: left;
         }
 
         .final-score {
-            font-size: 24px;
+            font-family: 'Cinzel', serif;
+            font-size: 1.5rem;
             font-weight: 700;
-            color: var(--primary);
+            color: var(--celtic-purple);
+        }
+
+        .final-score-row.winner .final-score {
+            color: var(--gold-dark);
         }
 
         .margin-victory {
             text-align: center;
-            color: var(--text-muted);
-            font-size: 16px;
+            color: var(--ink-light);
+            font-size: 1rem;
             margin-bottom: 24px;
+            font-style: italic;
         }
 
-        /* Round Summary */
-        .round-summary {
-            margin-top: 16px;
-            padding-top: 16px;
-            border-top: 1px solid var(--border);
+        /* ========================================
+           HISTORY SECTION
+           ======================================== */
+
+        .history-section {
+            margin-top: 24px;
         }
 
-        .round-summary-title {
-            font-size: 14px;
-            color: var(--text-muted);
-            margin-bottom: 8px;
+        .history-section h3 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            color: var(--celtic-purple-deep);
+            margin-bottom: 16px;
+            text-align: center;
         }
 
-        .round-summary-row {
+        .history-round {
+            background: var(--parchment);
+            border-radius: 14px;
+            padding: 18px;
+            margin-bottom: 14px;
+            box-shadow: var(--shadow-soft);
+            border-left: 4px solid var(--celtic-purple);
+        }
+
+        .history-round-header {
             display: flex;
             justify-content: space-between;
-            padding: 8px 0;
-            font-size: 14px;
+            align-items: center;
+            margin-bottom: 14px;
         }
 
-        .round-bonus-awarded {
-            color: var(--bonus);
-            font-size: 12px;
+        .history-round-title {
+            font-family: 'Cinzel', serif;
+            font-weight: 600;
+            color: var(--celtic-purple-deep);
         }
 
-        /* Menu Modal */
+        .history-edit-btn {
+            padding: 8px 14px;
+            font-family: 'Crimson Pro', serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            background: var(--parchment-light);
+            border: 1px solid var(--celtic-purple);
+            color: var(--celtic-purple);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s var(--smooth);
+        }
+
+        .history-edit-btn:hover {
+            background: var(--celtic-purple);
+            color: var(--parchment-light);
+        }
+
+        .history-scores {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .history-score-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            font-size: 0.95rem;
+            border-bottom: 1px dashed rgba(91, 46, 140, 0.1);
+        }
+
+        .history-score-row:last-child {
+            border-bottom: none;
+        }
+
+        .history-score-name {
+            color: var(--ink-dark);
+        }
+
+        .history-score-value {
+            font-weight: 600;
+            color: var(--celtic-purple);
+        }
+
+        .history-bonus {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(212, 168, 75, 0.3);
+            font-size: 0.85rem;
+            color: var(--gold-dark);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .history-bonus::before {
+            content: '★';
+            color: var(--gold);
+        }
+
+        /* ========================================
+           MODAL
+           ======================================== */
+
         .modal-overlay {
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.7);
+            inset: 0;
+            background: rgba(45, 27, 78, 0.7);
+            backdrop-filter: blur(4px);
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 1000;
             padding: 20px;
+            animation: fadeIn 0.3s var(--smooth);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         .modal {
-            background: var(--bg-card);
-            border-radius: 16px;
-            padding: 24px;
+            background: var(--parchment-light);
+            border-radius: 20px;
+            padding: 28px;
             width: 100%;
-            max-width: 400px;
-            border: 1px solid var(--border);
+            max-width: 380px;
+            box-shadow: var(--shadow-lifted);
+            animation: slideUp 0.4s var(--bounce);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .modal h3 {
-            margin: 0 0 20px 0;
+            font-family: 'Cinzel', serif;
             text-align: center;
+            margin: 0 0 24px 0;
+            color: var(--celtic-purple-deep);
         }
 
         .modal-buttons {
@@ -555,85 +1140,101 @@
             gap: 12px;
         }
 
-        /* History View */
-        .history-section {
-            margin-top: 24px;
+        /* ========================================
+           ANIMATIONS
+           ======================================== */
+
+        @keyframes bounceIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); opacity: 1; }
         }
 
-        .history-round {
-            background: var(--bg-input);
-            border-radius: 10px;
-            padding: 16px;
-            margin-bottom: 12px;
+        @keyframes slideIn {
+            from { transform: translateX(-20px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
         }
 
-        .history-round-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
+        .animate-bounce-in {
+            animation: bounceIn 0.5s var(--bounce);
         }
 
-        .history-round-title {
-            font-weight: 600;
+        .animate-slide-in {
+            animation: slideIn 0.4s var(--smooth);
         }
 
-        .history-edit-btn {
-            padding: 6px 12px;
-            font-size: 13px;
-            background: var(--bg);
-            border: 1px solid var(--border);
-            color: var(--text);
-            border-radius: 6px;
-            cursor: pointer;
+        /* Score count-up animation */
+        .score-animate {
+            animation: scoreFlash 0.3s var(--smooth);
         }
 
-        .history-scores {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            font-size: 14px;
+        @keyframes scoreFlash {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); color: var(--gold); }
+            100% { transform: scale(1); }
         }
 
-        .history-score-row {
-            display: flex;
-            justify-content: space-between;
-        }
+        /* ========================================
+           RESPONSIVE ADJUSTMENTS
+           ======================================== */
 
-        .history-bonus {
-            color: var(--bonus);
-            font-size: 12px;
-            margin-top: 8px;
-        }
-
-        /* Keyboard navigation hint */
-        .keyboard-hint {
-            text-align: center;
-            font-size: 12px;
-            color: var(--text-muted);
-            margin-top: 8px;
-        }
-
-        @media (min-width: 400px) {
-            .bonus-btn {
-                min-width: auto;
-                flex: 1;
+        @media (max-width: 380px) {
+            .container {
+                padding: 16px;
             }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .round-number {
+                width: 44px;
+                height: 44px;
+                font-size: 1.3rem;
+            }
+
+            .bonus-buttons {
+                grid-template-columns: 1fr;
+            }
+
             .bonus-btn.tie-none {
-                min-width: auto;
+                grid-column: span 1;
+            }
+        }
+
+        @media (min-width: 500px) {
+            .bonus-buttons {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            }
+
+            .bonus-btn.tie-none {
+                grid-column: span 1;
+            }
+        }
+
+        /* Touch feedback */
+        @media (hover: none) {
+            .btn:active,
+            .bonus-btn:active,
+            .player-count-btn:active,
+            .round-nav-btn:active {
+                transform: scale(0.97);
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Setup Screen -->
+        <!-- ========================================
+             SETUP SCREEN
+             ======================================== -->
         <div id="setup-screen">
             <h1>QuiddleBot</h1>
+            <p class="tagline">A Celtic Scorekeeper for Wordsmiths</p>
 
             <div class="card">
                 <div class="setup-section">
-                    <label>Number of Players</label>
+                    <label>Gather Your Players</label>
                     <div class="player-count-buttons">
                         <button class="player-count-btn selected" data-count="2">2</button>
                         <button class="player-count-btn" data-count="3">3</button>
@@ -642,17 +1243,17 @@
                 </div>
 
                 <div class="setup-section">
-                    <label>Player Names</label>
+                    <label>Name Your Champions</label>
                     <div class="player-name-inputs" id="player-name-inputs">
-                        <input type="text" class="player-name-input" placeholder="Player 1" data-player="0" maxlength="20">
-                        <input type="text" class="player-name-input" placeholder="Player 2" data-player="1" maxlength="20">
+                        <input type="text" class="player-name-input" placeholder="First Wordsmith" data-player="0" maxlength="20">
+                        <input type="text" class="player-name-input" placeholder="Second Wordsmith" data-player="1" maxlength="20">
                     </div>
                 </div>
 
                 <div class="toggle-container hidden" id="most-words-toggle-container">
                     <div>
-                        <div class="toggle-label">Enable "Most Words" Bonus</div>
-                        <div class="toggle-sublabel">Optional for 2-player games</div>
+                        <div class="toggle-label">Most Words Bonus</div>
+                        <div class="toggle-sublabel">Optional challenge for two players</div>
                     </div>
                     <label class="toggle">
                         <input type="checkbox" id="most-words-toggle">
@@ -661,13 +1262,21 @@
                 </div>
             </div>
 
-            <button class="btn btn-primary" id="start-game-btn">Start Game</button>
+            <button class="btn btn-primary" id="start-game-btn">Begin the Quest</button>
         </div>
 
-        <!-- Game Screen -->
+        <!-- ========================================
+             GAME SCREEN
+             ======================================== -->
         <div id="game-screen" class="hidden">
             <div class="game-header">
-                <div class="round-indicator">Round <span id="current-round">1</span>/8</div>
+                <div class="round-indicator">
+                    <div class="round-number"><span id="current-round">1</span></div>
+                    <div>
+                        <div class="round-title" id="round-title">First Flourish</div>
+                        <div class="round-subtitle">Round <span id="round-of">1</span> of 8</div>
+                    </div>
+                </div>
                 <button class="menu-btn" id="menu-btn">Menu</button>
             </div>
 
@@ -681,89 +1290,121 @@
 
             <!-- Round Entry -->
             <div class="card" id="round-entry">
-                <h3 id="round-entry-title">Enter Round 1 Scores</h3>
+                <div class="round-entry-header">
+                    <h3 class="round-entry-title" id="round-entry-title">Record Your Scores</h3>
+                    <p class="round-entry-subtitle" id="round-entry-subtitle">Enter each player's points for this round</p>
+                </div>
 
                 <div class="score-inputs" id="score-inputs"></div>
 
                 <div class="bonus-section" id="longest-word-section">
                     <div class="bonus-title">
-                        <span class="bonus-icon">★</span> Longest Word (+10)
+                        <span class="bonus-icon">★</span>
+                        Longest Word
+                        <span class="bonus-points">(+10 points)</span>
                     </div>
                     <div class="bonus-buttons" id="longest-word-buttons"></div>
                 </div>
 
                 <div class="bonus-section hidden" id="most-words-section">
                     <div class="bonus-title">
-                        <span class="bonus-icon">★</span> Most Words (+10)
+                        <span class="bonus-icon">★</span>
+                        Most Words
+                        <span class="bonus-points">(+10 points)</span>
                     </div>
                     <div class="bonus-buttons" id="most-words-buttons"></div>
                 </div>
 
-                <p class="keyboard-hint">Press Tab/Enter to move between fields</p>
+                <p class="keyboard-hint">Tab or Enter to move between fields</p>
 
                 <div class="action-buttons">
-                    <button class="btn btn-success hidden" id="next-round-btn">Next Round →</button>
-                    <button class="btn btn-primary hidden" id="save-edit-btn">Save Changes</button>
+                    <button class="btn btn-success hidden" id="next-round-btn">Onward to Round <span id="next-round-num">2</span></button>
+                    <button class="btn btn-gold hidden" id="save-edit-btn">Save Changes</button>
                     <button class="btn btn-secondary hidden" id="cancel-edit-btn">Cancel Edit</button>
-                    <button class="btn btn-success hidden" id="finish-game-btn">Finish Game</button>
+                    <button class="btn btn-gold hidden" id="finish-game-btn">Reveal the Victor</button>
                 </div>
             </div>
 
             <!-- Round History -->
             <div class="history-section hidden" id="history-section">
-                <h3>Round History</h3>
+                <h3>Chronicle of Rounds</h3>
                 <div id="history-list"></div>
             </div>
         </div>
 
-        <!-- Game Over Screen -->
+        <!-- ========================================
+             GAME OVER SCREEN
+             ======================================== -->
         <div id="game-over-screen" class="hidden">
-            <div class="card">
-                <div class="game-over-title">Game Over!</div>
-                <div class="winner-name" id="winner-name"></div>
+            <div class="card game-over-card">
+                <div class="victory-banner">
+                    <div class="game-over-title">The Quest is Complete!</div>
+                    <div class="winner-name" id="winner-name"></div>
+                    <div class="winner-subtitle" id="winner-subtitle">Champion Wordsmith</div>
+                </div>
 
                 <div class="final-scores" id="final-scores"></div>
                 <div class="margin-victory" id="margin-victory"></div>
 
                 <div class="action-buttons">
-                    <button class="btn btn-primary" id="new-game-btn">New Game</button>
-                    <button class="btn btn-secondary" id="view-history-btn">View Round History</button>
+                    <button class="btn btn-primary" id="new-game-btn">Begin a New Quest</button>
+                    <button class="btn btn-secondary" id="view-history-btn">View the Chronicle</button>
                 </div>
             </div>
 
             <div class="history-section hidden" id="final-history-section">
-                <h3>Round History</h3>
+                <h3>Chronicle of Rounds</h3>
                 <div id="final-history-list"></div>
             </div>
         </div>
 
-        <!-- Menu Modal -->
+        <!-- ========================================
+             MENU MODAL
+             ======================================== -->
         <div class="modal-overlay hidden" id="menu-modal">
             <div class="modal">
                 <h3>Game Menu</h3>
                 <div class="modal-buttons">
                     <button class="btn btn-secondary" id="view-all-rounds-btn">View All Rounds</button>
-                    <button class="btn btn-danger" id="end-game-btn">End Game Early</button>
-                    <button class="btn btn-danger" id="new-game-menu-btn">Start New Game</button>
-                    <button class="btn btn-secondary" id="close-menu-btn">Close</button>
+                    <button class="btn btn-danger" id="end-game-btn">End Quest Early</button>
+                    <button class="btn btn-danger" id="new-game-menu-btn">Abandon & Restart</button>
+                    <button class="btn btn-secondary" id="close-menu-btn">Return to Game</button>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Game State
+        // ========================================
+        // ROUND NAMES - Celtic/Whimsical Theme
+        // ========================================
+        const ROUND_NAMES = [
+            "First Flourish",
+            "The Gathering",
+            "Words Take Wing",
+            "The Turning",
+            "Midway Mastery",
+            "Rising Stakes",
+            "The Penultimate",
+            "The Grand Finale"
+        ];
+
+        // ========================================
+        // GAME STATE
+        // ========================================
         let gameState = {
             players: [],
             playerCount: 2,
             mostWordsEnabled: false,
             currentRound: 1,
-            rounds: [], // Array of round data: { scores: [], longestWord: null, mostWords: null }
+            rounds: [],
             isEditing: false,
             editingRound: null
         };
 
-        // DOM Elements
+        // ========================================
+        // DOM ELEMENTS
+        // ========================================
         const setupScreen = document.getElementById('setup-screen');
         const gameScreen = document.getElementById('game-screen');
         const gameOverScreen = document.getElementById('game-over-screen');
@@ -773,6 +1414,8 @@
         const mostWordsToggle = document.getElementById('most-words-toggle');
         const startGameBtn = document.getElementById('start-game-btn');
         const currentRoundEl = document.getElementById('current-round');
+        const roundOfEl = document.getElementById('round-of');
+        const roundTitleEl = document.getElementById('round-title');
         const roundNavEl = document.getElementById('round-nav');
         const scoreboardEl = document.getElementById('scoreboard');
         const scoreInputsEl = document.getElementById('score-inputs');
@@ -781,7 +1424,9 @@
         const mostWordsSection = document.getElementById('most-words-section');
         const mostWordsButtonsEl = document.getElementById('most-words-buttons');
         const roundEntryTitle = document.getElementById('round-entry-title');
+        const roundEntrySubtitle = document.getElementById('round-entry-subtitle');
         const nextRoundBtn = document.getElementById('next-round-btn');
+        const nextRoundNum = document.getElementById('next-round-num');
         const saveEditBtn = document.getElementById('save-edit-btn');
         const cancelEditBtn = document.getElementById('cancel-edit-btn');
         const finishGameBtn = document.getElementById('finish-game-btn');
@@ -794,6 +1439,7 @@
         const endGameBtn = document.getElementById('end-game-btn');
         const newGameMenuBtn = document.getElementById('new-game-menu-btn');
         const winnerNameEl = document.getElementById('winner-name');
+        const winnerSubtitle = document.getElementById('winner-subtitle');
         const finalScoresEl = document.getElementById('final-scores');
         const marginVictoryEl = document.getElementById('margin-victory');
         const newGameBtn = document.getElementById('new-game-btn');
@@ -801,13 +1447,18 @@
         const finalHistorySection = document.getElementById('final-history-section');
         const finalHistoryList = document.getElementById('final-history-list');
 
-        // Initialize
+        // ========================================
+        // INITIALIZATION
+        // ========================================
         function init() {
             loadGameState();
             setupEventListeners();
 
-            if (gameState.players.length > 0) {
+            if (gameState.players.length > 0 && gameState.rounds.length < 8) {
                 showGameScreen();
+            } else if (gameState.players.length > 0 && gameState.rounds.length >= 8) {
+                // Game was completed, show game over
+                showGameOver();
             }
         }
 
@@ -838,14 +1489,14 @@
             });
 
             endGameBtn.addEventListener('click', () => {
-                if (confirm('End game early and see final scores?')) {
+                if (confirm('End the quest early and reveal final scores?')) {
                     menuModal.classList.add('hidden');
                     showGameOver();
                 }
             });
 
             newGameMenuBtn.addEventListener('click', () => {
-                if (confirm('Start a new game? Current progress will be lost.')) {
+                if (confirm('Abandon this quest and begin anew? All progress will be lost.')) {
                     menuModal.classList.add('hidden');
                     resetGame();
                 }
@@ -865,12 +1516,22 @@
             });
         }
 
+        // ========================================
+        // PLAYER SETUP
+        // ========================================
         function updatePlayerInputs() {
             const count = gameState.playerCount;
+            const placeholders = [
+                "First Wordsmith",
+                "Second Wordsmith",
+                "Third Wordsmith",
+                "Fourth Wordsmith"
+            ];
+
             let html = '';
             for (let i = 0; i < count; i++) {
                 const existingName = gameState.players[i] || '';
-                html += `<input type="text" class="player-name-input" placeholder="Player ${i + 1}" data-player="${i}" maxlength="20" value="${existingName}">`;
+                html += `<input type="text" class="player-name-input" placeholder="${placeholders[i]}" data-player="${i}" maxlength="20" value="${existingName}">`;
             }
             playerNameInputsContainer.innerHTML = html;
 
@@ -901,8 +1562,10 @@
         function startGame() {
             const inputs = playerNameInputsContainer.querySelectorAll('input');
             const players = [];
+            const defaultNames = ["Scribe", "Bard", "Sage", "Scholar"];
+
             inputs.forEach((input, idx) => {
-                players.push(input.value.trim() || `Player ${idx + 1}`);
+                players.push(input.value.trim() || defaultNames[idx]);
             });
 
             gameState.players = players;
@@ -916,6 +1579,9 @@
             showGameScreen();
         }
 
+        // ========================================
+        // SCREEN MANAGEMENT
+        // ========================================
         function showGameScreen() {
             setupScreen.classList.add('hidden');
             gameOverScreen.classList.add('hidden');
@@ -923,8 +1589,17 @@
             renderGame();
         }
 
+        // ========================================
+        // GAME RENDERING
+        // ========================================
         function renderGame() {
-            currentRoundEl.textContent = gameState.currentRound;
+            const roundNum = gameState.isEditing ? gameState.editingRound : gameState.currentRound;
+
+            currentRoundEl.textContent = roundNum;
+            roundOfEl.textContent = roundNum;
+            roundTitleEl.textContent = ROUND_NAMES[roundNum - 1] || `Round ${roundNum}`;
+            nextRoundNum.textContent = gameState.currentRound + 1;
+
             renderRoundNav();
             renderScoreboard();
             renderRoundEntry();
@@ -965,9 +1640,13 @@
             let html = '';
             gameState.players.forEach((player, idx) => {
                 const isLeading = totals[idx] === maxScore && maxScore > 0;
+                const initial = player.charAt(0).toUpperCase();
                 html += `
-                    <div class="scoreboard-row ${isLeading ? 'leading' : ''}">
-                        <span class="player-name">${escapeHtml(player)}</span>
+                    <div class="scoreboard-row ${isLeading ? 'leading' : ''} animate-slide-in" style="animation-delay: ${idx * 0.05}s">
+                        <div class="player-info">
+                            <div class="player-avatar p${idx}">${initial}</div>
+                            <span class="player-name">${escapeHtml(player)}</span>
+                        </div>
                         <span class="player-total">${totals[idx]}</span>
                     </div>
                 `;
@@ -979,17 +1658,25 @@
             const roundNum = gameState.isEditing ? gameState.editingRound : gameState.currentRound;
             const existingData = gameState.rounds[roundNum - 1] || null;
 
-            roundEntryTitle.textContent = gameState.isEditing
-                ? `Editing Round ${roundNum}`
-                : `Enter Round ${roundNum} Scores`;
+            if (gameState.isEditing) {
+                roundEntryTitle.textContent = `Editing ${ROUND_NAMES[roundNum - 1]}`;
+                roundEntrySubtitle.textContent = `Modify Round ${roundNum} scores and bonuses`;
+            } else {
+                roundEntryTitle.textContent = "Record Your Scores";
+                roundEntrySubtitle.textContent = `Enter each player's points for ${ROUND_NAMES[roundNum - 1]}`;
+            }
 
             // Score inputs
             let inputsHtml = '';
             gameState.players.forEach((player, idx) => {
                 const value = existingData ? existingData.scores[idx] : '';
+                const initial = player.charAt(0).toUpperCase();
                 inputsHtml += `
                     <div class="score-input-row">
-                        <span class="score-input-label">${escapeHtml(player)}</span>
+                        <div class="score-input-label">
+                            <div class="player-avatar p${idx}">${initial}</div>
+                            <span class="score-input-name">${escapeHtml(player)}</span>
+                        </div>
                         <input type="number" class="score-input" data-player="${idx}"
                                value="${value}" inputmode="numeric" pattern="-?[0-9]*">
                     </div>
@@ -1011,13 +1698,16 @@
             const inputs = scoreInputsEl.querySelectorAll('input');
             inputs.forEach((input, idx) => {
                 input.addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter' || e.key === 'Tab') {
-                        if (!e.shiftKey && idx < inputs.length - 1) {
+                    if (e.key === 'Enter' || (e.key === 'Tab' && !e.shiftKey)) {
+                        if (idx < inputs.length - 1) {
                             e.preventDefault();
                             inputs[idx + 1].focus();
                         }
                     }
                 });
+
+                // Update action buttons when input changes
+                input.addEventListener('input', updateActionButtons);
             });
 
             // Auto-focus first input
@@ -1058,11 +1748,7 @@
             if (gameState.isEditing) {
                 saveEditBtn.classList.remove('hidden');
                 cancelEditBtn.classList.remove('hidden');
-                if (!allFilled) {
-                    saveEditBtn.disabled = true;
-                } else {
-                    saveEditBtn.disabled = false;
-                }
+                saveEditBtn.disabled = !allFilled;
             } else if (gameState.currentRound === 8) {
                 if (allFilled) {
                     finishGameBtn.classList.remove('hidden');
@@ -1092,6 +1778,9 @@
             return allFilled;
         }
 
+        // ========================================
+        // ROUND DATA HANDLING
+        // ========================================
         function getRoundData() {
             const scores = [];
             scoreInputsEl.querySelectorAll('input').forEach(input => {
@@ -1141,6 +1830,9 @@
             renderGame();
         }
 
+        // ========================================
+        // HISTORY RENDERING
+        // ========================================
         function renderHistory() {
             if (gameState.rounds.length === 0) {
                 historySection.classList.add('hidden');
@@ -1171,25 +1863,25 @@
                 const total = baseScore + bonus;
                 scoresHtml += `
                     <div class="history-score-row">
-                        <span>${escapeHtml(player)}</span>
-                        <span>${baseScore}${bonus > 0 ? ` + ${bonus} = ${total}` : ''}</span>
+                        <span class="history-score-name">${escapeHtml(player)}</span>
+                        <span class="history-score-value">${baseScore}${bonus > 0 ? ` + ${bonus} = ${total}` : ''}</span>
                     </div>
                 `;
             });
 
             let bonusText = '';
             if (round.longestWord !== 'tie' && round.longestWord !== null) {
-                bonusText += `Longest Word: ${gameState.players[round.longestWord]}`;
+                bonusText += `Longest Word: ${escapeHtml(gameState.players[round.longestWord])}`;
             }
             if (round.mostWords !== 'tie' && round.mostWords !== null) {
                 if (bonusText) bonusText += ' | ';
-                bonusText += `Most Words: ${gameState.players[round.mostWords]}`;
+                bonusText += `Most Words: ${escapeHtml(gameState.players[round.mostWords])}`;
             }
 
             return `
                 <div class="history-round">
                     <div class="history-round-header">
-                        <span class="history-round-title">Round ${roundNum}</span>
+                        <span class="history-round-title">${ROUND_NAMES[roundNum - 1]}</span>
                         ${showEditBtn ? `<button class="history-edit-btn" data-round="${roundNum}">Edit</button>` : ''}
                     </div>
                     <div class="history-scores">${scoresHtml}</div>
@@ -1198,6 +1890,9 @@
             `;
         }
 
+        // ========================================
+        // SCORE CALCULATIONS
+        // ========================================
         function calculateTotals() {
             const totals = gameState.players.map(() => 0);
 
@@ -1213,6 +1908,9 @@
             return totals;
         }
 
+        // ========================================
+        // GAME OVER
+        // ========================================
         function showGameOver() {
             gameScreen.classList.add('hidden');
             gameOverScreen.classList.remove('hidden');
@@ -1229,16 +1927,18 @@
             })).sort((a, b) => b.score - a.score);
 
             if (winners > 1) {
-                winnerNameEl.textContent = "It's a Tie!";
+                winnerNameEl.textContent = "A Tie Most Noble!";
+                winnerSubtitle.textContent = "The wordsmiths share the glory";
             } else {
-                winnerNameEl.textContent = sorted[0].name + " Wins!";
+                winnerNameEl.textContent = sorted[0].name;
+                winnerSubtitle.textContent = "Champion Wordsmith";
             }
 
             let scoresHtml = '';
             sorted.forEach((player, rank) => {
                 const isWinner = player.score === maxScore;
                 scoresHtml += `
-                    <div class="final-score-row ${isWinner ? 'winner' : ''}">
+                    <div class="final-score-row ${isWinner ? 'winner' : ''} animate-slide-in" style="animation-delay: ${rank * 0.1}s">
                         <span class="final-rank">${rank + 1}</span>
                         <span class="final-player-name">${escapeHtml(player.name)}</span>
                         <span class="final-score">${player.score}</span>
@@ -1249,7 +1949,9 @@
 
             if (sorted.length > 1 && winners === 1) {
                 const margin = sorted[0].score - sorted[1].score;
-                marginVictoryEl.textContent = `Margin of victory: ${margin} points`;
+                marginVictoryEl.textContent = `Victory by ${margin} ${margin === 1 ? 'point' : 'points'}`;
+            } else if (winners > 1) {
+                marginVictoryEl.textContent = `Tied at ${maxScore} points`;
             } else {
                 marginVictoryEl.textContent = '';
             }
@@ -1266,6 +1968,9 @@
             finalHistoryList.innerHTML = html;
         }
 
+        // ========================================
+        // GAME RESET
+        // ========================================
         function resetGame() {
             gameState = {
                 players: [],
@@ -1292,6 +1997,9 @@
             historySection.classList.add('hidden');
         }
 
+        // ========================================
+        // LOCAL STORAGE
+        // ========================================
         function saveGameState() {
             localStorage.setItem('quiddlebot_game', JSON.stringify(gameState));
         }
@@ -1309,13 +2017,18 @@
             updatePlayerInputs();
         }
 
+        // ========================================
+        // UTILITIES
+        // ========================================
         function escapeHtml(text) {
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
         }
 
-        // Initialize on load
+        // ========================================
+        // INITIALIZE APP
+        // ========================================
         init();
     </script>
 </body>
