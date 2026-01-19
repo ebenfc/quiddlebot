@@ -1306,7 +1306,8 @@
             });
         }
 
-        function launchConfetti() {
+        function launchConfetti(winnerName) {
+            const isSam = winnerName && winnerName.toLowerCase() === 'sam';
             const colors = ['#6B3FA0', '#8B5FBF', '#D4A84B', '#2E7D4A', '#1E5A8A', '#8B2942'];
             const container = document.createElement('div');
             container.className = 'confetti-container';
@@ -1316,12 +1317,20 @@
                 const confetti = document.createElement('div');
                 confetti.className = 'confetti';
                 confetti.style.left = Math.random() * 100 + '%';
-                confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
                 confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
                 confetti.style.animationDelay = Math.random() * 1.5 + 's';
-                confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
-                confetti.style.width = (Math.random() * 8 + 6) + 'px';
-                confetti.style.height = (Math.random() * 8 + 6) + 'px';
+
+                if (isSam) {
+                    confetti.textContent = '💩';
+                    confetti.style.fontSize = (Math.random() * 12 + 16) + 'px';
+                    confetti.style.width = 'auto';
+                    confetti.style.height = 'auto';
+                } else {
+                    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+                    confetti.style.width = (Math.random() * 8 + 6) + 'px';
+                    confetti.style.height = (Math.random() * 8 + 6) + 'px';
+                }
                 container.appendChild(confetti);
             }
 
@@ -1345,7 +1354,7 @@
                 winnerSub.textContent = "Champion Wordsmith";
             }
 
-            launchConfetti();
+            launchConfetti(winners === 1 ? sorted[0].n : null);
 
             finalScores.innerHTML = sorted.map((p, i) => `
                 <div class="final-row ${p.s === max ? 'winner' : ''}">
