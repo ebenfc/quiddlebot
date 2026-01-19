@@ -6,2030 +6,1401 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#2D1B4E">
-    <title>QuiddleBot - Quiddler Scorekeeper</title>
-
-    <!-- Google Fonts - Celtic-inspired typography -->
+    <title>QuiddleBot</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
-        /* ========================================
-           CELTIC ILLUMINATED MANUSCRIPT THEME
-           QuiddleBot - Quiddler Scorekeeper
-           ======================================== */
-
-        * {
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
 
         :root {
-            /* Celtic Jewel Tones */
-            --celtic-purple: #5B2E8C;
-            --celtic-purple-deep: #2D1B4E;
-            --celtic-purple-light: #7B4BAD;
-            --celtic-red: #8B2942;
-            --celtic-red-light: #B83B5E;
-            --celtic-green: #1E5631;
-            --celtic-green-light: #2E8B57;
-            --celtic-blue: #1B4D89;
-            --celtic-blue-light: #2E6EB5;
-            --celtic-teal: #1D6F6F;
-
-            /* Gold & Metallic */
+            --purple: #5B2E8C;
+            --purple-deep: #2D1B4E;
+            --purple-light: #7B4BAD;
+            --green: #1E5631;
+            --green-light: #2E8B57;
+            --blue: #1B4D89;
+            --red: #8B2942;
             --gold: #D4A84B;
             --gold-light: #E8C86E;
             --gold-dark: #B8923D;
             --gold-glow: rgba(212, 168, 75, 0.4);
-
-            /* Parchment & Backgrounds */
             --parchment: #F5ECD7;
             --parchment-dark: #E8DCC4;
             --parchment-light: #FBF7EE;
-            --vellum: #EDE4CF;
-
-            /* Text */
-            --ink-dark: #2C1810;
-            --ink-medium: #4A3728;
+            --ink: #2C1810;
             --ink-light: #6B5344;
-
-            /* Shadows & Effects */
-            --shadow-soft: 0 4px 12px rgba(45, 27, 78, 0.15);
-            --shadow-medium: 0 6px 20px rgba(45, 27, 78, 0.2);
-            --shadow-lifted: 0 8px 30px rgba(45, 27, 78, 0.25);
-            --shadow-inset: inset 0 2px 4px rgba(45, 27, 78, 0.1);
-
-            /* Borders */
-            --border-ornate: 2px solid var(--celtic-purple);
-            --border-gold: 2px solid var(--gold);
-
-            /* Animation */
+            --shadow: 0 2px 8px rgba(45, 27, 78, 0.15);
+            --shadow-md: 0 4px 12px rgba(45, 27, 78, 0.2);
             --bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
             --smooth: cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* ========================================
-           BASE STYLES
-           ======================================== */
+        html, body { height: 100%; overflow: hidden; }
 
         body {
             font-family: 'Crimson Pro', Georgia, serif;
             background: var(--parchment);
-            background-image:
-                radial-gradient(ellipse at top, var(--parchment-light) 0%, transparent 70%),
-                radial-gradient(ellipse at bottom, var(--vellum) 0%, transparent 70%),
-                url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
-            color: var(--ink-dark);
-            margin: 0;
-            padding: 0;
-            min-height: 100vh;
-            line-height: 1.5;
+            color: var(--ink);
+            font-size: 16px;
+            line-height: 1.4;
         }
 
-        .container {
-            max-width: 520px;
+        .app {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            max-width: 500px;
             margin: 0 auto;
-            padding: 20px;
-            padding-bottom: 120px;
         }
 
-        /* ========================================
-           TYPOGRAPHY
-           ======================================== */
-
-        h1, h2, h3 {
-            font-family: 'Cinzel', Georgia, serif;
-            font-weight: 600;
-            letter-spacing: 0.02em;
-            color: var(--celtic-purple-deep);
+        /* ===== GLOBAL HEADER ===== */
+        .global-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            background: linear-gradient(135deg, var(--purple-deep) 0%, var(--purple) 100%);
+            color: var(--parchment-light);
+            flex-shrink: 0;
         }
 
-        h1 {
-            text-align: center;
-            font-size: 2.2rem;
-            margin: 0 0 8px 0;
-            background: linear-gradient(135deg, var(--celtic-purple-deep) 0%, var(--celtic-purple) 50%, var(--gold) 100%);
+        .hamburger {
+            width: 44px;
+            height: 44px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            margin: -8px;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+
+        .hamburger:active { background: rgba(255,255,255,0.1); }
+        .hamburger span {
+            display: block;
+            width: 22px;
+            height: 2px;
+            background: var(--parchment-light);
+            border-radius: 2px;
+            transition: 0.3s;
+        }
+
+        .logo {
+            font-family: 'Cinzel', serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--parchment-light) 0%, var(--gold-light) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
 
-        .tagline {
-            text-align: center;
-            font-size: 0.95rem;
-            color: var(--ink-light);
-            margin-bottom: 24px;
-            font-style: italic;
+        .header-right { width: 44px; }
+
+        /* ===== NAVIGATION DRAWER ===== */
+        .nav-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(45, 27, 78, 0.6);
+            opacity: 0;
+            visibility: hidden;
+            transition: 0.3s;
+            z-index: 100;
         }
+        .nav-overlay.open { opacity: 1; visibility: visible; }
 
-        /* ========================================
-           CELTIC KNOTWORK DECORATIONS
-           ======================================== */
-
-        .celtic-border {
-            position: relative;
-            padding: 24px;
-            background: var(--parchment-light);
-            border-radius: 16px;
-            box-shadow: var(--shadow-medium);
-        }
-
-        .celtic-border::before {
-            content: '';
-            position: absolute;
-            inset: 4px;
-            border: 2px solid var(--celtic-purple);
-            border-radius: 12px;
-            opacity: 0.3;
-            pointer-events: none;
-        }
-
-        .celtic-divider {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            margin: 20px 0;
-            color: var(--celtic-purple);
-            opacity: 0.5;
-        }
-
-        .celtic-divider::before,
-        .celtic-divider::after {
-            content: '';
-            flex: 1;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, var(--celtic-purple), transparent);
-        }
-
-        .celtic-knot {
-            width: 24px;
-            height: 24px;
-            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%235B2E8C' d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14c-2.33 0-4.32-1.45-5.12-3.5h1.67c.69 1.19 1.97 2 3.45 2s2.75-.81 3.45-2h1.67c-.8 2.05-2.79 3.5-5.12 3.5z'/%3E%3C/svg%3E");
-        }
-
-        /* ========================================
-           CARDS & CONTAINERS
-           ======================================== */
-
-        .card {
-            background: var(--parchment-light);
-            border-radius: 20px;
-            padding: 24px;
-            margin-bottom: 20px;
-            box-shadow: var(--shadow-medium);
-            border: 1px solid rgba(91, 46, 140, 0.1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .card::after {
-            content: '';
-            position: absolute;
+        .nav-drawer {
+            position: fixed;
             top: 0;
             left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, var(--celtic-purple), var(--gold), var(--celtic-purple));
-            opacity: 0.6;
-        }
-
-        .card-plain {
+            bottom: 0;
+            width: 280px;
             background: var(--parchment-light);
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 16px;
-            box-shadow: var(--shadow-soft);
-            border: 1px solid rgba(91, 46, 140, 0.08);
-        }
-
-        .hidden {
-            display: none !important;
-        }
-
-        /* ========================================
-           SETUP SCREEN
-           ======================================== */
-
-        .setup-section {
-            margin-bottom: 28px;
-        }
-
-        .setup-section label {
-            display: block;
-            margin-bottom: 12px;
-            font-family: 'Cinzel', serif;
-            font-weight: 600;
-            font-size: 1rem;
-            color: var(--celtic-purple-deep);
-            letter-spacing: 0.03em;
-        }
-
-        .player-count-buttons {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 24px;
-        }
-
-        .player-count-btn {
-            flex: 1;
-            padding: 18px 16px;
-            font-family: 'Cinzel', serif;
-            font-size: 1.3rem;
-            font-weight: 700;
-            border: 2px solid var(--celtic-purple);
-            background: var(--parchment);
-            color: var(--celtic-purple);
-            border-radius: 14px;
-            cursor: pointer;
-            transition: all 0.3s var(--bounce);
-            box-shadow: var(--shadow-soft);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .player-count-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-lifted);
-        }
-
-        .player-count-btn:active {
-            transform: translateY(0) scale(0.98);
-        }
-
-        .player-count-btn.selected {
-            background: linear-gradient(135deg, var(--celtic-purple) 0%, var(--celtic-purple-light) 100%);
-            color: var(--parchment-light);
-            border-color: var(--celtic-purple);
-            box-shadow: var(--shadow-medium), 0 0 20px rgba(91, 46, 140, 0.3);
-        }
-
-        .player-name-inputs {
+            transform: translateX(-100%);
+            transition: transform 0.3s var(--smooth);
+            z-index: 101;
             display: flex;
             flex-direction: column;
+        }
+        .nav-overlay.open .nav-drawer { transform: translateX(0); }
+
+        .nav-header {
+            padding: 20px;
+            background: linear-gradient(135deg, var(--purple-deep) 0%, var(--purple) 100%);
+            color: var(--parchment-light);
+        }
+        .nav-header h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.4rem;
+            margin-bottom: 4px;
+        }
+        .nav-menu { flex: 1; padding: 12px 0; }
+        .nav-item {
+            display: flex;
+            align-items: center;
             gap: 14px;
+            padding: 14px 20px;
+            font-size: 1.05rem;
+            font-weight: 500;
+            color: var(--ink);
+            cursor: pointer;
+            transition: background 0.2s;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+        }
+        .nav-item:hover, .nav-item:active { background: var(--parchment-dark); }
+        .nav-item.active { background: rgba(91, 46, 140, 0.1); color: var(--purple); }
+        .nav-icon { font-size: 1.2rem; width: 24px; text-align: center; }
+
+        /* ===== PAGE CONTAINER ===== */
+        .page-container {
+            flex: 1;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
-        .player-name-input {
-            width: 100%;
-            padding: 16px 20px;
-            font-family: 'Crimson Pro', serif;
-            font-size: 1.15rem;
+        .page { display: none; padding: 16px; }
+        .page.active { display: block; }
+
+        /* ===== SETUP PAGE ===== */
+        .setup-header {
+            text-align: center;
+            margin-bottom: 16px;
+        }
+        .setup-header h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.6rem;
+            color: var(--purple-deep);
+            margin-bottom: 4px;
+        }
+        .card {
+            background: var(--parchment-light);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: var(--shadow);
+        }
+
+        .section-label {
+            font-family: 'Cinzel', serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--purple-deep);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .player-count-btns {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        .player-count-btn {
+            flex: 1;
+            padding: 14px;
+            font-family: 'Cinzel', serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            border: 2px solid var(--purple);
+            background: var(--parchment);
+            color: var(--purple);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s var(--bounce);
+        }
+        .player-count-btn.selected {
+            background: var(--purple);
+            color: var(--parchment-light);
+        }
+
+        .player-inputs { display: flex; flex-direction: column; gap: 10px; }
+        .player-input {
+            padding: 12px 14px;
+            font-size: 1rem;
             border: 2px solid rgba(91, 46, 140, 0.2);
             background: var(--parchment);
-            color: var(--ink-dark);
-            border-radius: 12px;
+            color: var(--ink);
+            border-radius: 10px;
             outline: none;
-            transition: all 0.3s var(--smooth);
-            box-shadow: var(--shadow-inset);
+            transition: border-color 0.2s;
         }
+        .player-input:focus { border-color: var(--purple); }
+        .player-input::placeholder { color: var(--ink-light); }
 
-        .player-name-input:focus {
-            border-color: var(--celtic-purple);
-            box-shadow: var(--shadow-inset), 0 0 0 4px rgba(91, 46, 140, 0.15);
-        }
-
-        .player-name-input::placeholder {
-            color: var(--ink-light);
-            opacity: 0.7;
-        }
-
-        /* Toggle Switch */
-        .toggle-container {
+        .toggle-row {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 18px 20px;
+            padding: 12px 14px;
             background: var(--parchment);
-            border-radius: 14px;
-            margin-top: 20px;
-            box-shadow: var(--shadow-inset);
-            border: 1px solid rgba(91, 46, 140, 0.1);
+            border-radius: 10px;
+            margin-top: 12px;
         }
-
-        .toggle-label {
-            font-family: 'Cinzel', serif;
-            font-size: 0.95rem;
-            font-weight: 600;
-            color: var(--celtic-purple-deep);
-        }
-
-        .toggle-sublabel {
-            font-size: 0.85rem;
-            color: var(--ink-light);
-            margin-top: 4px;
-            font-style: italic;
-        }
+        .toggle-text { font-size: 0.95rem; }
+        .toggle-sub { font-size: 0.8rem; color: var(--ink-light); }
 
         .toggle {
             position: relative;
-            width: 60px;
-            height: 34px;
-            flex-shrink: 0;
+            width: 50px;
+            height: 28px;
         }
-
-        .toggle input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
+        .toggle input { opacity: 0; width: 0; height: 0; }
         .toggle-slider {
             position: absolute;
-            cursor: pointer;
             inset: 0;
             background: var(--parchment-dark);
-            border-radius: 34px;
-            transition: 0.4s var(--smooth);
-            border: 2px solid rgba(91, 46, 140, 0.2);
+            border-radius: 28px;
+            cursor: pointer;
+            transition: 0.3s;
         }
-
         .toggle-slider:before {
-            position: absolute;
             content: "";
-            height: 26px;
-            width: 26px;
-            left: 2px;
-            bottom: 2px;
+            position: absolute;
+            height: 22px;
+            width: 22px;
+            left: 3px;
+            bottom: 3px;
             background: white;
             border-radius: 50%;
-            transition: 0.4s var(--bounce);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            transition: 0.3s var(--bounce);
         }
-
-        .toggle input:checked + .toggle-slider {
-            background: linear-gradient(135deg, var(--celtic-purple) 0%, var(--celtic-purple-light) 100%);
-            border-color: var(--celtic-purple);
-        }
-
-        .toggle input:checked + .toggle-slider:before {
-            transform: translateX(26px);
-            background: var(--gold-light);
-            box-shadow: 0 0 8px var(--gold-glow);
-        }
-
-        /* ========================================
-           BUTTONS
-           ======================================== */
+        .toggle input:checked + .toggle-slider { background: var(--purple); }
+        .toggle input:checked + .toggle-slider:before { transform: translateX(22px); background: var(--gold-light); }
 
         .btn {
             width: 100%;
-            padding: 18px 24px;
-            font-family: 'Cinzel', serif;
-            font-size: 1.1rem;
-            font-weight: 600;
-            border: none;
-            border-radius: 14px;
-            cursor: pointer;
-            transition: all 0.3s var(--bounce);
-            position: relative;
-            overflow: hidden;
-            letter-spacing: 0.03em;
-        }
-
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: left 0.5s ease;
-        }
-
-        .btn:hover::before {
-            left: 100%;
-        }
-
-        .btn:active {
-            transform: scale(0.98);
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--celtic-purple) 0%, var(--celtic-purple-light) 100%);
-            color: var(--parchment-light);
-            box-shadow: var(--shadow-medium), 0 4px 15px rgba(91, 46, 140, 0.3);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-lifted), 0 6px 20px rgba(91, 46, 140, 0.4);
-        }
-
-        .btn-primary:disabled {
-            background: var(--parchment-dark);
-            color: var(--ink-light);
-            cursor: not-allowed;
-            box-shadow: none;
-            transform: none;
-        }
-
-        .btn-success {
-            background: linear-gradient(135deg, var(--celtic-green) 0%, var(--celtic-green-light) 100%);
-            color: var(--parchment-light);
-            box-shadow: var(--shadow-medium), 0 4px 15px rgba(30, 86, 49, 0.3);
-        }
-
-        .btn-success:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-lifted), 0 6px 20px rgba(30, 86, 49, 0.4);
-        }
-
-        .btn-secondary {
-            background: var(--parchment);
-            color: var(--celtic-purple);
-            border: 2px solid var(--celtic-purple);
-            box-shadow: var(--shadow-soft);
-        }
-
-        .btn-secondary:hover {
-            background: var(--celtic-purple);
-            color: var(--parchment-light);
-        }
-
-        .btn-danger {
-            background: linear-gradient(135deg, var(--celtic-red) 0%, var(--celtic-red-light) 100%);
-            color: var(--parchment-light);
-            box-shadow: var(--shadow-medium), 0 4px 15px rgba(139, 41, 66, 0.3);
-        }
-
-        .btn-gold {
-            background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold) 50%, var(--gold-light) 100%);
-            color: var(--ink-dark);
-            box-shadow: var(--shadow-medium), 0 4px 15px var(--gold-glow);
-        }
-
-        .btn-gold:hover {
-            box-shadow: var(--shadow-lifted), 0 6px 25px var(--gold-glow);
-        }
-
-        /* ========================================
-           GAME HEADER
-           ======================================== */
-
-        .game-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding: 0 4px;
-        }
-
-        .round-indicator {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .round-number {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 52px;
-            height: 52px;
-            background: linear-gradient(135deg, var(--celtic-purple) 0%, var(--celtic-purple-light) 100%);
-            border-radius: 50%;
-            font-family: 'Cinzel', serif;
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--gold-light);
-            box-shadow: var(--shadow-medium), 0 0 20px rgba(91, 46, 140, 0.3);
-            position: relative;
-        }
-
-        .round-number::before {
-            content: '';
-            position: absolute;
-            inset: 3px;
-            border: 2px solid var(--gold);
-            border-radius: 50%;
-            opacity: 0.5;
-        }
-
-        .round-title {
-            font-family: 'Cinzel', serif;
-            font-size: 1.1rem;
-            color: var(--celtic-purple-deep);
-        }
-
-        .round-subtitle {
-            font-size: 0.85rem;
-            color: var(--ink-light);
-            font-style: italic;
-        }
-
-        .menu-btn {
-            padding: 12px 18px;
-            font-family: 'Crimson Pro', serif;
-            font-size: 0.95rem;
-            font-weight: 600;
-            background: var(--parchment);
-            border: 2px solid var(--celtic-purple);
-            color: var(--celtic-purple);
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s var(--smooth);
-            box-shadow: var(--shadow-soft);
-        }
-
-        .menu-btn:hover {
-            background: var(--celtic-purple);
-            color: var(--parchment-light);
-        }
-
-        /* ========================================
-           ROUND NAVIGATION
-           ======================================== */
-
-        .round-nav {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            margin-bottom: 20px;
-            justify-content: center;
-        }
-
-        .round-nav-btn {
-            width: 44px;
-            height: 44px;
+            padding: 14px 20px;
             font-family: 'Cinzel', serif;
             font-size: 1rem;
             font-weight: 600;
-            border: 2px solid var(--celtic-purple);
-            background: var(--parchment);
-            color: var(--celtic-purple);
-            border-radius: 10px;
+            border: none;
+            border-radius: 12px;
             cursor: pointer;
-            transition: all 0.3s var(--bounce);
-            box-shadow: var(--shadow-soft);
+            transition: all 0.2s var(--bounce);
         }
-
-        .round-nav-btn:hover {
-            transform: translateY(-2px);
+        .btn:active { transform: scale(0.98); }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--purple) 0%, var(--purple-light) 100%);
+            color: var(--parchment-light);
+            box-shadow: var(--shadow-md);
         }
-
-        .round-nav-btn.current {
-            background: linear-gradient(135deg, var(--celtic-purple) 0%, var(--celtic-purple-light) 100%);
-            color: var(--gold-light);
-            border-color: var(--celtic-purple);
-            box-shadow: var(--shadow-medium), 0 0 15px rgba(91, 46, 140, 0.3);
+        .btn-success {
+            background: linear-gradient(135deg, var(--green) 0%, var(--green-light) 100%);
+            color: var(--parchment-light);
         }
-
-        .round-nav-btn.completed {
-            background: var(--parchment);
-            border-color: var(--celtic-green);
-            color: var(--celtic-green);
-        }
-
-        .round-nav-btn.completed::after {
-            content: '';
-            position: absolute;
-            bottom: 4px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 6px;
-            height: 6px;
-            background: var(--celtic-green);
-            border-radius: 50%;
-        }
-
-        .round-nav-btn.editing {
+        .btn-gold {
             background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold) 100%);
-            color: var(--ink-dark);
-            border-color: var(--gold);
-            box-shadow: var(--shadow-medium), 0 0 15px var(--gold-glow);
+            color: var(--ink);
         }
-
-        /* ========================================
-           SCOREBOARD
-           ======================================== */
-
-        .scoreboard {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
+        .btn-secondary {
+            background: var(--parchment);
+            color: var(--purple);
+            border: 2px solid var(--purple);
         }
+        .btn-danger {
+            background: linear-gradient(135deg, var(--red) 0%, #B83B5E 100%);
+            color: var(--parchment-light);
+        }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        .scoreboard-row {
+        .hidden { display: none !important; }
+
+        /* ===== GAME PAGE - COMPACT ===== */
+        .game-bar {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 16px 20px;
-            background: var(--parchment);
-            border-radius: 14px;
-            border: 2px solid transparent;
-            box-shadow: var(--shadow-soft);
-            transition: all 0.4s var(--smooth);
+            margin-bottom: 12px;
         }
-
-        .scoreboard-row.leading {
-            border-color: var(--gold);
-            background: linear-gradient(135deg, var(--parchment) 0%, rgba(212, 168, 75, 0.1) 100%);
-            box-shadow: var(--shadow-medium), 0 0 20px var(--gold-glow);
-        }
-
-        .scoreboard-row.leading .player-name::before {
-            content: '★ ';
-            color: var(--gold);
-        }
-
-        .player-info {
+        .round-badge {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
         }
-
-        .player-avatar {
-            width: 36px;
-            height: 36px;
+        .round-num {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--purple) 0%, var(--purple-light) 100%);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-family: 'Cinzel', serif;
+            font-size: 1.2rem;
             font-weight: 700;
-            font-size: 0.9rem;
-            color: var(--parchment-light);
+            color: var(--gold-light);
+            box-shadow: var(--shadow);
         }
+        .round-info h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 1rem;
+            color: var(--purple-deep);
+            line-height: 1.2;
+        }
+        .round-info span { font-size: 0.8rem; color: var(--ink-light); }
 
-        .player-avatar.p0 { background: var(--celtic-purple); }
-        .player-avatar.p1 { background: var(--celtic-green); }
-        .player-avatar.p2 { background: var(--celtic-blue); }
-        .player-avatar.p3 { background: var(--celtic-red); }
-
-        .player-name {
-            font-family: 'Crimson Pro', serif;
+        .game-menu-btn {
+            padding: 8px 14px;
+            font-size: 0.85rem;
             font-weight: 600;
-            font-size: 1.1rem;
-            color: var(--ink-dark);
+            background: var(--parchment-light);
+            border: 1px solid var(--purple);
+            color: var(--purple);
+            border-radius: 8px;
+            cursor: pointer;
         }
 
-        .player-total {
-            font-family: 'Cinzel', serif;
-            font-size: 1.6rem;
-            font-weight: 700;
-            color: var(--celtic-purple);
-            min-width: 60px;
-            text-align: right;
-        }
-
-        .scoreboard-row.leading .player-total {
-            color: var(--gold-dark);
-        }
-
-        /* ========================================
-           ROUND ENTRY
-           ======================================== */
-
-        .round-entry-header {
-            text-align: center;
-            margin-bottom: 24px;
-        }
-
-        .round-entry-title {
-            font-family: 'Cinzel', serif;
-            font-size: 1.3rem;
-            color: var(--celtic-purple-deep);
-            margin: 0 0 6px 0;
-        }
-
-        .round-entry-subtitle {
-            font-size: 0.9rem;
-            color: var(--ink-light);
-            font-style: italic;
-        }
-
-        .score-inputs {
+        /* Round dots navigation */
+        .round-dots {
             display: flex;
-            flex-direction: column;
-            gap: 14px;
-            margin-bottom: 28px;
+            justify-content: center;
+            gap: 6px;
+            margin-bottom: 12px;
         }
-
-        .score-input-row {
+        .round-dot {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 2px solid var(--purple);
+            background: var(--parchment);
+            font-family: 'Cinzel', serif;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--purple);
+            cursor: pointer;
+            transition: all 0.2s;
             display: flex;
             align-items: center;
-            gap: 16px;
+            justify-content: center;
+        }
+        .round-dot.current {
+            background: var(--purple);
+            color: var(--gold-light);
+        }
+        .round-dot.completed {
+            border-color: var(--green);
+            color: var(--green);
+        }
+        .round-dot.editing {
+            background: var(--gold);
+            border-color: var(--gold);
+            color: var(--ink);
         }
 
-        .score-input-label {
+        /* Compact scoreboard - horizontal */
+        .scoreboard-compact {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        .score-chip {
             flex: 1;
             display: flex;
             align-items: center;
+            gap: 8px;
+            padding: 10px 12px;
+            background: var(--parchment-light);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            border: 2px solid transparent;
+            transition: all 0.3s;
+        }
+        .score-chip.leading {
+            border-color: var(--gold);
+            background: linear-gradient(135deg, var(--parchment-light) 0%, rgba(212, 168, 75, 0.15) 100%);
+        }
+        .score-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Cinzel', serif;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--parchment-light);
+            flex-shrink: 0;
+        }
+        .score-avatar.p0 { background: var(--purple); }
+        .score-avatar.p1 { background: var(--green); }
+        .score-avatar.p2 { background: var(--blue); }
+        .score-avatar.p3 { background: var(--red); }
+        .score-details { flex: 1; min-width: 0; }
+        .score-name {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--ink);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .score-chip.leading .score-name::before { content: '★ '; color: var(--gold); }
+        .score-total {
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--purple);
+        }
+        .score-chip.leading .score-total { color: var(--gold-dark); }
+
+        /* Score entry card - compact */
+        .entry-card {
+            background: var(--parchment-light);
+            border-radius: 16px;
+            padding: 14px;
+            box-shadow: var(--shadow);
+        }
+        .entry-header {
+            text-align: center;
+            margin-bottom: 12px;
+        }
+        .entry-header h3 {
+            font-family: 'Cinzel', serif;
+            font-size: 1rem;
+            color: var(--purple-deep);
+        }
+        .entry-header p { font-size: 0.8rem; color: var(--ink-light); font-style: italic; }
+
+        .score-rows { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+        .score-row {
+            display: flex;
+            align-items: center;
             gap: 10px;
         }
-
-        .score-input-label .player-avatar {
-            width: 32px;
-            height: 32px;
-            font-size: 0.8rem;
-        }
-
-        .score-input-name {
-            font-family: 'Crimson Pro', serif;
-            font-size: 1.05rem;
+        .score-row-label {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
             font-weight: 500;
-            color: var(--ink-dark);
         }
-
-        .score-input {
-            width: 100px;
-            padding: 14px 12px;
+        .score-row-input {
+            width: 80px;
+            padding: 10px 8px;
             font-family: 'Cinzel', serif;
-            font-size: 1.3rem;
+            font-size: 1.1rem;
             font-weight: 600;
             text-align: center;
             border: 2px solid rgba(91, 46, 140, 0.2);
             background: var(--parchment);
-            color: var(--celtic-purple-deep);
-            border-radius: 12px;
+            color: var(--purple-deep);
+            border-radius: 10px;
             outline: none;
-            transition: all 0.3s var(--smooth);
-            box-shadow: var(--shadow-inset);
         }
+        .score-row-input:focus { border-color: var(--purple); }
 
-        .score-input:focus {
-            border-color: var(--celtic-purple);
-            box-shadow: var(--shadow-inset), 0 0 0 4px rgba(91, 46, 140, 0.15);
-        }
-
-        .score-input::-webkit-inner-spin-button,
-        .score-input::-webkit-outer-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-
-        /* ========================================
-           BONUS SECTIONS
-           ======================================== */
-
-        .bonus-section {
-            margin-bottom: 24px;
-            padding: 20px;
-            background: linear-gradient(135deg, rgba(212, 168, 75, 0.08) 0%, rgba(212, 168, 75, 0.15) 100%);
-            border-radius: 16px;
+        /* Bonus section - compact */
+        .bonus-box {
+            background: linear-gradient(135deg, rgba(212, 168, 75, 0.1) 0%, rgba(212, 168, 75, 0.2) 100%);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 10px;
             border: 1px solid rgba(212, 168, 75, 0.3);
         }
-
-        .bonus-title {
+        .bonus-label {
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin-bottom: 14px;
+            gap: 6px;
             font-family: 'Cinzel', serif;
-            font-size: 1rem;
+            font-size: 0.85rem;
             font-weight: 600;
             color: var(--gold-dark);
+            margin-bottom: 8px;
         }
-
-        .bonus-icon {
-            font-size: 1.2rem;
-            filter: drop-shadow(0 0 4px var(--gold-glow));
+        .bonus-label span { font-size: 0.75rem; color: var(--ink-light); font-family: 'Crimson Pro', serif; }
+        .bonus-btns {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
         }
-
-        .bonus-points {
-            font-size: 0.85rem;
-            color: var(--ink-light);
-            font-family: 'Crimson Pro', serif;
-            font-weight: 400;
-        }
-
-        .bonus-buttons {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-        }
-
         .bonus-btn {
-            padding: 14px 12px;
-            font-family: 'Crimson Pro', serif;
-            font-size: 0.95rem;
+            flex: 1;
+            min-width: calc(50% - 3px);
+            padding: 10px 8px;
+            font-size: 0.85rem;
             font-weight: 600;
             border: 2px solid rgba(91, 46, 140, 0.2);
             background: var(--parchment);
-            color: var(--ink-dark);
-            border-radius: 12px;
+            color: var(--ink);
+            border-radius: 8px;
             cursor: pointer;
-            transition: all 0.3s var(--bounce);
-            box-shadow: var(--shadow-soft);
+            transition: all 0.2s;
         }
-
-        .bonus-btn:hover {
-            transform: translateY(-2px);
-            border-color: var(--celtic-purple);
-        }
-
-        .bonus-btn:active {
-            transform: scale(0.98);
-        }
-
+        .bonus-btn:active { transform: scale(0.97); }
         .bonus-btn.selected {
             background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold) 100%);
-            color: var(--ink-dark);
             border-color: var(--gold);
-            box-shadow: var(--shadow-medium), 0 0 15px var(--gold-glow);
+            color: var(--ink);
         }
-
-        .bonus-btn.selected::before {
-            content: '★ ';
-        }
-
         .bonus-btn.tie-none {
-            grid-column: span 2;
+            flex-basis: 100%;
             background: var(--parchment-dark);
             border-style: dashed;
         }
 
-        .bonus-btn.tie-none.selected {
-            background: var(--parchment-dark);
-            border-color: var(--ink-light);
-            border-style: solid;
-            box-shadow: var(--shadow-soft);
-        }
+        .action-btns { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
 
-        .bonus-btn.tie-none.selected::before {
-            content: '';
-        }
-
-        /* ========================================
-           ACTION BUTTONS
-           ======================================== */
-
-        .action-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-top: 28px;
-        }
-
-        .keyboard-hint {
+        /* ===== GAME OVER ===== */
+        .victory-card {
             text-align: center;
-            font-size: 0.85rem;
-            color: var(--ink-light);
-            margin-top: 16px;
-            font-style: italic;
+            background: var(--parchment-light);
+            border-radius: 16px;
+            padding: 20px 16px;
+            box-shadow: var(--shadow-md);
         }
-
-        /* ========================================
-           GAME OVER SCREEN
-           ======================================== */
-
-        .game-over-card {
-            text-align: center;
-            padding: 32px 24px;
-        }
-
-        .victory-banner {
-            margin-bottom: 24px;
-        }
-
-        .game-over-title {
+        .victory-title {
             font-family: 'Cinzel', serif;
-            font-size: 1.4rem;
+            font-size: 1.1rem;
             color: var(--ink-light);
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
-
         .winner-name {
             font-family: 'Cinzel', serif;
-            font-size: 2rem;
+            font-size: 1.6rem;
             font-weight: 700;
             background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold) 50%, var(--gold-light) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            filter: drop-shadow(0 2px 4px var(--gold-glow));
-            animation: victoryGlow 2s ease-in-out infinite alternate;
+            margin-bottom: 4px;
         }
-
-        @keyframes victoryGlow {
-            from { filter: drop-shadow(0 2px 4px var(--gold-glow)); }
-            to { filter: drop-shadow(0 4px 12px var(--gold-glow)); }
-        }
-
-        .winner-subtitle {
-            font-size: 1rem;
-            color: var(--ink-light);
-            font-style: italic;
-            margin-top: 4px;
-        }
-
-        .final-scores {
-            margin: 24px 0;
-        }
-
-        .final-score-row {
+        .winner-sub { font-size: 0.9rem; color: var(--ink-light); font-style: italic; margin-bottom: 16px; }
+        .final-scores { margin-bottom: 16px; }
+        .final-row {
             display: flex;
             align-items: center;
-            padding: 16px 20px;
+            padding: 10px 14px;
             background: var(--parchment);
-            border-radius: 14px;
-            margin-bottom: 10px;
-            box-shadow: var(--shadow-soft);
-            transition: all 0.3s var(--smooth);
+            border-radius: 10px;
+            margin-bottom: 6px;
         }
-
-        .final-score-row.winner {
-            background: linear-gradient(135deg, var(--parchment) 0%, rgba(212, 168, 75, 0.15) 100%);
-            border: 2px solid var(--gold);
-            box-shadow: var(--shadow-medium), 0 0 20px var(--gold-glow);
-        }
-
+        .final-row.winner { border: 2px solid var(--gold); background: rgba(212, 168, 75, 0.1); }
         .final-rank {
-            width: 36px;
-            height: 36px;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: var(--parchment-dark);
             display: flex;
             align-items: center;
             justify-content: center;
             font-family: 'Cinzel', serif;
-            font-size: 1.1rem;
             font-weight: 700;
-            color: var(--ink-light);
-            background: var(--parchment-dark);
-            border-radius: 50%;
-            margin-right: 16px;
+            font-size: 0.9rem;
+            margin-right: 12px;
         }
+        .final-row.winner .final-rank { background: var(--gold); }
+        .final-name { flex: 1; font-weight: 600; }
+        .final-pts { font-family: 'Cinzel', serif; font-weight: 700; font-size: 1.2rem; color: var(--purple); }
+        .final-row.winner .final-pts { color: var(--gold-dark); }
+        .margin-text { font-size: 0.85rem; color: var(--ink-light); font-style: italic; margin-bottom: 16px; }
 
-        .final-score-row.winner .final-rank {
-            background: var(--gold);
-            color: var(--ink-dark);
-        }
-
-        .final-player-name {
-            flex: 1;
-            font-family: 'Crimson Pro', serif;
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--ink-dark);
-            text-align: left;
-        }
-
-        .final-score {
-            font-family: 'Cinzel', serif;
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--celtic-purple);
-        }
-
-        .final-score-row.winner .final-score {
-            color: var(--gold-dark);
-        }
-
-        .margin-victory {
-            text-align: center;
-            color: var(--ink-light);
-            font-size: 1rem;
-            margin-bottom: 24px;
-            font-style: italic;
-        }
-
-        /* ========================================
-           HISTORY SECTION
-           ======================================== */
-
-        .history-section {
-            margin-top: 24px;
-        }
-
-        .history-section h3 {
-            font-family: 'Cinzel', serif;
-            font-size: 1.1rem;
-            color: var(--celtic-purple-deep);
-            margin-bottom: 16px;
-            text-align: center;
-        }
-
-        .history-round {
-            background: var(--parchment);
-            border-radius: 14px;
-            padding: 18px;
-            margin-bottom: 14px;
-            box-shadow: var(--shadow-soft);
-            border-left: 4px solid var(--celtic-purple);
-        }
-
-        .history-round-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 14px;
-        }
-
-        .history-round-title {
-            font-family: 'Cinzel', serif;
-            font-weight: 600;
-            color: var(--celtic-purple-deep);
-        }
-
-        .history-edit-btn {
-            padding: 8px 14px;
-            font-family: 'Crimson Pro', serif;
-            font-size: 0.85rem;
-            font-weight: 600;
-            background: var(--parchment-light);
-            border: 1px solid var(--celtic-purple);
-            color: var(--celtic-purple);
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s var(--smooth);
-        }
-
-        .history-edit-btn:hover {
-            background: var(--celtic-purple);
-            color: var(--parchment-light);
-        }
-
-        .history-scores {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .history-score-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 6px 0;
-            font-size: 0.95rem;
-            border-bottom: 1px dashed rgba(91, 46, 140, 0.1);
-        }
-
-        .history-score-row:last-child {
-            border-bottom: none;
-        }
-
-        .history-score-name {
-            color: var(--ink-dark);
-        }
-
-        .history-score-value {
-            font-weight: 600;
-            color: var(--celtic-purple);
-        }
-
-        .history-bonus {
-            margin-top: 12px;
-            padding-top: 12px;
-            border-top: 1px solid rgba(212, 168, 75, 0.3);
-            font-size: 0.85rem;
-            color: var(--gold-dark);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .history-bonus::before {
-            content: '★';
-            color: var(--gold);
-        }
-
-        /* ========================================
-           MODAL
-           ======================================== */
-
+        /* ===== MODAL ===== */
         .modal-overlay {
             position: fixed;
             inset: 0;
             background: rgba(45, 27, 78, 0.7);
-            backdrop-filter: blur(4px);
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 1000;
+            z-index: 200;
             padding: 20px;
-            animation: fadeIn 0.3s var(--smooth);
         }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
         .modal {
             background: var(--parchment-light);
-            border-radius: 20px;
-            padding: 28px;
+            border-radius: 16px;
+            padding: 20px;
             width: 100%;
-            max-width: 380px;
-            box-shadow: var(--shadow-lifted);
-            animation: slideUp 0.4s var(--bounce);
+            max-width: 320px;
+            box-shadow: var(--shadow-md);
         }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
         .modal h3 {
             font-family: 'Cinzel', serif;
             text-align: center;
-            margin: 0 0 24px 0;
-            color: var(--celtic-purple-deep);
+            margin-bottom: 16px;
+            color: var(--purple-deep);
         }
+        .modal-btns { display: flex; flex-direction: column; gap: 10px; }
 
-        .modal-buttons {
+        /* ===== HELP & RULES PAGES ===== */
+        .info-page h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.4rem;
+            color: var(--purple-deep);
+            margin-bottom: 16px;
+            text-align: center;
+        }
+        .info-card {
+            background: var(--parchment-light);
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: var(--shadow);
+        }
+        .info-card h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 1rem;
+            color: var(--purple);
+            margin-bottom: 10px;
             display: flex;
-            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+        .info-card p, .info-card li {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 8px;
+        }
+        .info-card ul { padding-left: 20px; }
+        .info-card li { margin-bottom: 6px; }
+        .info-card strong { color: var(--purple-deep); }
+
+        .step-list { counter-reset: step; list-style: none; padding: 0; }
+        .step-list li {
+            counter-increment: step;
+            display: flex;
             gap: 12px;
+            margin-bottom: 12px;
+        }
+        .step-list li::before {
+            content: counter(step);
+            width: 24px;
+            height: 24px;
+            background: var(--purple);
+            color: var(--parchment-light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            font-size: 0.8rem;
+            flex-shrink: 0;
         }
 
-        /* ========================================
-           ANIMATIONS
-           ======================================== */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+            margin: 12px 0;
+        }
+        .letter-card {
+            background: var(--parchment);
+            border: 1px solid var(--purple);
+            border-radius: 6px;
+            padding: 6px 4px;
+            text-align: center;
+            font-size: 0.75rem;
+        }
+        .letter-card strong { display: block; font-size: 0.9rem; color: var(--purple); }
 
-        @keyframes bounceIn {
-            0% { transform: scale(0.8); opacity: 0; }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); opacity: 1; }
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 16px;
+            font-size: 0.9rem;
+            margin-bottom: 12px;
         }
 
-        @keyframes slideIn {
-            from { transform: translateX(-20px); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
+        /* ===== HISTORY ===== */
+        .history-list { margin-top: 16px; }
+        .history-item {
+            background: var(--parchment-light);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-left: 3px solid var(--purple);
+            box-shadow: var(--shadow);
         }
-
-        .animate-bounce-in {
-            animation: bounceIn 0.5s var(--bounce);
+        .history-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
         }
-
-        .animate-slide-in {
-            animation: slideIn 0.4s var(--smooth);
+        .history-title { font-family: 'Cinzel', serif; font-weight: 600; color: var(--purple-deep); font-size: 0.9rem; }
+        .history-edit {
+            padding: 4px 10px;
+            font-size: 0.75rem;
+            background: var(--parchment);
+            border: 1px solid var(--purple);
+            color: var(--purple);
+            border-radius: 6px;
+            cursor: pointer;
         }
-
-        /* Score count-up animation */
-        .score-animate {
-            animation: scoreFlash 0.3s var(--smooth);
-        }
-
-        @keyframes scoreFlash {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); color: var(--gold); }
-            100% { transform: scale(1); }
-        }
-
-        /* ========================================
-           RESPONSIVE ADJUSTMENTS
-           ======================================== */
-
-        @media (max-width: 380px) {
-            .container {
-                padding: 16px;
-            }
-
-            h1 {
-                font-size: 1.8rem;
-            }
-
-            .round-number {
-                width: 44px;
-                height: 44px;
-                font-size: 1.3rem;
-            }
-
-            .bonus-buttons {
-                grid-template-columns: 1fr;
-            }
-
-            .bonus-btn.tie-none {
-                grid-column: span 1;
-            }
-        }
-
-        @media (min-width: 500px) {
-            .bonus-buttons {
-                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            }
-
-            .bonus-btn.tie-none {
-                grid-column: span 1;
-            }
-        }
-
-        /* Touch feedback */
-        @media (hover: none) {
-            .btn:active,
-            .bonus-btn:active,
-            .player-count-btn:active,
-            .round-nav-btn:active {
-                transform: scale(0.97);
-            }
-        }
+        .history-scores { font-size: 0.85rem; }
+        .history-row { display: flex; justify-content: space-between; padding: 3px 0; }
+        .history-bonus { font-size: 0.8rem; color: var(--gold-dark); margin-top: 6px; }
+        .history-bonus::before { content: '★ '; color: var(--gold); }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- ========================================
-             SETUP SCREEN
-             ======================================== -->
-        <div id="setup-screen">
-            <h1>QuiddleBot</h1>
-            <p class="tagline">A Celtic Scorekeeper for Wordsmiths</p>
+    <div class="app">
+        <!-- Global Header -->
+        <header class="global-header">
+            <button class="hamburger" id="hamburger-btn" aria-label="Menu">
+                <span></span><span></span><span></span>
+            </button>
+            <div class="logo">QuiddleBot</div>
+            <div class="header-right"></div>
+        </header>
 
-            <div class="card">
-                <div class="setup-section">
-                    <label>Gather Your Players</label>
-                    <div class="player-count-buttons">
-                        <button class="player-count-btn selected" data-count="2">2</button>
-                        <button class="player-count-btn" data-count="3">3</button>
-                        <button class="player-count-btn" data-count="4">4</button>
-                    </div>
+        <!-- Navigation Drawer -->
+        <div class="nav-overlay" id="nav-overlay">
+            <nav class="nav-drawer">
+                <div class="nav-header">
+                    <h2>QuiddleBot</h2>
                 </div>
-
-                <div class="setup-section">
-                    <label>Name Your Champions</label>
-                    <div class="player-name-inputs" id="player-name-inputs">
-                        <input type="text" class="player-name-input" placeholder="First Wordsmith" data-player="0" maxlength="20">
-                        <input type="text" class="player-name-input" placeholder="Second Wordsmith" data-player="1" maxlength="20">
-                    </div>
+                <div class="nav-menu">
+                    <button class="nav-item active" data-page="score">
+                        <span class="nav-icon">📝</span> Scorekeeper
+                    </button>
+                    <button class="nav-item" data-page="help">
+                        <span class="nav-icon">❓</span> How to Use
+                    </button>
+                    <button class="nav-item" data-page="rules">
+                        <span class="nav-icon">📖</span> Quiddler Rules
+                    </button>
                 </div>
-
-                <div class="toggle-container hidden" id="most-words-toggle-container">
-                    <div>
-                        <div class="toggle-label">Most Words Bonus</div>
-                        <div class="toggle-sublabel">Optional challenge for two players</div>
-                    </div>
-                    <label class="toggle">
-                        <input type="checkbox" id="most-words-toggle">
-                        <span class="toggle-slider"></span>
-                    </label>
-                </div>
-            </div>
-
-            <button class="btn btn-primary" id="start-game-btn">Begin the Quest</button>
+            </nav>
         </div>
 
-        <!-- ========================================
-             GAME SCREEN
-             ======================================== -->
-        <div id="game-screen" class="hidden">
-            <div class="game-header">
-                <div class="round-indicator">
-                    <div class="round-number"><span id="current-round">1</span></div>
-                    <div>
-                        <div class="round-title" id="round-title">First Flourish</div>
-                        <div class="round-subtitle">Round <span id="round-of">1</span> of 8</div>
+        <!-- Page Container -->
+        <div class="page-container">
+            <!-- SCOREKEEPER PAGE -->
+            <div class="page active" id="page-score">
+                <!-- Setup Screen -->
+                <div id="setup-screen">
+                    <div class="setup-header">
+                        <h1>New Game</h1>
                     </div>
+                    <div class="card">
+                        <div class="section-label">Players</div>
+                        <div class="player-count-btns">
+                            <button class="player-count-btn selected" data-count="2">2</button>
+                            <button class="player-count-btn" data-count="3">3</button>
+                            <button class="player-count-btn" data-count="4">4</button>
+                        </div>
+                        <div class="player-inputs" id="player-inputs">
+                            <input type="text" class="player-input" placeholder="Player 1" maxlength="12">
+                            <input type="text" class="player-input" placeholder="Player 2" maxlength="12">
+                        </div>
+                        <div class="toggle-row hidden" id="most-words-row">
+                            <div>
+                                <div class="toggle-text">Most Words Bonus</div>
+                                <div class="toggle-sub">Optional for 2 players</div>
+                            </div>
+                            <label class="toggle">
+                                <input type="checkbox" id="most-words-toggle">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" id="start-btn">Begin Quest</button>
                 </div>
-                <button class="menu-btn" id="menu-btn">Menu</button>
+
+                <!-- Game Screen -->
+                <div id="game-screen" class="hidden">
+                    <div class="game-bar">
+                        <div class="round-badge">
+                            <div class="round-num" id="round-num">1</div>
+                            <div class="round-info">
+                                <h2 id="round-name">First Flourish</h2>
+                                <span>Round <span id="round-of">1</span> of 8</span>
+                            </div>
+                        </div>
+                        <button class="game-menu-btn" id="game-menu-btn">Menu</button>
+                    </div>
+
+                    <div class="round-dots" id="round-dots"></div>
+                    <div class="scoreboard-compact" id="scoreboard"></div>
+
+                    <div class="entry-card">
+                        <div class="entry-header">
+                            <h3 id="entry-title">Record Scores</h3>
+                            <p id="entry-sub">Enter points for this round</p>
+                        </div>
+                        <div class="score-rows" id="score-rows"></div>
+
+                        <div class="bonus-box" id="longest-box">
+                            <div class="bonus-label">★ Longest Word <span>(+10)</span></div>
+                            <div class="bonus-btns" id="longest-btns"></div>
+                        </div>
+
+                        <div class="bonus-box hidden" id="most-words-box">
+                            <div class="bonus-label">★ Most Words <span>(+10)</span></div>
+                            <div class="bonus-btns" id="most-words-btns"></div>
+                        </div>
+
+                        <div class="action-btns">
+                            <button class="btn btn-success hidden" id="next-btn">Next Round</button>
+                            <button class="btn btn-gold hidden" id="save-btn">Save Changes</button>
+                            <button class="btn btn-secondary hidden" id="cancel-btn">Cancel</button>
+                            <button class="btn btn-gold hidden" id="finish-btn">Reveal Victor</button>
+                        </div>
+                    </div>
+
+                    <div class="history-list hidden" id="history-section"></div>
+                </div>
+
+                <!-- Game Over Screen -->
+                <div id="gameover-screen" class="hidden">
+                    <div class="victory-card">
+                        <div class="victory-title">Quest Complete!</div>
+                        <div class="winner-name" id="winner-name"></div>
+                        <div class="winner-sub" id="winner-sub">Champion Wordsmith</div>
+                        <div class="final-scores" id="final-scores"></div>
+                        <div class="margin-text" id="margin-text"></div>
+                        <div class="action-btns">
+                            <button class="btn btn-primary" id="new-game-btn">New Quest</button>
+                            <button class="btn btn-secondary" id="view-history-btn">View History</button>
+                        </div>
+                    </div>
+                    <div class="history-list hidden" id="final-history"></div>
+                </div>
             </div>
 
-            <!-- Round Navigation -->
-            <div class="round-nav" id="round-nav"></div>
+            <!-- HELP PAGE -->
+            <div class="page" id="page-help">
+                <div class="info-page">
+                    <h1>How to Use QuiddleBot</h1>
 
-            <!-- Scoreboard -->
-            <div class="card">
-                <div class="scoreboard" id="scoreboard"></div>
-            </div>
-
-            <!-- Round Entry -->
-            <div class="card" id="round-entry">
-                <div class="round-entry-header">
-                    <h3 class="round-entry-title" id="round-entry-title">Record Your Scores</h3>
-                    <p class="round-entry-subtitle" id="round-entry-subtitle">Enter each player's points for this round</p>
-                </div>
-
-                <div class="score-inputs" id="score-inputs"></div>
-
-                <div class="bonus-section" id="longest-word-section">
-                    <div class="bonus-title">
-                        <span class="bonus-icon">★</span>
-                        Longest Word
-                        <span class="bonus-points">(+10 points)</span>
+                    <div class="info-card">
+                        <h2>📝 Getting Started</h2>
+                        <ol class="step-list">
+                            <li>Select number of players (2-4)</li>
+                            <li>Enter player names</li>
+                            <li>For 2 players, optionally enable "Most Words" bonus</li>
+                            <li>Tap "Begin Quest" to start</li>
+                        </ol>
                     </div>
-                    <div class="bonus-buttons" id="longest-word-buttons"></div>
-                </div>
 
-                <div class="bonus-section hidden" id="most-words-section">
-                    <div class="bonus-title">
-                        <span class="bonus-icon">★</span>
-                        Most Words
-                        <span class="bonus-points">(+10 points)</span>
+                    <div class="info-card">
+                        <h2>🎮 Each Round</h2>
+                        <ol class="step-list">
+                            <li>Players calculate their own card points</li>
+                            <li>Enter each player's score in the app</li>
+                            <li>Select who won Longest Word bonus (or Tie/None)</li>
+                            <li>If enabled, select Most Words winner</li>
+                            <li>Tap "Next Round" to continue</li>
+                        </ol>
                     </div>
-                    <div class="bonus-buttons" id="most-words-buttons"></div>
-                </div>
 
-                <p class="keyboard-hint">Tab or Enter to move between fields</p>
+                    <div class="info-card">
+                        <h2>★ Bonuses</h2>
+                        <p><strong>Longest Word:</strong> +10 points to the player who spelled the longest word this round.</p>
+                        <p><strong>Most Words:</strong> +10 points to whoever made the most words (3+ players always, optional for 2).</p>
+                        <p><strong>Ties:</strong> If players tie for a bonus, select "Tie/None" - no bonus is awarded.</p>
+                    </div>
 
-                <div class="action-buttons">
-                    <button class="btn btn-success hidden" id="next-round-btn">Onward to Round <span id="next-round-num">2</span></button>
-                    <button class="btn btn-gold hidden" id="save-edit-btn">Save Changes</button>
-                    <button class="btn btn-secondary hidden" id="cancel-edit-btn">Cancel Edit</button>
-                    <button class="btn btn-gold hidden" id="finish-game-btn">Reveal the Victor</button>
+                    <div class="info-card">
+                        <h2>✏️ Editing & History</h2>
+                        <p>Tap any completed round dot to edit scores. Changes automatically recalculate totals.</p>
+                        <p>Use the Menu to view all rounds or end the game early.</p>
+                    </div>
                 </div>
             </div>
 
-            <!-- Round History -->
-            <div class="history-section hidden" id="history-section">
-                <h3>Chronicle of Rounds</h3>
-                <div id="history-list"></div>
+            <!-- RULES PAGE -->
+            <div class="page" id="page-rules">
+                <div class="info-page">
+                    <h1>How to Play Quiddler</h1>
+
+                    <div class="info-card">
+                        <h2>🎯 Objective</h2>
+                        <p>Score the most points by arranging your cards into words. Each card shows a letter and point value.</p>
+                    </div>
+
+                    <div class="info-card">
+                        <h2>🃏 The Deck</h2>
+                        <p>118 cards with letters A-Z plus special double-letter cards:</p>
+                        <p><strong>QU, IN, ER, TH, CL</strong></p>
+                        <p>Each card has a point value (1-15 points).</p>
+                    </div>
+
+                    <div class="info-card">
+                        <h2>📤 Dealing</h2>
+                        <p>Quiddler has <strong>8 rounds</strong>. Cards dealt per round:</p>
+                        <ul>
+                            <li>Round 1: 3 cards</li>
+                            <li>Round 2: 4 cards</li>
+                            <li>Round 3: 5 cards... and so on</li>
+                            <li>Round 8: 10 cards</li>
+                        </ul>
+                        <p>Remaining cards form a draw pile. Flip one card to start the discard pile.</p>
+                    </div>
+
+                    <div class="info-card">
+                        <h2>🔄 Gameplay</h2>
+                        <p>On your turn:</p>
+                        <ol class="step-list">
+                            <li><strong>Draw</strong> one card from the draw pile OR take the top discard</li>
+                            <li><strong>Discard</strong> one card to end your turn</li>
+                        </ol>
+                        <p>Goal: Arrange all your cards into valid words.</p>
+                    </div>
+
+                    <div class="info-card">
+                        <h2>🏁 Going Out</h2>
+                        <p>To go out, you must:</p>
+                        <ul>
+                            <li>Use ALL cards in your hand to form words</li>
+                            <li>Each word must be 2+ cards</li>
+                            <li>Discard one final card</li>
+                        </ul>
+                        <p>After someone goes out, other players get <strong>one more turn</strong> to form words with their cards.</p>
+                    </div>
+
+                    <div class="info-card">
+                        <h2>📊 Scoring</h2>
+                        <ul>
+                            <li><strong>Words:</strong> Add up point values of cards used</li>
+                            <li><strong>Unused cards:</strong> Subtract their points</li>
+                            <li><strong>Minimum:</strong> You can't score below 0 in a round</li>
+                        </ul>
+                    </div>
+
+                    <div class="info-card">
+                        <h2>★ Round Bonuses</h2>
+                        <p><strong>Longest Word:</strong> +10 points to whoever spelled the longest word</p>
+                        <p><strong>Most Words:</strong> +10 points to whoever made the most words</p>
+                        <p>Same player can win both! Ties = no bonus awarded.</p>
+                    </div>
+
+                    <div class="info-card">
+                        <h2>📚 Valid Words</h2>
+                        <ul>
+                            <li>Must be in your chosen dictionary</li>
+                            <li>No proper nouns, abbreviations, or hyphens</li>
+                            <li>Minimum 2 cards per word</li>
+                        </ul>
+                    </div>
+
+                    <div class="info-card">
+                        <h2>🏆 Winning</h2>
+                        <p>After 8 rounds, the player with the <strong>highest total score</strong> wins!</p>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- ========================================
-             GAME OVER SCREEN
-             ======================================== -->
-        <div id="game-over-screen" class="hidden">
-            <div class="card game-over-card">
-                <div class="victory-banner">
-                    <div class="game-over-title">The Quest is Complete!</div>
-                    <div class="winner-name" id="winner-name"></div>
-                    <div class="winner-subtitle" id="winner-subtitle">Champion Wordsmith</div>
-                </div>
-
-                <div class="final-scores" id="final-scores"></div>
-                <div class="margin-victory" id="margin-victory"></div>
-
-                <div class="action-buttons">
-                    <button class="btn btn-primary" id="new-game-btn">Begin a New Quest</button>
-                    <button class="btn btn-secondary" id="view-history-btn">View the Chronicle</button>
-                </div>
-            </div>
-
-            <div class="history-section hidden" id="final-history-section">
-                <h3>Chronicle of Rounds</h3>
-                <div id="final-history-list"></div>
-            </div>
-        </div>
-
-        <!-- ========================================
-             MENU MODAL
-             ======================================== -->
-        <div class="modal-overlay hidden" id="menu-modal">
+        <!-- Game Menu Modal -->
+        <div class="modal-overlay hidden" id="modal">
             <div class="modal">
                 <h3>Game Menu</h3>
-                <div class="modal-buttons">
-                    <button class="btn btn-secondary" id="view-all-rounds-btn">View All Rounds</button>
-                    <button class="btn btn-danger" id="end-game-btn">End Quest Early</button>
-                    <button class="btn btn-danger" id="new-game-menu-btn">Abandon & Restart</button>
-                    <button class="btn btn-secondary" id="close-menu-btn">Return to Game</button>
+                <div class="modal-btns">
+                    <button class="btn btn-secondary" id="modal-history">View All Rounds</button>
+                    <button class="btn btn-danger" id="modal-end">End Game Early</button>
+                    <button class="btn btn-danger" id="modal-new">New Game</button>
+                    <button class="btn btn-secondary" id="modal-close">Cancel</button>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // ========================================
-        // ROUND NAMES - Celtic/Whimsical Theme
-        // ========================================
-        const ROUND_NAMES = [
-            "First Flourish",
-            "The Gathering",
-            "Words Take Wing",
-            "The Turning",
-            "Midway Mastery",
-            "Rising Stakes",
-            "The Penultimate",
-            "The Grand Finale"
-        ];
+        const ROUNDS = ["First Flourish","The Gathering","Words Take Wing","The Turning","Midway Mastery","Rising Stakes","The Penultimate","The Grand Finale"];
 
-        // ========================================
-        // GAME STATE
-        // ========================================
-        let gameState = {
+        let state = {
             players: [],
-            playerCount: 2,
-            mostWordsEnabled: false,
-            currentRound: 1,
+            count: 2,
+            mostWords: false,
+            round: 1,
             rounds: [],
-            isEditing: false,
-            editingRound: null
+            editing: null
         };
 
-        // ========================================
-        // DOM ELEMENTS
-        // ========================================
-        const setupScreen = document.getElementById('setup-screen');
-        const gameScreen = document.getElementById('game-screen');
-        const gameOverScreen = document.getElementById('game-over-screen');
-        const playerCountBtns = document.querySelectorAll('.player-count-btn');
-        const playerNameInputsContainer = document.getElementById('player-name-inputs');
-        const mostWordsToggleContainer = document.getElementById('most-words-toggle-container');
-        const mostWordsToggle = document.getElementById('most-words-toggle');
-        const startGameBtn = document.getElementById('start-game-btn');
-        const currentRoundEl = document.getElementById('current-round');
-        const roundOfEl = document.getElementById('round-of');
-        const roundTitleEl = document.getElementById('round-title');
-        const roundNavEl = document.getElementById('round-nav');
-        const scoreboardEl = document.getElementById('scoreboard');
-        const scoreInputsEl = document.getElementById('score-inputs');
-        const longestWordSection = document.getElementById('longest-word-section');
-        const longestWordButtons = document.getElementById('longest-word-buttons');
-        const mostWordsSection = document.getElementById('most-words-section');
-        const mostWordsButtonsEl = document.getElementById('most-words-buttons');
-        const roundEntryTitle = document.getElementById('round-entry-title');
-        const roundEntrySubtitle = document.getElementById('round-entry-subtitle');
-        const nextRoundBtn = document.getElementById('next-round-btn');
-        const nextRoundNum = document.getElementById('next-round-num');
-        const saveEditBtn = document.getElementById('save-edit-btn');
-        const cancelEditBtn = document.getElementById('cancel-edit-btn');
-        const finishGameBtn = document.getElementById('finish-game-btn');
-        const historySection = document.getElementById('history-section');
-        const historyList = document.getElementById('history-list');
-        const menuBtn = document.getElementById('menu-btn');
-        const menuModal = document.getElementById('menu-modal');
-        const closeMenuBtn = document.getElementById('close-menu-btn');
-        const viewAllRoundsBtn = document.getElementById('view-all-rounds-btn');
-        const endGameBtn = document.getElementById('end-game-btn');
-        const newGameMenuBtn = document.getElementById('new-game-menu-btn');
-        const winnerNameEl = document.getElementById('winner-name');
-        const winnerSubtitle = document.getElementById('winner-subtitle');
-        const finalScoresEl = document.getElementById('final-scores');
-        const marginVictoryEl = document.getElementById('margin-victory');
-        const newGameBtn = document.getElementById('new-game-btn');
-        const viewHistoryBtn = document.getElementById('view-history-btn');
-        const finalHistorySection = document.getElementById('final-history-section');
-        const finalHistoryList = document.getElementById('final-history-list');
+        // DOM refs
+        const $ = id => document.getElementById(id);
+        const $$ = sel => document.querySelectorAll(sel);
 
-        // ========================================
-        // INITIALIZATION
-        // ========================================
-        function init() {
-            loadGameState();
-            setupEventListeners();
+        const hamburgerBtn = $('hamburger-btn');
+        const navOverlay = $('nav-overlay');
+        const navItems = $$('.nav-item');
+        const pages = $$('.page');
 
-            if (gameState.players.length > 0 && gameState.rounds.length < 8) {
-                showGameScreen();
-            } else if (gameState.players.length > 0 && gameState.rounds.length >= 8) {
-                // Game was completed, show game over
-                showGameOver();
-            }
-        }
+        const setupScreen = $('setup-screen');
+        const gameScreen = $('game-screen');
+        const gameoverScreen = $('gameover-screen');
+        const playerCountBtns = $$('.player-count-btn');
+        const playerInputsEl = $('player-inputs');
+        const mostWordsRow = $('most-words-row');
+        const mostWordsToggle = $('most-words-toggle');
+        const startBtn = $('start-btn');
 
-        function setupEventListeners() {
-            // Player count selection
-            playerCountBtns.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    playerCountBtns.forEach(b => b.classList.remove('selected'));
-                    btn.classList.add('selected');
-                    gameState.playerCount = parseInt(btn.dataset.count);
-                    updatePlayerInputs();
-                });
-            });
+        const roundNum = $('round-num');
+        const roundName = $('round-name');
+        const roundOf = $('round-of');
+        const roundDots = $('round-dots');
+        const scoreboard = $('scoreboard');
+        const entryTitle = $('entry-title');
+        const entrySub = $('entry-sub');
+        const scoreRows = $('score-rows');
+        const longestBox = $('longest-box');
+        const longestBtns = $('longest-btns');
+        const mostWordsBox = $('most-words-box');
+        const mostWordsBtns = $('most-words-btns');
+        const nextBtn = $('next-btn');
+        const saveBtn = $('save-btn');
+        const cancelBtn = $('cancel-btn');
+        const finishBtn = $('finish-btn');
+        const gameMenuBtn = $('game-menu-btn');
+        const historySection = $('history-section');
 
-            // Start game
-            startGameBtn.addEventListener('click', startGame);
+        const winnerNameEl = $('winner-name');
+        const winnerSub = $('winner-sub');
+        const finalScores = $('final-scores');
+        const marginText = $('margin-text');
+        const newGameBtn = $('new-game-btn');
+        const viewHistoryBtn = $('view-history-btn');
+        const finalHistory = $('final-history');
 
-            // Menu
-            menuBtn.addEventListener('click', () => menuModal.classList.remove('hidden'));
-            closeMenuBtn.addEventListener('click', () => menuModal.classList.add('hidden'));
-            menuModal.addEventListener('click', (e) => {
-                if (e.target === menuModal) menuModal.classList.add('hidden');
-            });
+        const modal = $('modal');
+        const modalHistory = $('modal-history');
+        const modalEnd = $('modal-end');
+        const modalNew = $('modal-new');
+        const modalClose = $('modal-close');
 
-            viewAllRoundsBtn.addEventListener('click', () => {
-                menuModal.classList.add('hidden');
-                historySection.classList.toggle('hidden');
-            });
+        // Navigation
+        hamburgerBtn.onclick = () => navOverlay.classList.add('open');
+        navOverlay.onclick = e => { if (e.target === navOverlay) navOverlay.classList.remove('open'); };
 
-            endGameBtn.addEventListener('click', () => {
-                if (confirm('End the quest early and reveal final scores?')) {
-                    menuModal.classList.add('hidden');
-                    showGameOver();
-                }
-            });
+        navItems.forEach(item => {
+            item.onclick = () => {
+                const page = item.dataset.page;
+                navItems.forEach(n => n.classList.remove('active'));
+                item.classList.add('active');
+                pages.forEach(p => p.classList.toggle('active', p.id === 'page-' + page));
+                navOverlay.classList.remove('open');
+            };
+        });
 
-            newGameMenuBtn.addEventListener('click', () => {
-                if (confirm('Abandon this quest and begin anew? All progress will be lost.')) {
-                    menuModal.classList.add('hidden');
-                    resetGame();
-                }
-            });
+        // Setup
+        playerCountBtns.forEach(btn => {
+            btn.onclick = () => {
+                playerCountBtns.forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+                state.count = +btn.dataset.count;
+                updatePlayerInputs();
+            };
+        });
 
-            // Round actions
-            nextRoundBtn.addEventListener('click', submitRound);
-            saveEditBtn.addEventListener('click', saveEdit);
-            cancelEditBtn.addEventListener('click', cancelEdit);
-            finishGameBtn.addEventListener('click', () => showGameOver());
-
-            // Game over
-            newGameBtn.addEventListener('click', resetGame);
-            viewHistoryBtn.addEventListener('click', () => {
-                finalHistorySection.classList.toggle('hidden');
-                renderFinalHistory();
-            });
-        }
-
-        // ========================================
-        // PLAYER SETUP
-        // ========================================
         function updatePlayerInputs() {
-            const count = gameState.playerCount;
-            const placeholders = [
-                "First Wordsmith",
-                "Second Wordsmith",
-                "Third Wordsmith",
-                "Fourth Wordsmith"
-            ];
-
-            let html = '';
-            for (let i = 0; i < count; i++) {
-                const existingName = gameState.players[i] || '';
-                html += `<input type="text" class="player-name-input" placeholder="${placeholders[i]}" data-player="${i}" maxlength="20" value="${existingName}">`;
+            const names = ["Player 1","Player 2","Player 3","Player 4"];
+            playerInputsEl.innerHTML = '';
+            for (let i = 0; i < state.count; i++) {
+                const inp = document.createElement('input');
+                inp.type = 'text';
+                inp.className = 'player-input';
+                inp.placeholder = names[i];
+                inp.maxLength = 12;
+                playerInputsEl.appendChild(inp);
             }
-            playerNameInputsContainer.innerHTML = html;
-
-            // Show/hide Most Words toggle for 2-player games
-            if (count === 2) {
-                mostWordsToggleContainer.classList.remove('hidden');
-            } else {
-                mostWordsToggleContainer.classList.add('hidden');
-                mostWordsToggle.checked = false;
-            }
-
-            // Add enter key navigation
-            const inputs = playerNameInputsContainer.querySelectorAll('input');
-            inputs.forEach((input, idx) => {
-                input.addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter') {
-                        e.preventDefault();
-                        if (idx < inputs.length - 1) {
-                            inputs[idx + 1].focus();
-                        } else {
-                            startGame();
-                        }
-                    }
-                });
-            });
+            mostWordsRow.classList.toggle('hidden', state.count !== 2);
         }
 
-        function startGame() {
-            const inputs = playerNameInputsContainer.querySelectorAll('input');
-            const players = [];
-            const defaultNames = ["Scribe", "Bard", "Sage", "Scholar"];
+        startBtn.onclick = () => {
+            const inputs = playerInputsEl.querySelectorAll('input');
+            const defaults = ["Scribe","Bard","Sage","Scholar"];
+            state.players = [...inputs].map((inp, i) => inp.value.trim() || defaults[i]);
+            state.mostWords = state.count > 2 || mostWordsToggle.checked;
+            state.round = 1;
+            state.rounds = [];
+            state.editing = null;
+            save();
+            showGame();
+        };
 
-            inputs.forEach((input, idx) => {
-                players.push(input.value.trim() || defaultNames[idx]);
-            });
-
-            gameState.players = players;
-            gameState.mostWordsEnabled = gameState.playerCount > 2 || mostWordsToggle.checked;
-            gameState.currentRound = 1;
-            gameState.rounds = [];
-            gameState.isEditing = false;
-            gameState.editingRound = null;
-
-            saveGameState();
-            showGameScreen();
-        }
-
-        // ========================================
-        // SCREEN MANAGEMENT
-        // ========================================
-        function showGameScreen() {
+        function showGame() {
             setupScreen.classList.add('hidden');
-            gameOverScreen.classList.add('hidden');
+            gameoverScreen.classList.add('hidden');
             gameScreen.classList.remove('hidden');
-            renderGame();
+            render();
         }
 
-        // ========================================
-        // GAME RENDERING
-        // ========================================
-        function renderGame() {
-            const roundNum = gameState.isEditing ? gameState.editingRound : gameState.currentRound;
+        function render() {
+            const r = state.editing ?? state.round;
+            roundNum.textContent = r;
+            roundOf.textContent = r;
+            roundName.textContent = ROUNDS[r - 1];
 
-            currentRoundEl.textContent = roundNum;
-            roundOfEl.textContent = roundNum;
-            roundTitleEl.textContent = ROUND_NAMES[roundNum - 1] || `Round ${roundNum}`;
-            nextRoundNum.textContent = gameState.currentRound + 1;
-
-            renderRoundNav();
-            renderScoreboard();
-            renderRoundEntry();
-            renderHistory();
-            updateActionButtons();
-        }
-
-        function renderRoundNav() {
-            let html = '';
+            // Round dots
+            roundDots.innerHTML = '';
             for (let i = 1; i <= 8; i++) {
-                let className = 'round-nav-btn';
-                if (i === gameState.currentRound && !gameState.isEditing) {
-                    className += ' current';
-                } else if (gameState.isEditing && i === gameState.editingRound) {
-                    className += ' editing';
-                } else if (i < gameState.currentRound || gameState.rounds[i - 1]) {
-                    className += ' completed';
-                }
-                html += `<button class="${className}" data-round="${i}">${i}</button>`;
+                const dot = document.createElement('button');
+                dot.className = 'round-dot';
+                dot.textContent = i;
+                if (i === state.round && !state.editing) dot.classList.add('current');
+                else if (state.editing === i) dot.classList.add('editing');
+                else if (state.rounds[i - 1]) dot.classList.add('completed');
+                dot.onclick = () => { if (state.rounds[i - 1] && i < state.round) { state.editing = i; render(); } };
+                roundDots.appendChild(dot);
             }
-            roundNavEl.innerHTML = html;
 
-            // Add click handlers
-            roundNavEl.querySelectorAll('.round-nav-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const round = parseInt(btn.dataset.round);
-                    if (round < gameState.currentRound && gameState.rounds[round - 1]) {
-                        editRound(round);
-                    }
-                });
-            });
-        }
-
-        function renderScoreboard() {
-            const totals = calculateTotals();
-            const maxScore = Math.max(...totals);
-
-            let html = '';
-            gameState.players.forEach((player, idx) => {
-                const isLeading = totals[idx] === maxScore && maxScore > 0;
-                const initial = player.charAt(0).toUpperCase();
-                html += `
-                    <div class="scoreboard-row ${isLeading ? 'leading' : ''} animate-slide-in" style="animation-delay: ${idx * 0.05}s">
-                        <div class="player-info">
-                            <div class="player-avatar p${idx}">${initial}</div>
-                            <span class="player-name">${escapeHtml(player)}</span>
-                        </div>
-                        <span class="player-total">${totals[idx]}</span>
+            // Scoreboard
+            const totals = calcTotals();
+            const max = Math.max(...totals);
+            scoreboard.innerHTML = state.players.map((p, i) => `
+                <div class="score-chip ${totals[i] === max && max > 0 ? 'leading' : ''}">
+                    <div class="score-avatar p${i}">${p[0]}</div>
+                    <div class="score-details">
+                        <div class="score-name">${esc(p)}</div>
+                        <div class="score-total">${totals[i]}</div>
                     </div>
-                `;
-            });
-            scoreboardEl.innerHTML = html;
-        }
+                </div>
+            `).join('');
 
-        function renderRoundEntry() {
-            const roundNum = gameState.isEditing ? gameState.editingRound : gameState.currentRound;
-            const existingData = gameState.rounds[roundNum - 1] || null;
+            // Entry
+            const data = state.rounds[r - 1];
+            entryTitle.textContent = state.editing ? `Edit Round ${r}` : 'Record Scores';
+            entrySub.textContent = state.editing ? 'Modify scores and bonuses' : `Enter points for ${ROUNDS[r - 1]}`;
 
-            if (gameState.isEditing) {
-                roundEntryTitle.textContent = `Editing ${ROUND_NAMES[roundNum - 1]}`;
-                roundEntrySubtitle.textContent = `Modify Round ${roundNum} scores and bonuses`;
-            } else {
-                roundEntryTitle.textContent = "Record Your Scores";
-                roundEntrySubtitle.textContent = `Enter each player's points for ${ROUND_NAMES[roundNum - 1]}`;
-            }
-
-            // Score inputs
-            let inputsHtml = '';
-            gameState.players.forEach((player, idx) => {
-                const value = existingData ? existingData.scores[idx] : '';
-                const initial = player.charAt(0).toUpperCase();
-                inputsHtml += `
-                    <div class="score-input-row">
-                        <div class="score-input-label">
-                            <div class="player-avatar p${idx}">${initial}</div>
-                            <span class="score-input-name">${escapeHtml(player)}</span>
-                        </div>
-                        <input type="number" class="score-input" data-player="${idx}"
-                               value="${value}" inputmode="numeric" pattern="-?[0-9]*">
+            scoreRows.innerHTML = state.players.map((p, i) => `
+                <div class="score-row">
+                    <div class="score-row-label">
+                        <div class="score-avatar p${i}">${p[0]}</div>
+                        <span>${esc(p)}</span>
                     </div>
-                `;
+                    <input type="number" class="score-row-input" data-idx="${i}" value="${data?.scores[i] ?? ''}" inputmode="numeric">
+                </div>
+            `).join('');
+
+            scoreRows.querySelectorAll('input').forEach(inp => {
+                inp.oninput = updateBtns;
+                inp.onkeydown = e => {
+                    if (e.key === 'Enter') {
+                        const next = inp.closest('.score-row').nextElementSibling?.querySelector('input');
+                        if (next) next.focus();
+                    }
+                };
             });
-            scoreInputsEl.innerHTML = inputsHtml;
+            setTimeout(() => scoreRows.querySelector('input')?.focus(), 50);
 
-            // Bonus buttons
-            renderBonusButtons('longest-word', longestWordButtons, existingData?.longestWord);
-
-            if (gameState.mostWordsEnabled) {
-                mostWordsSection.classList.remove('hidden');
-                renderBonusButtons('most-words', mostWordsButtonsEl, existingData?.mostWords);
+            renderBonusBtns(longestBtns, data?.longest);
+            if (state.mostWords) {
+                mostWordsBox.classList.remove('hidden');
+                renderBonusBtns(mostWordsBtns, data?.mostWords);
             } else {
-                mostWordsSection.classList.add('hidden');
+                mostWordsBox.classList.add('hidden');
             }
 
-            // Add keyboard navigation
-            const inputs = scoreInputsEl.querySelectorAll('input');
-            inputs.forEach((input, idx) => {
-                input.addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter' || (e.key === 'Tab' && !e.shiftKey)) {
-                        if (idx < inputs.length - 1) {
-                            e.preventDefault();
-                            inputs[idx + 1].focus();
-                        }
-                    }
-                });
-
-                // Update action buttons when input changes
-                input.addEventListener('input', updateActionButtons);
-            });
-
-            // Auto-focus first input
-            setTimeout(() => {
-                const firstInput = scoreInputsEl.querySelector('input');
-                if (firstInput) firstInput.focus();
-            }, 100);
+            updateBtns();
         }
 
-        function renderBonusButtons(type, container, selectedValue) {
-            let html = '';
-            gameState.players.forEach((player, idx) => {
-                const selected = selectedValue === idx ? 'selected' : '';
-                html += `<button class="bonus-btn ${selected}" data-type="${type}" data-value="${idx}">${escapeHtml(player)}</button>`;
-            });
-            const tieSelected = selectedValue === 'tie' ? 'selected' : '';
-            html += `<button class="bonus-btn tie-none ${tieSelected}" data-type="${type}" data-value="tie">Tie / None</button>`;
-            container.innerHTML = html;
+        function renderBonusBtns(container, selected) {
+            container.innerHTML = state.players.map((p, i) =>
+                `<button class="bonus-btn ${selected === i ? 'selected' : ''}" data-val="${i}">${esc(p)}</button>`
+            ).join('') + `<button class="bonus-btn tie-none ${selected === 'tie' ? 'selected' : ''}" data-val="tie">Tie / None</button>`;
 
-            // Add click handlers
             container.querySelectorAll('.bonus-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
+                btn.onclick = () => {
                     container.querySelectorAll('.bonus-btn').forEach(b => b.classList.remove('selected'));
                     btn.classList.add('selected');
-                    updateActionButtons();
-                });
+                    updateBtns();
+                };
             });
         }
 
-        function updateActionButtons() {
-            const allFilled = isRoundComplete();
+        function updateBtns() {
+            const filled = isComplete();
+            nextBtn.classList.add('hidden');
+            saveBtn.classList.add('hidden');
+            cancelBtn.classList.add('hidden');
+            finishBtn.classList.add('hidden');
 
-            nextRoundBtn.classList.add('hidden');
-            saveEditBtn.classList.add('hidden');
-            cancelEditBtn.classList.add('hidden');
-            finishGameBtn.classList.add('hidden');
-
-            if (gameState.isEditing) {
-                saveEditBtn.classList.remove('hidden');
-                cancelEditBtn.classList.remove('hidden');
-                saveEditBtn.disabled = !allFilled;
-            } else if (gameState.currentRound === 8) {
-                if (allFilled) {
-                    finishGameBtn.classList.remove('hidden');
-                }
+            if (state.editing) {
+                saveBtn.classList.remove('hidden');
+                cancelBtn.classList.remove('hidden');
+                saveBtn.disabled = !filled;
+            } else if (state.round === 8) {
+                if (filled) finishBtn.classList.remove('hidden');
             } else {
-                if (allFilled) {
-                    nextRoundBtn.classList.remove('hidden');
-                }
+                if (filled) nextBtn.classList.remove('hidden');
             }
         }
 
-        function isRoundComplete() {
-            const inputs = scoreInputsEl.querySelectorAll('input');
-            let allFilled = true;
-            inputs.forEach(input => {
-                if (input.value === '') allFilled = false;
-            });
+        function isComplete() {
+            const inputs = scoreRows.querySelectorAll('input');
+            if ([...inputs].some(i => i.value === '')) return false;
+            if (!longestBtns.querySelector('.selected')) return false;
+            if (state.mostWords && !mostWordsBtns.querySelector('.selected')) return false;
+            return true;
+        }
 
-            const longestSelected = longestWordButtons.querySelector('.bonus-btn.selected');
-            if (!longestSelected) allFilled = false;
-
-            if (gameState.mostWordsEnabled) {
-                const mostWordsSelected = mostWordsButtonsEl.querySelector('.bonus-btn.selected');
-                if (!mostWordsSelected) allFilled = false;
+        function getData() {
+            const scores = [...scoreRows.querySelectorAll('input')].map(i => +i.value || 0);
+            let longest = longestBtns.querySelector('.selected')?.dataset.val;
+            longest = longest === 'tie' ? 'tie' : (longest != null ? +longest : null);
+            let mw = null;
+            if (state.mostWords) {
+                mw = mostWordsBtns.querySelector('.selected')?.dataset.val;
+                mw = mw === 'tie' ? 'tie' : (mw != null ? +mw : null);
             }
-
-            return allFilled;
+            return { scores, longest, mostWords: mw };
         }
 
-        // ========================================
-        // ROUND DATA HANDLING
-        // ========================================
-        function getRoundData() {
-            const scores = [];
-            scoreInputsEl.querySelectorAll('input').forEach(input => {
-                scores.push(parseInt(input.value) || 0);
-            });
+        nextBtn.onclick = () => {
+            state.rounds[state.round - 1] = getData();
+            state.round++;
+            save();
+            render();
+        };
 
-            const longestWordBtn = longestWordButtons.querySelector('.bonus-btn.selected');
-            let longestWord = longestWordBtn?.dataset.value;
-            longestWord = longestWord === 'tie' ? 'tie' : (longestWord !== undefined ? parseInt(longestWord) : null);
+        saveBtn.onclick = () => {
+            state.rounds[state.editing - 1] = getData();
+            state.editing = null;
+            save();
+            render();
+        };
 
-            let mostWords = null;
-            if (gameState.mostWordsEnabled) {
-                const mostWordsBtn = mostWordsButtonsEl.querySelector('.bonus-btn.selected');
-                mostWords = mostWordsBtn?.dataset.value;
-                mostWords = mostWords === 'tie' ? 'tie' : (mostWords !== undefined ? parseInt(mostWords) : null);
-            }
+        cancelBtn.onclick = () => { state.editing = null; render(); };
 
-            return { scores, longestWord, mostWords };
-        }
+        finishBtn.onclick = () => {
+            state.rounds[state.round - 1] = getData();
+            save();
+            showGameOver();
+        };
 
-        function submitRound() {
-            const data = getRoundData();
-            gameState.rounds[gameState.currentRound - 1] = data;
-            gameState.currentRound++;
-            saveGameState();
-            renderGame();
-        }
-
-        function editRound(roundNum) {
-            gameState.isEditing = true;
-            gameState.editingRound = roundNum;
-            renderGame();
-        }
-
-        function saveEdit() {
-            const data = getRoundData();
-            gameState.rounds[gameState.editingRound - 1] = data;
-            gameState.isEditing = false;
-            gameState.editingRound = null;
-            saveGameState();
-            renderGame();
-        }
-
-        function cancelEdit() {
-            gameState.isEditing = false;
-            gameState.editingRound = null;
-            renderGame();
-        }
-
-        // ========================================
-        // HISTORY RENDERING
-        // ========================================
-        function renderHistory() {
-            if (gameState.rounds.length === 0) {
-                historySection.classList.add('hidden');
-                return;
-            }
-
-            let html = '';
-            gameState.rounds.forEach((round, idx) => {
-                if (!round) return;
-                html += renderHistoryRound(round, idx + 1, true);
-            });
-            historyList.innerHTML = html;
-
-            // Add edit handlers
-            historyList.querySelectorAll('.history-edit-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const round = parseInt(btn.dataset.round);
-                    editRound(round);
+        function calcTotals() {
+            return state.players.map((_, i) => {
+                let t = 0;
+                state.rounds.forEach(r => {
+                    if (!r) return;
+                    t += r.scores[i];
+                    if (r.longest === i) t += 10;
+                    if (r.mostWords === i) t += 10;
                 });
+                return t;
             });
         }
 
-        function renderHistoryRound(round, roundNum, showEditBtn = false) {
-            let scoresHtml = '';
-            gameState.players.forEach((player, idx) => {
-                const baseScore = round.scores[idx];
-                const bonus = (round.longestWord === idx ? 10 : 0) + (round.mostWords === idx ? 10 : 0);
-                const total = baseScore + bonus;
-                scoresHtml += `
-                    <div class="history-score-row">
-                        <span class="history-score-name">${escapeHtml(player)}</span>
-                        <span class="history-score-value">${baseScore}${bonus > 0 ? ` + ${bonus} = ${total}` : ''}</span>
-                    </div>
-                `;
-            });
-
-            let bonusText = '';
-            if (round.longestWord !== 'tie' && round.longestWord !== null) {
-                bonusText += `Longest Word: ${escapeHtml(gameState.players[round.longestWord])}`;
-            }
-            if (round.mostWords !== 'tie' && round.mostWords !== null) {
-                if (bonusText) bonusText += ' | ';
-                bonusText += `Most Words: ${escapeHtml(gameState.players[round.mostWords])}`;
-            }
-
-            return `
-                <div class="history-round">
-                    <div class="history-round-header">
-                        <span class="history-round-title">${ROUND_NAMES[roundNum - 1]}</span>
-                        ${showEditBtn ? `<button class="history-edit-btn" data-round="${roundNum}">Edit</button>` : ''}
-                    </div>
-                    <div class="history-scores">${scoresHtml}</div>
-                    ${bonusText ? `<div class="history-bonus">${bonusText}</div>` : ''}
-                </div>
-            `;
-        }
-
-        // ========================================
-        // SCORE CALCULATIONS
-        // ========================================
-        function calculateTotals() {
-            const totals = gameState.players.map(() => 0);
-
-            gameState.rounds.forEach(round => {
-                if (!round) return;
-                round.scores.forEach((score, idx) => {
-                    totals[idx] += score;
-                    if (round.longestWord === idx) totals[idx] += 10;
-                    if (round.mostWords === idx) totals[idx] += 10;
-                });
-            });
-
-            return totals;
-        }
-
-        // ========================================
-        // GAME OVER
-        // ========================================
         function showGameOver() {
             gameScreen.classList.add('hidden');
-            gameOverScreen.classList.remove('hidden');
+            gameoverScreen.classList.remove('hidden');
 
-            const totals = calculateTotals();
-            const maxScore = Math.max(...totals);
-            const winners = totals.filter(t => t === maxScore).length;
-
-            // Sort players by score
-            const sorted = gameState.players.map((name, idx) => ({
-                name,
-                score: totals[idx],
-                idx
-            })).sort((a, b) => b.score - a.score);
+            const totals = calcTotals();
+            const max = Math.max(...totals);
+            const winners = totals.filter(t => t === max).length;
+            const sorted = state.players.map((n, i) => ({ n, s: totals[i] })).sort((a, b) => b.s - a.s);
 
             if (winners > 1) {
-                winnerNameEl.textContent = "A Tie Most Noble!";
-                winnerSubtitle.textContent = "The wordsmiths share the glory";
+                winnerNameEl.textContent = "It's a Tie!";
+                winnerSub.textContent = "Wordsmiths share the glory";
             } else {
-                winnerNameEl.textContent = sorted[0].name;
-                winnerSubtitle.textContent = "Champion Wordsmith";
+                winnerNameEl.textContent = sorted[0].n;
+                winnerSub.textContent = "Champion Wordsmith";
             }
 
-            let scoresHtml = '';
-            sorted.forEach((player, rank) => {
-                const isWinner = player.score === maxScore;
-                scoresHtml += `
-                    <div class="final-score-row ${isWinner ? 'winner' : ''} animate-slide-in" style="animation-delay: ${rank * 0.1}s">
-                        <span class="final-rank">${rank + 1}</span>
-                        <span class="final-player-name">${escapeHtml(player.name)}</span>
-                        <span class="final-score">${player.score}</span>
-                    </div>
-                `;
-            });
-            finalScoresEl.innerHTML = scoresHtml;
+            finalScores.innerHTML = sorted.map((p, i) => `
+                <div class="final-row ${p.s === max ? 'winner' : ''}">
+                    <div class="final-rank">${i + 1}</div>
+                    <div class="final-name">${esc(p.n)}</div>
+                    <div class="final-pts">${p.s}</div>
+                </div>
+            `).join('');
 
-            if (sorted.length > 1 && winners === 1) {
-                const margin = sorted[0].score - sorted[1].score;
-                marginVictoryEl.textContent = `Victory by ${margin} ${margin === 1 ? 'point' : 'points'}`;
-            } else if (winners > 1) {
-                marginVictoryEl.textContent = `Tied at ${maxScore} points`;
-            } else {
-                marginVictoryEl.textContent = '';
+            marginText.textContent = winners === 1 && sorted.length > 1
+                ? `Victory by ${sorted[0].s - sorted[1].s} points`
+                : winners > 1 ? `Tied at ${max} points` : '';
+        }
+
+        newGameBtn.onclick = reset;
+        viewHistoryBtn.onclick = () => {
+            finalHistory.classList.toggle('hidden');
+            if (!finalHistory.classList.contains('hidden')) renderHistory(finalHistory, false);
+        };
+
+        gameMenuBtn.onclick = () => modal.classList.remove('hidden');
+        modalClose.onclick = () => modal.classList.add('hidden');
+        modal.onclick = e => { if (e.target === modal) modal.classList.add('hidden'); };
+
+        modalHistory.onclick = () => {
+            modal.classList.add('hidden');
+            historySection.classList.toggle('hidden');
+            if (!historySection.classList.contains('hidden')) renderHistory(historySection, true);
+        };
+
+        modalEnd.onclick = () => {
+            if (confirm('End game early?')) { modal.classList.add('hidden'); showGameOver(); }
+        };
+
+        modalNew.onclick = () => {
+            if (confirm('Start new game?')) { modal.classList.add('hidden'); reset(); }
+        };
+
+        function renderHistory(container, canEdit) {
+            container.innerHTML = '<h3 style="font-family:Cinzel;text-align:center;margin-bottom:12px;color:var(--purple-deep)">Round History</h3>' +
+                state.rounds.map((r, i) => {
+                    if (!r) return '';
+                    const scores = state.players.map((p, j) => {
+                        const base = r.scores[j];
+                        const bonus = (r.longest === j ? 10 : 0) + (r.mostWords === j ? 10 : 0);
+                        return `<div class="history-row"><span>${esc(p)}</span><span>${base}${bonus ? ` +${bonus}` : ''}</span></div>`;
+                    }).join('');
+                    let bonusTxt = '';
+                    if (r.longest !== 'tie' && r.longest != null) bonusTxt += `Longest: ${state.players[r.longest]}`;
+                    if (r.mostWords !== 'tie' && r.mostWords != null) bonusTxt += (bonusTxt ? ' · ' : '') + `Most: ${state.players[r.mostWords]}`;
+                    return `
+                        <div class="history-item">
+                            <div class="history-head">
+                                <span class="history-title">${ROUNDS[i]}</span>
+                                ${canEdit ? `<button class="history-edit" data-r="${i + 1}">Edit</button>` : ''}
+                            </div>
+                            <div class="history-scores">${scores}</div>
+                            ${bonusTxt ? `<div class="history-bonus">${bonusTxt}</div>` : ''}
+                        </div>
+                    `;
+                }).join('');
+
+            if (canEdit) {
+                container.querySelectorAll('.history-edit').forEach(btn => {
+                    btn.onclick = () => { state.editing = +btn.dataset.r; historySection.classList.add('hidden'); render(); };
+                });
             }
-
-            saveGameState();
         }
 
-        function renderFinalHistory() {
-            let html = '';
-            gameState.rounds.forEach((round, idx) => {
-                if (!round) return;
-                html += renderHistoryRound(round, idx + 1, false);
-            });
-            finalHistoryList.innerHTML = html;
-        }
-
-        // ========================================
-        // GAME RESET
-        // ========================================
-        function resetGame() {
-            gameState = {
-                players: [],
-                playerCount: 2,
-                mostWordsEnabled: false,
-                currentRound: 1,
-                rounds: [],
-                isEditing: false,
-                editingRound: null
-            };
-            localStorage.removeItem('quiddlebot_game');
-
+        function reset() {
+            state = { players: [], count: 2, mostWords: false, round: 1, rounds: [], editing: null };
+            localStorage.removeItem('quiddlebot');
             gameScreen.classList.add('hidden');
-            gameOverScreen.classList.add('hidden');
+            gameoverScreen.classList.add('hidden');
             setupScreen.classList.remove('hidden');
-
-            // Reset UI
-            playerCountBtns.forEach(btn => {
-                btn.classList.toggle('selected', btn.dataset.count === '2');
-            });
+            historySection.classList.add('hidden');
+            finalHistory.classList.add('hidden');
+            playerCountBtns.forEach(b => b.classList.toggle('selected', b.dataset.count === '2'));
             mostWordsToggle.checked = false;
             updatePlayerInputs();
-            finalHistorySection.classList.add('hidden');
-            historySection.classList.add('hidden');
         }
 
-        // ========================================
-        // LOCAL STORAGE
-        // ========================================
-        function saveGameState() {
-            localStorage.setItem('quiddlebot_game', JSON.stringify(gameState));
-        }
+        function save() { localStorage.setItem('quiddlebot', JSON.stringify(state)); }
 
-        function loadGameState() {
-            const saved = localStorage.getItem('quiddlebot_game');
-            if (saved) {
-                try {
-                    const parsed = JSON.parse(saved);
-                    gameState = { ...gameState, ...parsed };
-                } catch (e) {
-                    console.error('Failed to load game state:', e);
-                }
+        function load() {
+            const s = localStorage.getItem('quiddlebot');
+            if (s) {
+                try { Object.assign(state, JSON.parse(s)); } catch {}
             }
             updatePlayerInputs();
+            if (state.players.length) {
+                if (state.rounds.length >= 8) showGameOver();
+                else showGame();
+            }
         }
 
-        // ========================================
-        // UTILITIES
-        // ========================================
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
+        function esc(t) { const d = document.createElement('div'); d.textContent = t; return d.innerHTML; }
 
-        // ========================================
-        // INITIALIZE APP
-        // ========================================
-        init();
+        load();
     </script>
 </body>
 </html>
