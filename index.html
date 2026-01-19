@@ -606,6 +606,26 @@
         .final-row.winner .final-pts { color: var(--gold-dark); }
         .margin-text { font-size: 0.85rem; color: var(--ink-light); font-style: italic; margin-bottom: 16px; }
 
+        /* ===== CONFETTI ===== */
+        .confetti-container {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 1000;
+            overflow: hidden;
+        }
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            top: -10px;
+            animation: confetti-fall linear forwards;
+        }
+        @keyframes confetti-fall {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+
         /* ===== MODAL ===== */
         .modal-overlay {
             position: fixed;
@@ -1286,6 +1306,28 @@
             });
         }
 
+        function launchConfetti() {
+            const colors = ['#6B3FA0', '#8B5FBF', '#D4A84B', '#2E7D4A', '#1E5A8A', '#8B2942'];
+            const container = document.createElement('div');
+            container.className = 'confetti-container';
+            document.body.appendChild(container);
+
+            for (let i = 0; i < 80; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                confetti.style.animationDelay = Math.random() * 1.5 + 's';
+                confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+                confetti.style.width = (Math.random() * 8 + 6) + 'px';
+                confetti.style.height = (Math.random() * 8 + 6) + 'px';
+                container.appendChild(confetti);
+            }
+
+            setTimeout(() => container.remove(), 5000);
+        }
+
         function showGameOver() {
             gameScreen.classList.add('hidden');
             gameoverScreen.classList.remove('hidden');
@@ -1302,6 +1344,8 @@
                 winnerNameEl.textContent = sorted[0].n;
                 winnerSub.textContent = "Champion Wordsmith";
             }
+
+            launchConfetti();
 
             finalScores.innerHTML = sorted.map((p, i) => `
                 <div class="final-row ${p.s === max ? 'winner' : ''}">
