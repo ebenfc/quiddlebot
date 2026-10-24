@@ -11,3 +11,17 @@
 
 # Local development
 node_modules/
+
+# Xcode
+xcuserdata/
+DerivedData/
+*.xcuserstate
+*.xcscmblueprint
+*.hmap
+*.ipa
+*.dSYM
+*.dSYM.zip
+.build/
+
+# iCloud Drive conflict copies of the generated project ("QuiddleBot 2.xcodeproj", ...)
+QuiddleBot [0-9]*.xcodeproj/

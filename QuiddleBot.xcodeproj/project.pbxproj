@@ -1,0 +1,516 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		10D07258E15B7010EE6FA700 /* QuiddleBotApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE2C3416A4B0F37FB7CD4F93 /* QuiddleBotApp.swift */; };
+		202064E49B23336D59247A85 /* RoundNavView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E8E3B0C4552588D8757B181 /* RoundNavView.swift */; };
+		3133278DF80ADF36D0E56CF7 /* GameOverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3159E4C5A145EE56F25A21A /* GameOverView.swift */; };
+		4AE51F652D7E5F50D634D408 /* ScoreboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E40CE845D8D3C6EEF1B412 /* ScoreboardView.swift */; };
+		5076FADE3CDE2D82076C4601 /* RoundEntryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B9D8F2E6F3AC4407A5C03A7 /* RoundEntryView.swift */; };
+		67A10201869745535A9B10D3 /* BonusPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C69905B4DC378611E35F1829 /* BonusPickerView.swift */; };
+		984CF11A932DF38E27F840F6 /* Scoring.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3420AB2037A30BA5F6D0BCF1 /* Scoring.swift */; };
+		B4071870668C10B66F55C3B3 /* ScoringTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CDA446AB11DE3D8C185006C /* ScoringTests.swift */; };
+		B55E592DC3C68C9AFE534D4B /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5989C1CFA07B4D3140ECE8A /* RootView.swift */; };
+		BE53A11DD1E0EEA4D4BDED5E /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCBE0F59A87E750FE2FF852B /* HistoryView.swift */; };
+		CBDC3481C2E530E854809226 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 66CD7C01E8764BEFA56A7C99 /* Assets.xcassets */; };
+		D01690C6AAFAF4F539AE1F3F /* RoundDraft.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC25D545C188614A6738CA67 /* RoundDraft.swift */; };
+		D44A6D9A2900D6C5F59F3F05 /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = 534BF4C1AF894FB907BA9EC5 /* Game.swift */; };
+		D4E583F46DEA00261FA975AA /* SetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF8BFA2A897AE8AAB1C6B78D /* SetupView.swift */; };
+		E07F31879D12CEE5109C188B /* GameStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3295D09197A256EB6EA9A417 /* GameStore.swift */; };
+		EDAEDCBEA484C4FFABB6A138 /* CardValues.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01E4971FD49D44036757E12E /* CardValues.swift */; };
+		F5A07DCBC48C16138897A478 /* GameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81988C87752860A6854D8414 /* GameView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		55EB6691E70EDD1736401E87 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5E1ED4333EE55B7153AD8EF5 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1FF2E69F8727B24D130F1D27;
+			remoteInfo = QuiddleBot;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		01E4971FD49D44036757E12E /* CardValues.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardValues.swift; sourceTree = "<group>"; };
+		0B9D8F2E6F3AC4407A5C03A7 /* RoundEntryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundEntryView.swift; sourceTree = "<group>"; };
+		3295D09197A256EB6EA9A417 /* GameStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameStore.swift; sourceTree = "<group>"; };
+		3420AB2037A30BA5F6D0BCF1 /* Scoring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scoring.swift; sourceTree = "<group>"; };
+		3CDA446AB11DE3D8C185006C /* ScoringTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoringTests.swift; sourceTree = "<group>"; };
+		51E40CE845D8D3C6EEF1B412 /* ScoreboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreboardView.swift; sourceTree = "<group>"; };
+		534BF4C1AF894FB907BA9EC5 /* Game.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Game.swift; sourceTree = "<group>"; };
+		66CD7C01E8764BEFA56A7C99 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		6C9D0D8A9B79AB3BD4A8AA1C /* QuiddleBot.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = QuiddleBot.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		81988C87752860A6854D8414 /* GameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameView.swift; sourceTree = "<group>"; };
+		9E8E3B0C4552588D8757B181 /* RoundNavView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundNavView.swift; sourceTree = "<group>"; };
+		B3159E4C5A145EE56F25A21A /* GameOverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameOverView.swift; sourceTree = "<group>"; };
+		BCBE0F59A87E750FE2FF852B /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
+		C69905B4DC378611E35F1829 /* BonusPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BonusPickerView.swift; sourceTree = "<group>"; };
+		CF8BFA2A897AE8AAB1C6B78D /* SetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetupView.swift; sourceTree = "<group>"; };
+		E5989C1CFA07B4D3140ECE8A /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		EC25D545C188614A6738CA67 /* RoundDraft.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundDraft.swift; sourceTree = "<group>"; };
+		EE2C3416A4B0F37FB7CD4F93 /* QuiddleBotApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuiddleBotApp.swift; sourceTree = "<group>"; };
+		F0F10CC0BC7901310D9C68FF /* QuiddleBotTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = QuiddleBotTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		03369D9BDB2AA991573CA772 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				C69905B4DC378611E35F1829 /* BonusPickerView.swift */,
+				B3159E4C5A145EE56F25A21A /* GameOverView.swift */,
+				81988C87752860A6854D8414 /* GameView.swift */,
+				BCBE0F59A87E750FE2FF852B /* HistoryView.swift */,
+				E5989C1CFA07B4D3140ECE8A /* RootView.swift */,
+				EC25D545C188614A6738CA67 /* RoundDraft.swift */,
+				0B9D8F2E6F3AC4407A5C03A7 /* RoundEntryView.swift */,
+				9E8E3B0C4552588D8757B181 /* RoundNavView.swift */,
+				51E40CE845D8D3C6EEF1B412 /* ScoreboardView.swift */,
+				CF8BFA2A897AE8AAB1C6B78D /* SetupView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		296243B2947BCFA6A4137709 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				01E4971FD49D44036757E12E /* CardValues.swift */,
+				534BF4C1AF894FB907BA9EC5 /* Game.swift */,
+				3420AB2037A30BA5F6D0BCF1 /* Scoring.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		554ECE9339F1237F72C5D65E /* QuiddleBotTests */ = {
+			isa = PBXGroup;
+			children = (
+				3CDA446AB11DE3D8C185006C /* ScoringTests.swift */,
+			);
+			path = QuiddleBotTests;
+			sourceTree = "<group>";
+		};
+		94AC68E6E874D4FA85C1D2A1 /* Store */ = {
+			isa = PBXGroup;
+			children = (
+				3295D09197A256EB6EA9A417 /* GameStore.swift */,
+			);
+			path = Store;
+			sourceTree = "<group>";
+		};
+		A15D14B072DC365899AD789C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				6C9D0D8A9B79AB3BD4A8AA1C /* QuiddleBot.app */,
+				F0F10CC0BC7901310D9C68FF /* QuiddleBotTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		D23294BD19584CAA4DF48B10 = {
+			isa = PBXGroup;
+			children = (
+				D84F8BE0A149224B79D79E4F /* QuiddleBot */,
+				554ECE9339F1237F72C5D65E /* QuiddleBotTests */,
+				A15D14B072DC365899AD789C /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		D84F8BE0A149224B79D79E4F /* QuiddleBot */ = {
+			isa = PBXGroup;
+			children = (
+				66CD7C01E8764BEFA56A7C99 /* Assets.xcassets */,
+				EE2C3416A4B0F37FB7CD4F93 /* QuiddleBotApp.swift */,
+				296243B2947BCFA6A4137709 /* Models */,
+				94AC68E6E874D4FA85C1D2A1 /* Store */,
+				03369D9BDB2AA991573CA772 /* Views */,
+			);
+			path = QuiddleBot;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		1FF2E69F8727B24D130F1D27 /* QuiddleBot */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 673D1D1D90E63CA2BEC8AC4F /* Build configuration list for PBXNativeTarget "QuiddleBot" */;
+			buildPhases = (
+				164907D27463B26DC0F6EAC7 /* Sources */,
+				57D07784331761AE3EEC99F0 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = QuiddleBot;
+			packageProductDependencies = (
+			);
+			productName = QuiddleBot;
+			productReference = 6C9D0D8A9B79AB3BD4A8AA1C /* QuiddleBot.app */;
+			productType = "com.apple.product-type.application";
+		};
+		6C243F8D98901CD066758F40 /* QuiddleBotTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 19C6C2F15AD127A02527A95E /* Build configuration list for PBXNativeTarget "QuiddleBotTests" */;
+			buildPhases = (
+				731F54121E9EF77EB742D735 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				7847D0C9A6C20372634CCA45 /* PBXTargetDependency */,
+			);
+			name = QuiddleBotTests;
+			packageProductDependencies = (
+			);
+			productName = QuiddleBotTests;
+			productReference = F0F10CC0BC7901310D9C68FF /* QuiddleBotTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		5E1ED4333EE55B7153AD8EF5 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					1FF2E69F8727B24D130F1D27 = {
+						DevelopmentTeam = M677V6WCV7;
+						ProvisioningStyle = Automatic;
+					};
+					6C243F8D98901CD066758F40 = {
+						DevelopmentTeam = M677V6WCV7;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = CAA16962A3A0AFE712357F04 /* Build configuration list for PBXProject "QuiddleBot" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = D23294BD19584CAA4DF48B10;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = A15D14B072DC365899AD789C /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				1FF2E69F8727B24D130F1D27 /* QuiddleBot */,
+				6C243F8D98901CD066758F40 /* QuiddleBotTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		57D07784331761AE3EEC99F0 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CBDC3481C2E530E854809226 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		164907D27463B26DC0F6EAC7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				67A10201869745535A9B10D3 /* BonusPickerView.swift in Sources */,
+				EDAEDCBEA484C4FFABB6A138 /* CardValues.swift in Sources */,
+				D44A6D9A2900D6C5F59F3F05 /* Game.swift in Sources */,
+				3133278DF80ADF36D0E56CF7 /* GameOverView.swift in Sources */,
+				E07F31879D12CEE5109C188B /* GameStore.swift in Sources */,
+				F5A07DCBC48C16138897A478 /* GameView.swift in Sources */,
+				BE53A11DD1E0EEA4D4BDED5E /* HistoryView.swift in Sources */,
+				10D07258E15B7010EE6FA700 /* QuiddleBotApp.swift in Sources */,
+				B55E592DC3C68C9AFE534D4B /* RootView.swift in Sources */,
+				D01690C6AAFAF4F539AE1F3F /* RoundDraft.swift in Sources */,
+				5076FADE3CDE2D82076C4601 /* RoundEntryView.swift in Sources */,
+				202064E49B23336D59247A85 /* RoundNavView.swift in Sources */,
+				4AE51F652D7E5F50D634D408 /* ScoreboardView.swift in Sources */,
+				984CF11A932DF38E27F840F6 /* Scoring.swift in Sources */,
+				D4E583F46DEA00261FA975AA /* SetupView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		731F54121E9EF77EB742D735 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B4071870668C10B66F55C3B3 /* ScoringTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		7847D0C9A6C20372634CCA45 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1FF2E69F8727B24D130F1D27 /* QuiddleBot */;
+			targetProxy = 55EB6691E70EDD1736401E87 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		4425694E799F956F6B435B6B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = M677V6WCV7;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+		4A4F106AA0C3AE4F19598E68 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = M677V6WCV7;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		7843BBEAE1D30D957474259C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = QuiddleBot;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ebencarey.quiddlebot;
+				PRODUCT_NAME = QuiddleBot;
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		94D6FD7E42CF41EEAEA40D59 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = QuiddleBot;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ebencarey.quiddlebot;
+				PRODUCT_NAME = QuiddleBot;
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		CE2276E8E0B7E1F528CED5BF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.ebencarey.quiddlebot.tests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/QuiddleBot.app/QuiddleBot";
+			};
+			name = Debug;
+		};
+		E919A9DA61FB76A5A96ACD98 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.ebencarey.quiddlebot.tests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/QuiddleBot.app/QuiddleBot";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		19C6C2F15AD127A02527A95E /* Build configuration list for PBXNativeTarget "QuiddleBotTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CE2276E8E0B7E1F528CED5BF /* Debug */,
+				E919A9DA61FB76A5A96ACD98 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		673D1D1D90E63CA2BEC8AC4F /* Build configuration list for PBXNativeTarget "QuiddleBot" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7843BBEAE1D30D957474259C /* Debug */,
+				94D6FD7E42CF41EEAEA40D59 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		CAA16962A3A0AFE712357F04 /* Build configuration list for PBXProject "QuiddleBot" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4A4F106AA0C3AE4F19598E68 /* Debug */,
+				4425694E799F956F6B435B6B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 5E1ED4333EE55B7153AD8EF5 /* Project object */;
+}

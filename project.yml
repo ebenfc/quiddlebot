@@ -1,0 +1,66 @@
+# XcodeGen spec. Regenerate the project with: xcodegen generate
+name: QuiddleBot
+options:
+  bundleIdPrefix: com.ebencarey
+  deploymentTarget:
+    iOS: "17.0"
+  createIntermediateGroups: true
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    # Swift 6.2 "approachable concurrency": the whole app runs on the main actor unless a
+    # type opts out with `nonisolated`, which the pure model types do.
+    SWIFT_DEFAULT_ACTOR_ISOLATION: MainActor
+    SWIFT_APPROACHABLE_CONCURRENCY: YES
+    SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY: YES
+    ENABLE_USER_SCRIPT_SANDBOXING: YES
+    CODE_SIGN_STYLE: Automatic
+    # Paid Apple Developer team "EB-EN FRASER CAREY" (Individual). Not a secret: it is
+    # embedded in every app this team signs.
+    DEVELOPMENT_TEAM: M677V6WCV7
+targets:
+  QuiddleBot:
+    type: application
+    platform: iOS
+    sources:
+      - path: QuiddleBot
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.ebencarey.quiddlebot
+        PRODUCT_NAME: QuiddleBot
+        MARKETING_VERSION: "1.0"
+        CURRENT_PROJECT_VERSION: 1
+        TARGETED_DEVICE_FAMILY: "1"
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_CFBundleDisplayName: QuiddleBot
+        INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.utilities
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        INFOPLIST_KEY_UISupportedInterfaceOrientations: UIInterfaceOrientationPortrait
+        INFOPLIST_KEY_ITSAppUsesNonExemptEncryption: NO
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+        SWIFT_EMIT_LOC_STRINGS: YES
+  QuiddleBotTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: QuiddleBotTests
+    dependencies:
+      - target: QuiddleBot
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.ebencarey.quiddlebot.tests
+        GENERATE_INFOPLIST_FILE: YES
+schemes:
+  QuiddleBot:
+    build:
+      targets:
+        QuiddleBot: all
+        QuiddleBotTests: [test]
+    run:
+      config: Debug
+    test:
+      config: Debug
+      gatherCoverageData: true
+      targets:
+        - QuiddleBotTests
