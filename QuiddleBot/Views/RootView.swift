@@ -5,15 +5,19 @@ struct RootView: View {
     @Environment(GameStore.self) private var store
 
     var body: some View {
-        if let game = store.game {
-            if game.isFinished {
-                GameOverView(game: game)
+        Group {
+            if let game = store.game {
+                if game.isFinished {
+                    GameOverView(game: game)
+                } else {
+                    GameView(game: game)
+                }
             } else {
-                GameView(game: game)
+                SetupView()
             }
-        } else {
-            SetupView()
         }
+        // Rounded type everywhere: friendlier numbers, same system font metrics and Dynamic Type.
+        .fontDesign(.rounded)
     }
 }
 

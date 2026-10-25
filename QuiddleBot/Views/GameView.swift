@@ -9,33 +9,45 @@ struct GameView: View {
     @State private var drafts: [Int: RoundDraft] = [:]
     @State private var confirmEndEarly = false
     @State private var confirmNewGame = false
+    @FocusState private var focusedField: EntryField?
 
     private var activeRound: Int { store.editingRound ?? game.currentRound }
     private var isEditing: Bool { store.editingRound != nil }
+    private var activeDraft: RoundDraft { drafts[activeRound] ?? RoundDraft(playerCount: game.players.count) }
 
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(spacing: 16) {
+                VStack(alignment: .leading, spacing: 18) {
                     RoundNavView(game: game, editingRound: store.editingRound, onSelect: beginEditing)
                     ScoreboardView(game: game)
                     RoundEntryView(game: game,
                                    roundNumber: activeRound,
                                    isEditing: isEditing,
                                    draft: draftBinding(for: activeRound),
-                                   onSubmit: submit,
-                                   onSave: saveEdit,
-                                   onCancel: cancelEdit)
+                                   focusedField: $focusedField)
                         .id(activeRound)
                     if !game.rounds.isEmpty {
-                        HistoryView(game: game, onEdit: beginEditing)
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text("Scorecard").font(.title3.bold())
+                            HistoryView(game: game, onEdit: beginEditing)
+                        }
+                        .card()
                     }
                 }
-                .padding()
+                .padding(.horizontal, 20)
+                .padding(.bottom, 20)
             }
             .scrollDismissesKeyboard(.interactively)
             .background(Color(.systemGroupedBackground))
-            .navigationTitle(title)
+            .safeAreaInset(edge: .bottom) {
+                // While typing, the keyboard's own bar has Done and next-field buttons,
+                // so the pinned action bar steps aside instead of colliding with it.
+                if focusedField == nil {
+                    actionBar
+                }
+            }
+            .navigationTitle("QuiddleBot")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
@@ -65,11 +77,40 @@ struct GameView: View {
         .onDisappear { UIApplication.shared.isIdleTimerDisabled = false }
     }
 
-    private var title: String {
-        if let editing = store.editingRound {
-            return "Editing Round \(editing)"
+    /// The main action, pinned above the keyboard and home indicator.
+    private var actionBar: some View {
+        let round = activeDraft.round(rules: game.rules)
+        return BottomActionBar {
+            if round == nil {
+                Text("Enter everyone's score and pick each bonus to continue.")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+            }
+            if isEditing {
+                HStack(spacing: 12) {
+                    Button("Cancel", action: cancelEdit)
+                        .buttonStyle(SecondaryButtonStyle())
+                    Button("Save Changes") {
+                        if let round { saveEdit(round) }
+                    }
+                    .buttonStyle(PrimaryButtonStyle())
+                    .disabled(round == nil)
+                }
+            } else {
+                Button {
+                    if let round { submit(round) }
+                } label: {
+                    HStack(spacing: 8) {
+                        Text(game.isOnFinalRound ? "Finish Game" : "Next Round")
+                        Image(systemName: game.isOnFinalRound ? "flag.checkered" : "arrow.right")
+                    }
+                }
+                .buttonStyle(PrimaryButtonStyle())
+                .disabled(round == nil)
+            }
         }
-        return "Round \(game.currentRound) of \(game.rules.roundCount)"
+        .animation(.snappy, value: round == nil)
     }
 
     private func draftBinding(for round: Int) -> Binding<RoundDraft> {
@@ -86,13 +127,13 @@ struct GameView: View {
 
     private func submit(_ round: Round) {
         drafts[game.currentRound] = nil
-        store.submit(round)
+        withAnimation(.snappy) { store.submit(round) }
     }
 
     private func saveEdit(_ round: Round) {
         guard let editing = store.editingRound else { return }
         drafts[editing] = nil
-        store.save(round, forRound: editing)
+        withAnimation(.snappy) { store.save(round, forRound: editing) }
     }
 
     private func cancelEdit() {

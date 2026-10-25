@@ -180,6 +180,28 @@ struct PersistenceTests {
         #expect(GameStore(fileURL: url).game?.isFinished == true)
     }
 
+    @Test("A rematch keeps the players and rules and starts over")
+    func rematch() {
+        let url = temporaryFile()
+        defer { try? FileManager.default.removeItem(at: url) }
+
+        var rules = RuleSet.official(playerCount: 3)
+        rules.bonusValue = 15
+        let store = GameStore(fileURL: url)
+        store.start(players: ["Ada", "Ben", "Cy"], rules: rules)
+        for n in 1...8 {
+            store.submit(Round(scores: [n, 1, 2], longestWord: .tie, mostWords: .tie))
+        }
+        #expect(store.game?.isFinished == true)
+
+        store.rematch()
+        #expect(store.game?.players == ["Ada", "Ben", "Cy"])
+        #expect(store.game?.rules == rules)
+        #expect(store.game?.rounds.isEmpty == true)
+        #expect(store.game?.isFinished == false)
+        #expect(GameStore(fileURL: url).game?.rounds.isEmpty == true)
+    }
+
     @Test("Resetting removes the saved game")
     func resetClearsDisk() {
         let url = temporaryFile()

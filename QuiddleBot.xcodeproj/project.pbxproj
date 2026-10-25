@@ -13,7 +13,9 @@
 		4AE51F652D7E5F50D634D408 /* ScoreboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E40CE845D8D3C6EEF1B412 /* ScoreboardView.swift */; };
 		5076FADE3CDE2D82076C4601 /* RoundEntryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B9D8F2E6F3AC4407A5C03A7 /* RoundEntryView.swift */; };
 		67A10201869745535A9B10D3 /* BonusPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C69905B4DC378611E35F1829 /* BonusPickerView.swift */; };
+		6E64E8A09C24D226B4D9C835 /* ConfettiView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 069F7A693AFEE350824C1976 /* ConfettiView.swift */; };
 		984CF11A932DF38E27F840F6 /* Scoring.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3420AB2037A30BA5F6D0BCF1 /* Scoring.swift */; };
+		ABFF21B12A552C12AC614192 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDE1CDD2927FD0484F2FF10A /* Theme.swift */; };
 		B4071870668C10B66F55C3B3 /* ScoringTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CDA446AB11DE3D8C185006C /* ScoringTests.swift */; };
 		B55E592DC3C68C9AFE534D4B /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5989C1CFA07B4D3140ECE8A /* RootView.swift */; };
 		BE53A11DD1E0EEA4D4BDED5E /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCBE0F59A87E750FE2FF852B /* HistoryView.swift */; };
@@ -38,6 +40,7 @@
 
 /* Begin PBXFileReference section */
 		01E4971FD49D44036757E12E /* CardValues.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardValues.swift; sourceTree = "<group>"; };
+		069F7A693AFEE350824C1976 /* ConfettiView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfettiView.swift; sourceTree = "<group>"; };
 		0B9D8F2E6F3AC4407A5C03A7 /* RoundEntryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundEntryView.swift; sourceTree = "<group>"; };
 		3295D09197A256EB6EA9A417 /* GameStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameStore.swift; sourceTree = "<group>"; };
 		3420AB2037A30BA5F6D0BCF1 /* Scoring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scoring.swift; sourceTree = "<group>"; };
@@ -52,6 +55,7 @@
 		BCBE0F59A87E750FE2FF852B /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
 		C69905B4DC378611E35F1829 /* BonusPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BonusPickerView.swift; sourceTree = "<group>"; };
 		CF8BFA2A897AE8AAB1C6B78D /* SetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetupView.swift; sourceTree = "<group>"; };
+		DDE1CDD2927FD0484F2FF10A /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		E5989C1CFA07B4D3140ECE8A /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		EC25D545C188614A6738CA67 /* RoundDraft.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundDraft.swift; sourceTree = "<group>"; };
 		EE2C3416A4B0F37FB7CD4F93 /* QuiddleBotApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuiddleBotApp.swift; sourceTree = "<group>"; };
@@ -63,6 +67,7 @@
 			isa = PBXGroup;
 			children = (
 				C69905B4DC378611E35F1829 /* BonusPickerView.swift */,
+				069F7A693AFEE350824C1976 /* ConfettiView.swift */,
 				B3159E4C5A145EE56F25A21A /* GameOverView.swift */,
 				81988C87752860A6854D8414 /* GameView.swift */,
 				BCBE0F59A87E750FE2FF852B /* HistoryView.swift */,
@@ -72,6 +77,7 @@
 				9E8E3B0C4552588D8757B181 /* RoundNavView.swift */,
 				51E40CE845D8D3C6EEF1B412 /* ScoreboardView.swift */,
 				CF8BFA2A897AE8AAB1C6B78D /* SetupView.swift */,
+				DDE1CDD2927FD0484F2FF10A /* Theme.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -228,6 +234,7 @@
 			files = (
 				67A10201869745535A9B10D3 /* BonusPickerView.swift in Sources */,
 				EDAEDCBEA484C4FFABB6A138 /* CardValues.swift in Sources */,
+				6E64E8A09C24D226B4D9C835 /* ConfettiView.swift in Sources */,
 				D44A6D9A2900D6C5F59F3F05 /* Game.swift in Sources */,
 				3133278DF80ADF36D0E56CF7 /* GameOverView.swift in Sources */,
 				E07F31879D12CEE5109C188B /* GameStore.swift in Sources */,
@@ -241,6 +248,7 @@
 				4AE51F652D7E5F50D634D408 /* ScoreboardView.swift in Sources */,
 				984CF11A932DF38E27F840F6 /* Scoring.swift in Sources */,
 				D4E583F46DEA00261FA975AA /* SetupView.swift in Sources */,
+				ABFF21B12A552C12AC614192 /* Theme.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

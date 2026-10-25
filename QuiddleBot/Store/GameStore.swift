@@ -52,6 +52,12 @@ final class GameStore {
         persist()
     }
 
+    /// A fresh game with the same players and rules, for "one more".
+    func rematch() {
+        guard let current = game else { return }
+        start(players: current.players, rules: current.rules)
+    }
+
     func reset() {
         game = nil
         editingRound = nil
