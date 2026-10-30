@@ -8,22 +8,26 @@
 
 /* Begin PBXBuildFile section */
 		10D07258E15B7010EE6FA700 /* QuiddleBotApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE2C3416A4B0F37FB7CD4F93 /* QuiddleBotApp.swift */; };
+		1E1B2F6E6713EF5F84590051 /* RoundCountSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 736A582EAD18A22A37F72496 /* RoundCountSession.swift */; };
 		202064E49B23336D59247A85 /* RoundNavView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E8E3B0C4552588D8757B181 /* RoundNavView.swift */; };
 		3133278DF80ADF36D0E56CF7 /* GameOverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3159E4C5A145EE56F25A21A /* GameOverView.swift */; };
-		3C502131BCF1746F73321D1C /* HandBuilderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDC57959793B3C342F4D9768 /* HandBuilderView.swift */; };
 		4AE51F652D7E5F50D634D408 /* ScoreboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E40CE845D8D3C6EEF1B412 /* ScoreboardView.swift */; };
 		5076FADE3CDE2D82076C4601 /* RoundEntryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B9D8F2E6F3AC4407A5C03A7 /* RoundEntryView.swift */; };
 		5D3969D185C0E5B2E73A7714 /* Hand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 759D44788D5B323016BA1C22 /* Hand.swift */; };
 		67A10201869745535A9B10D3 /* BonusPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C69905B4DC378611E35F1829 /* BonusPickerView.swift */; };
 		6E64E8A09C24D226B4D9C835 /* ConfettiView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 069F7A693AFEE350824C1976 /* ConfettiView.swift */; };
+		8C8E4DD9423B44F2219C9784 /* CountingFlowTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2E9611F68351A16E0E41083 /* CountingFlowTests.swift */; };
 		8CE1FD7085F28E828554BCAA /* CardKeypadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0D1BE3CA45128E22C14F74D /* CardKeypadView.swift */; };
+		92A09219AA427FCD38ABD98D /* GameHighlights.swift in Sources */ = {isa = PBXBuildFile; fileRef = 191655FFC8681840E938DF01 /* GameHighlights.swift */; };
 		984CF11A932DF38E27F840F6 /* Scoring.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3420AB2037A30BA5F6D0BCF1 /* Scoring.swift */; };
 		989DF10783B390A24F0C5D3F /* HandDraft.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB14463F51CB5B5F2FE1E82E /* HandDraft.swift */; };
+		9B0F85091C97CB69C41C092C /* HandEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC8ECD4F0F8353BE1B1B434B /* HandEditorView.swift */; };
 		ABFF21B12A552C12AC614192 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDE1CDD2927FD0484F2FF10A /* Theme.swift */; };
 		B4071870668C10B66F55C3B3 /* ScoringTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CDA446AB11DE3D8C185006C /* ScoringTests.swift */; };
 		B55E592DC3C68C9AFE534D4B /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5989C1CFA07B4D3140ECE8A /* RootView.swift */; };
 		B6F8728A168DB0B2B1FF44B3 /* WordCalculatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9EC48530D94EA80678666C8 /* WordCalculatorTests.swift */; };
 		BE53A11DD1E0EEA4D4BDED5E /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCBE0F59A87E750FE2FF852B /* HistoryView.swift */; };
+		C845FF477559F82E78C51D55 /* RoundCounterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABEF2397CAD9EF1497E0B33 /* RoundCounterView.swift */; };
 		CBDC3481C2E530E854809226 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 66CD7C01E8764BEFA56A7C99 /* Assets.xcassets */; };
 		D01690C6AAFAF4F539AE1F3F /* RoundDraft.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC25D545C188614A6738CA67 /* RoundDraft.swift */; };
 		D44A6D9A2900D6C5F59F3F05 /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = 534BF4C1AF894FB907BA9EC5 /* Game.swift */; };
@@ -46,7 +50,9 @@
 /* Begin PBXFileReference section */
 		01E4971FD49D44036757E12E /* CardValues.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardValues.swift; sourceTree = "<group>"; };
 		069F7A693AFEE350824C1976 /* ConfettiView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfettiView.swift; sourceTree = "<group>"; };
+		0ABEF2397CAD9EF1497E0B33 /* RoundCounterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundCounterView.swift; sourceTree = "<group>"; };
 		0B9D8F2E6F3AC4407A5C03A7 /* RoundEntryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundEntryView.swift; sourceTree = "<group>"; };
+		191655FFC8681840E938DF01 /* GameHighlights.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameHighlights.swift; sourceTree = "<group>"; };
 		3295D09197A256EB6EA9A417 /* GameStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameStore.swift; sourceTree = "<group>"; };
 		3420AB2037A30BA5F6D0BCF1 /* Scoring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scoring.swift; sourceTree = "<group>"; };
 		3CDA446AB11DE3D8C185006C /* ScoringTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoringTests.swift; sourceTree = "<group>"; };
@@ -54,6 +60,7 @@
 		534BF4C1AF894FB907BA9EC5 /* Game.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Game.swift; sourceTree = "<group>"; };
 		66CD7C01E8764BEFA56A7C99 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		6C9D0D8A9B79AB3BD4A8AA1C /* QuiddleBot.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = QuiddleBot.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		736A582EAD18A22A37F72496 /* RoundCountSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundCountSession.swift; sourceTree = "<group>"; };
 		759D44788D5B323016BA1C22 /* Hand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Hand.swift; sourceTree = "<group>"; };
 		81988C87752860A6854D8414 /* GameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameView.swift; sourceTree = "<group>"; };
 		9E8E3B0C4552588D8757B181 /* RoundNavView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundNavView.swift; sourceTree = "<group>"; };
@@ -61,13 +68,14 @@
 		B0D1BE3CA45128E22C14F74D /* CardKeypadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardKeypadView.swift; sourceTree = "<group>"; };
 		B3159E4C5A145EE56F25A21A /* GameOverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameOverView.swift; sourceTree = "<group>"; };
 		BCBE0F59A87E750FE2FF852B /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
+		C2E9611F68351A16E0E41083 /* CountingFlowTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountingFlowTests.swift; sourceTree = "<group>"; };
 		C69905B4DC378611E35F1829 /* BonusPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BonusPickerView.swift; sourceTree = "<group>"; };
 		CF8BFA2A897AE8AAB1C6B78D /* SetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetupView.swift; sourceTree = "<group>"; };
-		DDC57959793B3C342F4D9768 /* HandBuilderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HandBuilderView.swift; sourceTree = "<group>"; };
 		DDE1CDD2927FD0484F2FF10A /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		E5989C1CFA07B4D3140ECE8A /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		E9EC48530D94EA80678666C8 /* WordCalculatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordCalculatorTests.swift; sourceTree = "<group>"; };
 		EC25D545C188614A6738CA67 /* RoundDraft.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundDraft.swift; sourceTree = "<group>"; };
+		EC8ECD4F0F8353BE1B1B434B /* HandEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HandEditorView.swift; sourceTree = "<group>"; };
 		EE2C3416A4B0F37FB7CD4F93 /* QuiddleBotApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuiddleBotApp.swift; sourceTree = "<group>"; };
 		F0F10CC0BC7901310D9C68FF /* QuiddleBotTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = QuiddleBotTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -81,10 +89,12 @@
 				069F7A693AFEE350824C1976 /* ConfettiView.swift */,
 				B3159E4C5A145EE56F25A21A /* GameOverView.swift */,
 				81988C87752860A6854D8414 /* GameView.swift */,
-				DDC57959793B3C342F4D9768 /* HandBuilderView.swift */,
 				AB14463F51CB5B5F2FE1E82E /* HandDraft.swift */,
+				EC8ECD4F0F8353BE1B1B434B /* HandEditorView.swift */,
 				BCBE0F59A87E750FE2FF852B /* HistoryView.swift */,
 				E5989C1CFA07B4D3140ECE8A /* RootView.swift */,
+				0ABEF2397CAD9EF1497E0B33 /* RoundCounterView.swift */,
+				736A582EAD18A22A37F72496 /* RoundCountSession.swift */,
 				EC25D545C188614A6738CA67 /* RoundDraft.swift */,
 				0B9D8F2E6F3AC4407A5C03A7 /* RoundEntryView.swift */,
 				9E8E3B0C4552588D8757B181 /* RoundNavView.swift */,
@@ -100,6 +110,7 @@
 			children = (
 				01E4971FD49D44036757E12E /* CardValues.swift */,
 				534BF4C1AF894FB907BA9EC5 /* Game.swift */,
+				191655FFC8681840E938DF01 /* GameHighlights.swift */,
 				759D44788D5B323016BA1C22 /* Hand.swift */,
 				3420AB2037A30BA5F6D0BCF1 /* Scoring.swift */,
 			);
@@ -109,6 +120,7 @@
 		554ECE9339F1237F72C5D65E /* QuiddleBotTests */ = {
 			isa = PBXGroup;
 			children = (
+				C2E9611F68351A16E0E41083 /* CountingFlowTests.swift */,
 				3CDA446AB11DE3D8C185006C /* ScoringTests.swift */,
 				E9EC48530D94EA80678666C8 /* WordCalculatorTests.swift */,
 			);
@@ -252,15 +264,18 @@
 				EDAEDCBEA484C4FFABB6A138 /* CardValues.swift in Sources */,
 				6E64E8A09C24D226B4D9C835 /* ConfettiView.swift in Sources */,
 				D44A6D9A2900D6C5F59F3F05 /* Game.swift in Sources */,
+				92A09219AA427FCD38ABD98D /* GameHighlights.swift in Sources */,
 				3133278DF80ADF36D0E56CF7 /* GameOverView.swift in Sources */,
 				E07F31879D12CEE5109C188B /* GameStore.swift in Sources */,
 				F5A07DCBC48C16138897A478 /* GameView.swift in Sources */,
 				5D3969D185C0E5B2E73A7714 /* Hand.swift in Sources */,
-				3C502131BCF1746F73321D1C /* HandBuilderView.swift in Sources */,
 				989DF10783B390A24F0C5D3F /* HandDraft.swift in Sources */,
+				9B0F85091C97CB69C41C092C /* HandEditorView.swift in Sources */,
 				BE53A11DD1E0EEA4D4BDED5E /* HistoryView.swift in Sources */,
 				10D07258E15B7010EE6FA700 /* QuiddleBotApp.swift in Sources */,
 				B55E592DC3C68C9AFE534D4B /* RootView.swift in Sources */,
+				1E1B2F6E6713EF5F84590051 /* RoundCountSession.swift in Sources */,
+				C845FF477559F82E78C51D55 /* RoundCounterView.swift in Sources */,
 				D01690C6AAFAF4F539AE1F3F /* RoundDraft.swift in Sources */,
 				5076FADE3CDE2D82076C4601 /* RoundEntryView.swift in Sources */,
 				202064E49B23336D59247A85 /* RoundNavView.swift in Sources */,
@@ -275,6 +290,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8C8E4DD9423B44F2219C9784 /* CountingFlowTests.swift in Sources */,
 				B4071870668C10B66F55C3B3 /* ScoringTests.swift in Sources */,
 				B6F8728A168DB0B2B1FF44B3 /* WordCalculatorTests.swift in Sources */,
 			);
@@ -430,7 +446,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = QuiddleBot;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
@@ -456,7 +472,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = QuiddleBot;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;

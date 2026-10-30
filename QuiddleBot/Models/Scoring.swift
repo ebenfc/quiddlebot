@@ -103,14 +103,19 @@ nonisolated enum Scoring {
 
     // MARK: - Word calculator bonus suggestions
 
+    /// Everyone sharing the highest number, in player order. Empty when nobody is above zero
+    /// (or there are no players): nobody laid a word, so nobody is in the running.
+    static func topPlayers(of values: [Int]) -> [Int] {
+        guard let top = values.max(), top > 0 else { return [] }
+        return values.indices.filter { values[$0] == top }
+    }
+
     /// Who earns a bonus, given each player's number for it, in player order: letters in
     /// their longest word, or how many words they laid down.
     /// The single highest number wins. A shared top, or nobody above zero, pays nobody (.tie).
     static func soleLeader(of values: [Int]) -> BonusAward {
-        // Nobody above zero (or no players at all): nobody laid a word, so nobody earns it.
-        guard let top = values.max(), top > 0 else { return .tie }
         // Only a tie for first matters; two players sharing a lower number change nothing.
-        let leaders = values.indices.filter { values[$0] == top }
+        let leaders = topPlayers(of: values)
         return leaders.count == 1 ? .player(leaders[0]) : .tie
     }
 

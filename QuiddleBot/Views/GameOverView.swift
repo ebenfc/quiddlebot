@@ -11,6 +11,9 @@ struct GameOverView: View {
                 VStack(spacing: 22) {
                     hero
                     standingsCard
+                    if let highlights = GameHighlights(game: game) {
+                        highlightsCard(highlights)
+                    }
                     if !game.rounds.isEmpty {
                         VStack(alignment: .leading, spacing: 12) {
                             Text("Scorecard").font(.title3.bold())
@@ -120,6 +123,57 @@ struct GameOverView: View {
             }
         }
         .card(padding: 8)
+    }
+
+    /// The game's standout words, from the counted hands. Hidden for a game of typed scores.
+    private func highlightsCard(_ highlights: GameHighlights) -> some View {
+        let longest = highlights.longestWord
+        let best = highlights.bestWord
+        return VStack(alignment: .leading, spacing: 16) {
+            Text("Highlights").font(.title3.bold())
+            if longest == best {
+                // One word won both: say it once.
+                highlight("Longest and best word", longest,
+                          detail: "\(longest.word.letters) letters · \(best.word.points) points")
+            } else {
+                highlight("Longest word", longest, detail: "\(longest.word.letters) letters")
+                highlight("Best word", best, detail: "\(best.word.points) points")
+            }
+        }
+        .card()
+    }
+
+    private func highlight(_ title: String, _ pick: GameHighlights.Pick, detail: String) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "star.fill")
+                    .foregroundStyle(Theme.gold)
+                Text(title)
+                    .font(.subheadline.weight(.semibold))
+                Spacer()
+                Text(detail)
+                    .font(.caption.weight(.bold).monospacedDigit())
+                    .foregroundStyle(Theme.gold)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(Theme.gold.opacity(0.15), in: Capsule())
+            }
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 4) {
+                    ForEach(pick.word.faces.indices, id: \.self) { position in
+                        CardTile(face: pick.word.faces[position], tint: Theme.playerColor(pick.player))
+                    }
+                }
+            }
+            HStack(spacing: 6) {
+                PlayerAvatar(name: game.players[pick.player], index: pick.player, size: 20)
+                Text("\(game.players[pick.player]) · round \(pick.round)")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(title): \(pick.word.text), \(detail), \(game.players[pick.player]), round \(pick.round)")
     }
 
     private func medalColor(for rank: Int) -> Color {

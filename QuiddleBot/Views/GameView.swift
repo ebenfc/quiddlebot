@@ -9,7 +9,13 @@ struct GameView: View {
     @State private var drafts: [Int: RoundDraft] = [:]
     @State private var confirmEndEarly = false
     @State private var confirmNewGame = false
-    @FocusState private var focusedField: EntryField?
+    /// Who the round counter opens on, while it is showing.
+    @State private var counting: CountingStart?
+
+    private struct CountingStart: Identifiable {
+        let player: Int
+        var id: Int { player }
+    }
 
     private var activeRound: Int { store.editingRound ?? game.currentRound }
     private var isEditing: Bool { store.editingRound != nil }
@@ -17,36 +23,42 @@ struct GameView: View {
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 18) {
-                    RoundNavView(game: game, editingRound: store.editingRound, onSelect: beginEditing)
-                    ScoreboardView(game: game)
-                    RoundEntryView(game: game,
-                                   roundNumber: activeRound,
-                                   isEditing: isEditing,
-                                   draft: draftBinding(for: activeRound),
-                                   focusedField: $focusedField)
-                        .id(activeRound)
-                    if !game.rounds.isEmpty {
-                        VStack(alignment: .leading, spacing: 12) {
-                            Text("Scorecard").font(.title3.bold())
-                            HistoryView(game: game, onEdit: beginEditing)
+            ScrollViewReader { scroller in
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 18) {
+                        RoundNavView(game: game, editingRound: store.editingRound, onSelect: beginEditing)
+                        ScoreboardView(game: game)
+                        RoundEntryView(game: game,
+                                       isEditing: isEditing,
+                                       draft: draftBinding(for: activeRound),
+                                       onCount: startCounting(at:))
+                            .id(activeRound)
+                            .background(alignment: .top) {
+                                Color.clear.frame(height: 1).id(Self.roundAnchor)
+                            }
+                        if !game.rounds.isEmpty {
+                            VStack(alignment: .leading, spacing: 12) {
+                                Text("Scorecard").font(.title3.bold())
+                                HistoryView(game: game, onEdit: beginEditing)
+                            }
+                            .card()
                         }
-                        .card()
                     }
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 20)
                 }
-                .padding(.horizontal, 20)
-                .padding(.bottom, 20)
+                .fullScreenCover(item: $counting, onDismiss: {
+                    // Back from counting: show the round's results, not the scoreboard.
+                    withAnimation(.snappy) { scroller.scrollTo(Self.roundAnchor, anchor: .top) }
+                }) { start in
+                    RoundCounterView(players: game.players,
+                                     roundNumber: activeRound,
+                                     draft: activeDraft,
+                                     startingAt: start.player) { drafts[activeRound] = $0 }
+                }
             }
-            .scrollDismissesKeyboard(.interactively)
             .background(Color(.systemGroupedBackground))
-            .safeAreaInset(edge: .bottom) {
-                // While typing, the keyboard's own bar has Done and next-field buttons,
-                // so the pinned action bar steps aside instead of colliding with it.
-                if focusedField == nil {
-                    actionBar
-                }
-            }
+            .safeAreaInset(edge: .bottom) { actionBar }
             .navigationTitle("QuiddleBot")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -77,17 +89,33 @@ struct GameView: View {
         .onDisappear { UIApplication.shared.isIdleTimerDisabled = false }
     }
 
-    /// The main action, pinned above the keyboard and home indicator.
+    private static let roundAnchor = "round"
+
+    /// The main action, pinned above the home indicator. One button walks the round:
+    /// Count Hands until everyone has a score, then Next Round.
     private var actionBar: some View {
-        let round = activeDraft.round(rules: game.rules)
+        let draft = activeDraft
+        let round = draft.round(rules: game.rules)
+        let uncounted = draft.uncountedPlayers
         return BottomActionBar {
-            if round == nil {
-                Text("Enter everyone's score and pick each bonus to continue.")
+            if let hint = hint(round: round, uncounted: uncounted) {
+                Text(hint)
                     .font(.footnote)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
             }
-            if isEditing {
+            if !isEditing, let first = uncounted.first {
+                Button {
+                    startCounting(at: first)
+                } label: {
+                    HStack(spacing: 8) {
+                        Image(systemName: "square.grid.3x3.fill")
+                        Text(uncounted.count == game.players.count
+                             ? "Count Hands" : "Count \(game.players[first])'s Hand")
+                    }
+                }
+                .buttonStyle(PrimaryButtonStyle())
+            } else if isEditing {
                 HStack(spacing: 12) {
                     Button("Cancel", action: cancelEdit)
                         .buttonStyle(SecondaryButtonStyle())
@@ -111,6 +139,21 @@ struct GameView: View {
             }
         }
         .animation(.snappy, value: round == nil)
+        .animation(.snappy, value: uncounted)
+    }
+
+    /// What's still missing, when the button alone doesn't say.
+    private func hint(round: Round?, uncounted: [Int]) -> String? {
+        if !uncounted.isEmpty {
+            if isEditing { return "Count every hand to save." }
+            return uncounted.count == game.players.count
+                ? "When the round ends, count each player's cards." : nil
+        }
+        return round == nil ? "Pick each bonus to continue." : nil
+    }
+
+    private func startCounting(at player: Int) {
+        counting = CountingStart(player: player)
     }
 
     private func draftBinding(for round: Int) -> Binding<RoundDraft> {
