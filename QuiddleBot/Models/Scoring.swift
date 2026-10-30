@@ -100,4 +100,33 @@ nonisolated enum Scoring {
         guard let top = totals.max(), top > 0 else { return [] }
         return Set(totals.indices.filter { totals[$0] == top })
     }
+
+    // MARK: - Word calculator bonus suggestions
+
+    /// Who earns a bonus, given each player's number for it, in player order: letters in
+    /// their longest word, or how many words they laid down.
+    /// The single highest number wins. A shared top, or nobody above zero, pays nobody (.tie).
+    static func soleLeader(of values: [Int]) -> BonusAward {
+        // Nobody above zero (or no players at all): nobody laid a word, so nobody earns it.
+        guard let top = values.max(), top > 0 else { return .tie }
+        // Only a tie for first matters; two players sharing a lower number change nothing.
+        let leaders = values.indices.filter { values[$0] == top }
+        return leaders.count == 1 ? .player(leaders[0]) : .tie
+    }
+
+    /// Longest Word from the counted cards, or nil unless every player's hand was counted:
+    /// one typed score means we cannot know that player's words.
+    static func suggestedLongestWord(for hands: [Hand?]) -> BonusAward? {
+        allCounted(hands).map { soleLeader(of: $0.map(\.longestWordLetters)) }
+    }
+
+    /// Most Words from the counted cards, or nil unless every player's hand was counted.
+    static func suggestedMostWords(for hands: [Hand?]) -> BonusAward? {
+        allCounted(hands).map { soleLeader(of: $0.map(\.wordCount)) }
+    }
+
+    private static func allCounted(_ hands: [Hand?]) -> [Hand]? {
+        let counted = hands.compactMap { $0 }
+        return !hands.isEmpty && counted.count == hands.count ? counted : nil
+    }
 }

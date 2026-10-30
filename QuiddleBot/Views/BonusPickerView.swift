@@ -6,6 +6,9 @@ struct BonusPickerView: View {
     let bonus: Int
     let players: [String]
     @Binding var selection: BonusAward
+    /// What the word calculator's counted cards say, marked with sparkles. nil unless every
+    /// player's hand was counted.
+    var suggestion: BonusAward? = nil
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -30,7 +33,17 @@ struct BonusPickerView: View {
                 }
                 chip("Tie / none", value: .tie, color: Color(.systemGray), showsDot: false)
             }
+
+            if let suggestion {
+                Label(suggestion == selection ? "Picked from the counted cards. Tap to change."
+                                              : "Sparkles mark what the counted cards say.",
+                      systemImage: "sparkles")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .transition(.opacity)
+            }
         }
+        .animation(.snappy, value: suggestion)
         .sensoryFeedback(.selection, trigger: selection)
         .accessibilityElement(children: .contain)
         .accessibilityLabel("\(title) bonus")
@@ -57,6 +70,11 @@ struct BonusPickerView: View {
                 Text(label)
                     .lineLimit(1)
                     .minimumScaleFactor(0.8)
+                if suggestion == value {
+                    Image(systemName: "sparkles")
+                        .font(.caption2)
+                        .accessibilityLabel("suggested by the counted cards")
+                }
             }
             .font(.subheadline.weight(.semibold))
             .foregroundStyle(isSelected ? Color.white : Color.primary)

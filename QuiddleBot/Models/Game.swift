@@ -20,15 +20,20 @@ nonisolated struct Round: Codable, Equatable, Sendable {
     var penalties: [Int]
     var longestWord: BonusAward
     var mostWords: BonusAward
+    /// The hand each player counted in the word calculator; nil where the score was typed.
+    /// A record of how `scores` was reached: scoring itself only ever reads `scores`.
+    var hands: [Hand?]
 
     init(scores: [Int],
          penalties: [Int]? = nil,
          longestWord: BonusAward = .unset,
-         mostWords: BonusAward = .unset) {
+         mostWords: BonusAward = .unset,
+         hands: [Hand?]? = nil) {
         self.scores = scores
         self.penalties = penalties ?? Array(repeating: 0, count: scores.count)
         self.longestWord = longestWord
         self.mostWords = mostWords
+        self.hands = hands ?? Array(repeating: nil, count: scores.count)
     }
 
     /// Saves written before a field existed still load: missing keys take their defaults.
@@ -39,6 +44,13 @@ nonisolated struct Round: Codable, Equatable, Sendable {
             ?? Array(repeating: 0, count: scores.count)
         longestWord = try c.decodeIfPresent(BonusAward.self, forKey: .longestWord) ?? .unset
         mostWords = try c.decodeIfPresent(BonusAward.self, forKey: .mostWords) ?? .unset
+        // `try?`, not `try`: the store starts a fresh game when a save fails to load, so a
+        // damaged hand must cost only the cards, never the scores.
+        if let saved = try? c.decodeIfPresent([Hand?].self, forKey: .hands), saved.count == scores.count {
+            hands = saved
+        } else {
+            hands = Array(repeating: nil, count: scores.count)
+        }
     }
 }
 

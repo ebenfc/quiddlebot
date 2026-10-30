@@ -16,6 +16,14 @@ struct RoundEntryView: View {
     @Binding var draft: RoundDraft
     var focusedField: FocusState<EntryField?>.Binding
 
+    /// Whose hand the word calculator is open for.
+    @State private var counting: CountingPlayer?
+
+    private struct CountingPlayer: Identifiable {
+        let player: Int
+        var id: Int { player }
+    }
+
     private var rules: RuleSet { game.rules }
 
     var body: some View {
@@ -23,7 +31,7 @@ struct RoundEntryView: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(isEditing ? "Fix the scores" : "Scores this round")
                     .font(.title3.bold())
-                Text("Word points minus leftover cards. Tap + to switch to a negative hand.")
+                Text("Type word points minus leftover cards, or tap Count cards to add them up. Tap + for a negative hand.")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
             }
@@ -34,7 +42,8 @@ struct RoundEntryView: View {
                              player: player,
                              rules: rules,
                              draft: $draft,
-                             focusedField: focusedField)
+                             focusedField: focusedField,
+                             onCount: { count(player) })
                 }
             }
 
@@ -43,11 +52,17 @@ struct RoundEntryView: View {
             }
             if rules.longestWordEnabled {
                 BonusPickerView(title: "Longest word", bonus: rules.bonusValue,
-                                players: game.players, selection: $draft.longestWord)
+                                players: game.players,
+                                selection: Binding(get: { draft.effectiveLongestWord },
+                                                   set: { draft.pickLongestWord($0) }),
+                                suggestion: draft.suggestedLongestWord)
             }
             if rules.mostWordsEnabled {
                 BonusPickerView(title: "Most words", bonus: rules.bonusValue,
-                                players: game.players, selection: $draft.mostWords)
+                                players: game.players,
+                                selection: Binding(get: { draft.effectiveMostWords },
+                                                   set: { draft.pickMostWords($0) }),
+                                suggestion: draft.suggestedMostWords)
             }
         }
         .card()
@@ -59,9 +74,35 @@ struct RoundEntryView: View {
                 Button("Next player", systemImage: "chevron.down") { moveFocus(by: 1) }
                     .disabled(!canMoveFocus(by: 1))
                 Spacer()
+                if let player = focusedScorePlayer {
+                    Button { count(player) } label: {
+                        Label("Count cards", systemImage: "square.grid.3x3.fill")
+                            .labelStyle(.titleAndIcon)
+                    }
+                }
                 Button("Done") { focusedField.wrappedValue = nil }
             }
         }
+        .sheet(item: $counting) { item in
+            HandBuilderView(playerName: game.players[item.player],
+                            player: item.player,
+                            roundNumber: roundNumber,
+                            hand: draft.hands[item.player]) { hand in
+                draft.apply(hand, for: item.player)
+            }
+        }
+    }
+
+    private var focusedScorePlayer: Int? {
+        guard case .score(let player) = focusedField.wrappedValue else { return nil }
+        return player
+    }
+
+    /// Opens the word calculator. The keyboard goes away first, so GameView's pinned
+    /// action bar is back in place when the sheet closes.
+    private func count(_ player: Int) {
+        focusedField.wrappedValue = nil
+        counting = CountingPlayer(player: player)
     }
 
     private func canMoveFocus(by delta: Int) -> Bool {
@@ -74,13 +115,15 @@ struct RoundEntryView: View {
         focusedField.wrappedValue = .score(player + delta)
     }
 
-    /// One player's row: avatar and name, live notes about bonuses, sign toggle, score, challenge flag.
+    /// One player's row: avatar and name, live notes about bonuses, the word calculator link,
+    /// sign toggle, score, challenge flag.
     private struct ScoreRow: View {
         let name: String
         let player: Int
         let rules: RuleSet
         @Binding var draft: RoundDraft
         var focusedField: FocusState<EntryField?>.Binding
+        var onCount: () -> Void
 
         var body: some View {
             VStack(alignment: .leading, spacing: 8) {
@@ -107,6 +150,7 @@ struct RoundEntryView: View {
                                 .foregroundStyle(.secondary)
                                 .transition(.opacity)
                         }
+                        countCardsLink
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .animation(.snappy, value: bonusTotal)
@@ -145,16 +189,44 @@ struct RoundEntryView: View {
         /// The bonus points this player has been picked for, shown right where people look.
         private var bonusTotal: Int {
             var total = 0
-            if rules.longestWordEnabled, draft.longestWord == .player(player) { total += rules.bonusValue }
-            if rules.mostWordsEnabled, draft.mostWords == .player(player) { total += rules.bonusValue }
+            if rules.longestWordEnabled, draft.effectiveLongestWord == .player(player) { total += rules.bonusValue }
+            if rules.mostWordsEnabled, draft.effectiveMostWords == .player(player) { total += rules.bonusValue }
             return total
         }
 
         private var bonusNames: String {
             var names: [String] = []
-            if rules.longestWordEnabled, draft.longestWord == .player(player) { names.append("Longest word") }
-            if rules.mostWordsEnabled, draft.mostWords == .player(player) { names.append("Most words") }
+            if rules.longestWordEnabled, draft.effectiveLongestWord == .player(player) { names.append("Longest word") }
+            if rules.mostWordsEnabled, draft.effectiveMostWords == .player(player) { names.append("Most words") }
             return names.joined(separator: " and ")
+        }
+
+        /// Opens the word calculator. Once a hand is counted, it says what was counted; if a
+        /// different number is typed over it, it goes back to "Count cards".
+        private var countCardsLink: some View {
+            let icon = "square.grid.3x3.fill"
+            let hand = draft.countedHand(for: player)
+            // The long form, or a shorter one when the name column is narrow (iPhone SE).
+            let long = hand.map { "\(wordsText($0)) · \($0.cardCount) cards" } ?? "Count cards"
+            let short = hand.map(wordsText) ?? "Count"
+            return Button(action: onCount) {
+                ViewThatFits(in: .horizontal) {
+                    Label(long, systemImage: icon)
+                    Label(short, systemImage: icon)
+                }
+                .font(.caption.weight(.semibold))
+                .lineLimit(1)
+                .padding(.vertical, 3)
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .foregroundStyle(Color.accentColor)
+            .accessibilityLabel(hand.map { "Counted: \(wordsText($0)), \($0.cardCount) cards" } ?? "Count cards")
+            .accessibilityHint("Adds up \(name)'s hand from the cards")
+        }
+
+        private func wordsText(_ hand: Hand) -> String {
+            hand.wordCount == 1 ? "1 word" : "\(hand.wordCount) words"
         }
 
         /// A negative hand is floored at zero by the official rules; say so before submitting.

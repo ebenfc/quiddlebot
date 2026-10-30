@@ -49,6 +49,11 @@ nonisolated enum CardValues {
 
     static let totalCards: Int = deck.reduce(0) { $0 + $1.count }
 
+    /// Total printed value of some cards. A face not in the deck counts 0.
+    static func points(ofFaces faces: [String]) -> Int {
+        faces.reduce(0) { $0 + (points[$1] ?? 0) }
+    }
+
     /// Length of a word for the Longest Word bonus: counted in letters, so "TH" is 2.
     static func letterCount(ofFaces faces: [String]) -> Int {
         faces.reduce(0) { $0 + $1.count }

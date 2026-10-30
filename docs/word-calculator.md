@@ -1,0 +1,223 @@
+# Word calculator (v1.1): design
+
+## Context
+Today each player adds up their hand in their head, and the scorekeeper types one number per player
+(`RoundDraft.scoreText` → `Round.scores`). That is where mistakes come from: the five two-letter cards,
+subtracting leftovers, and Longest Word, which is measured in **letters** (TH = 2), not cards. No
+Quiddler app scores a word from its cards, so this is the v1.1 differentiator.
+
+Goal: a player taps the cards in each word they laid down and the cards they couldn't use. The app
+adds up the words, subtracts the leftovers, and works out Longest Word and Most Words. The result drops
+into the existing round entry. **Typing a number keeps working exactly as it does now**, and in the same
+round some players can type while others count.
+
+Designed 2026-10-29 from `0c8f366`, when 23 Swift Testing tests passed.
+
+**Owner's decisions (2026-10-29):**
+- Design A: a "Count cards" sheet per player.
+- Bonuses are pre-picked from the cards and can still be changed.
+- The keypad is QWERTY.
+- The owner writes `Scoring.soleLeader(of:)`.
+
+---
+
+## 1. The interaction: a "Count cards" sheet, one player at a time
+
+```
+┌ Round 4 ─────────────────────────┐        ┌ Ada's hand · 6 cards     Cancel ┐
+│ (A) Ada           [+] [ 31 ]  ⚑  │        │ QU·I·Z       25   ★ 4 letters    │
+│     ▦ 2 words · 6 cards          │  tap ▦ │ TH·E         11                  │
+│ (B) Ben           [+] [    ]  ⚑  │  ───▶  │ Leftover R   −5                  │
+│     ▦ Count cards                │        │ Words 36 − 5 = 31   6 of 6 cards │
+└──────────────────────────────────┘        │ [ Words | Leftovers ]            │
+                                            │ Q W E R T Y U I O P              │
+                                            │  A S D F G H J K L               │
+                                            │   Z X C V B N M   ⌫              │
+                                            │ QU IN ER CL TH   [Next word]     │
+                                            │ [           Use 31            ]  │
+                                            └──────────────────────────────────┘
+```
+
+- **Entry points.** The main way in is a **▦ Count cards** caption link under the player's name. It takes no width from the row: on the 402 pt iPhone 17 the name column is only 106 pt (79 pt on the 375 pt SE), and a fifth 38 pt button would squeeze it to 58 pt (31 pt on the SE). After a hand is counted, the link becomes a summary (`▦ 2 words · 6 cards`) that reopens the sheet. There is a second way in: a **Count cards** button in the number-pad toolbar, between the chevrons and Done, for anyone who has already tapped the field.
+- **Sheet.** Its parts, from top to bottom:
+  - the running sum and the card count (`6 of 6 cards`, compared with `Game.cardsDealt(inRound:)`)
+  - the words, each as a row of tiles with its points; the longest word gets a gold ★ and its letter count
+  - the leftover tray, tinted red
+  - the keypad, pinned to the bottom
+
+  Each tile is a generic rounded tile showing the letter and a small point value. It uses no Quiddler card art.
+- **Keypad (QWERTY).** It has three letter rows, plus a fourth row with QU IN ER CL TH (accent-tinted) and **Next word**, and ⌫. Every key shows its points small. A **Words | Leftovers** switch decides where taps go.
+- **Fixing mistakes.** Tap a tile to remove it. ⌫ removes the last card; on an empty word it steps back into the previous word. Tap a word to keep adding to it.
+- **Use 31** writes the score into the field, setting the sign toggle for a negative hand, keeps the hand alongside, and closes the sheet.
+- **Not chosen.** B (the whole table in one guided pass) is all-or-nothing and has more to build; it can come back later as a **Next player →** button in this sheet. C (typing words) has to guess where the two-letter cards are: THIN scores 16 or 17 depending on how it's split.
+
+## 2. What the calculator owns
+
+| Owns | Leaves alone |
+|---|---|
+| Word points. Two-letter cards count at their printed value. | The **zero floor** stays in `Scoring.handTotal`. The calculator hands over the raw number (e.g. −5), and the row's existing "Counts as 0" note explains it. |
+| Subtracting leftovers | **Challenge penalties** stay with the existing flag button. A word that lost a challenge is simply left out of the calculator. |
+| Each player's longest word in letters, via `CardValues.letterCount` | Whether a word is real; the table's dictionary decides that. |
+| Each player's word count | |
+| **Blocks Use:** a one-card word ("Words need at least two cards"), with a one-tap **Move to leftovers** fix. No legal word is one card. | |
+| **Warns but allows:** a card count that differs from what the round deals, since a lost challenge can legitimately change it | |
+
+**Bonus suggestions.** These appear only when **every** player in the round has a counted hand: if
+anyone typed a score, we can't know their words. Longest Word goes to the single player with the most
+letters in one word, and Most Words to the single player with the most words. A shared top, or nobody
+with a word, pays nobody (`.tie`, shown as "Tie / none"). Only bonuses the table plays are suggested
+(`RuleSet.longestWordEnabled` / `mostWordsEnabled`), so two-player games are already handled.
+
+**How a suggestion meets the picker** (pre-pick, changeable). There's no "was this auto-picked?" flag,
+just one rule: *the picker shows the scorekeeper's pick if they made one, otherwise the cards'
+suggestion*.
+- A pick that agrees with the cards is stored as "follow the cards" (`.unset`). A pick that disagrees is a manual override, and it always wins.
+- So if a word is fixed later, an agreeing pick moves with the cards and an override stays put.
+- If someone types over a counted score, the suggestion disappears and the bonus goes back to unpicked, so a stale auto-pick can't slip through.
+- The suggested chip gets a small sparkles mark and a "from the cards" caption.
+
+**Typed number always wins.** A hand counts only while the score field still shows its total. If you
+type a different number, the cards are ignored. Nothing needs to watch for this, because it's checked
+whenever the hand is used.
+
+## 3. Data model and saved games
+
+**New `QuiddleBot/Models/Hand.swift`.** Every type in it is `nonisolated`. That's required: with
+MainActor default isolation, `Round`'s synthesized `Codable`/`Sendable` won't compile otherwise.
+
+```swift
+/// One word laid down, as the cards it was made from, in order: ["QU", "I", "Z"].
+nonisolated struct Word: Codable, Equatable, Hashable, Sendable {
+    var faces: [String]
+    var points: Int  { faces.reduce(0) { $0 + (CardValues.points[$1] ?? 0) } }
+    var letters: Int { CardValues.letterCount(ofFaces: faces) }
+}
+
+/// One player's hand as counted in the calculator.
+nonisolated struct Hand: Codable, Equatable, Sendable {
+    var words: [Word] = []
+    var leftovers: [String] = []
+    var wordPoints: Int, leftoverPoints: Int            // computed
+    var score: Int { wordPoints - leftoverPoints }      // raw; may be negative; Scoring floors it
+    var longestWordLetters: Int { words.map(\.letters).max() ?? 0 }
+    var wordCount: Int { words.count }
+    var cardCount: Int                                  // computed
+}
+```
+Faces stay `String`s ("QU") to match `CardValues.points` and `letterCount(ofFaces:)`.
+
+**Changes to `Round`** in `Models/Game.swift`:
+- Add `var hands: [Hand?]`, with `nil` meaning the score was typed.
+- Add `hands: [Hand?]? = nil` as the **last** init parameter, so every existing call site still compiles.
+- In `init(from:)`, decode with `(try? c.decodeIfPresent([Hand?].self, forKey: .hands)) ?? nil`, falling back to all-nil. The `try?` matters: `GameStore.load()` throws away the *whole game* on any decode error, so a bad `hands` value must never cost the scores.
+- **`Round.scores` stays the single source of truth.** `Scoring.handTotal`, the totals, the standings and the scorecard don't change. A hand is a receipt: it lets editing a saved round reopen the cards, and it can feed later stats.
+
+**Changes to `RoundDraft`** in `Views/RoundDraft.swift`:
+```swift
+var hands: [Hand?]                                  // all nil; init(from:) loads round.hands
+func countedHand(for player: Int) -> Hand?          // hands[p] only if its score == score(for: p)
+mutating func apply(_ hand: Hand, for player: Int)  // scoreText = |score|, isNegative, hands[p]
+var suggestedLongestWord: BonusAward?               // nil unless every player has a counted hand
+var suggestedMostWords: BonusAward?
+var effectiveLongestWord: BonusAward                // manual pick, else suggestion, else .unset
+var effectiveMostWords: BonusAward
+mutating func pickLongestWord(_ award: BonusAward)  // agrees with suggestion → .unset; else manual
+mutating func pickMostWords(_ award: BonusAward)
+```
+- `isComplete` and `round(rules:)` use the effective picks.
+- `round(rules:)` saves `countedHand(for:)` for each player, so stale hands are dropped.
+- `init(from:)` runs the saved picks through the same `pick…` rule, so re-editing a round keeps the suggestion live.
+
+**New `Views/HandDraft.swift`.** The sheet's editing logic, as a testable value type like `RoundDraft`:
+- Input: `init(hand: Hand?, cardsDealt: Int)`.
+- Editing: `add(_ face:)`, `nextWord()`, which does nothing on an empty word, and `backspace()`.
+- Fixing: `removeCard(word:at:)`, `removeLeftover(at:)` and `moveWordToLeftovers(_:)`.
+- State: `target`, which is either `.words` or `.leftovers`.
+- Results: `issues`, where only a short word blocks, and `hand: Hand?`, which drops empty words and is nil while a short word remains.
+
+## 4. The owner's piece: the tie rule
+
+```swift
+extension Scoring {
+    /// Who earns a bonus, given each player's number for it (letters in their longest word,
+    /// or how many words they laid down), in player order.
+    /// The single highest number wins. A shared top, or nobody above zero, pays nobody (.tie).
+    static func soleLeader(of values: [Int]) -> BonusAward {
+        // TODO(owner)
+    }
+}
+```
+- `suggestedLongestWord(for:)` and `suggestedMostWords(for:)` are one-liners on top of it.
+- I write the stub and the failing tests first, then explain the edge cases: two players tied at the top while a third is lower, everyone at zero, and an empty list. The owner writes the body, and I review it.
+- Until the body is written, the stub returns `.tie`, so the app still builds.
+
+## 5. Build order (each step: tests first, then `xcodebuild test`)
+
+1. **Save the design.** Put this design in `docs/word-calculator.md`.
+2. **Model.** Add `Models/Hand.swift`, `Round.hands` and its decoding.
+   New tests in `QuiddleBotTests/WordCalculatorTests.swift`:
+   - QU·I·Z is 25 points and 4 letters.
+   - TH·E is 11 points and 3 letters.
+   - A negative hand floors to 0 through `handTotal`.
+   - A 1.0 save decodes with all-nil hands.
+   - A garbage `hands` value still loads the scores.
+   - Hands round-trip through `GameStore`.
+3. **Suggestions.** Add the `soleLeader` stub, the two suggestion functions and their tests. Then hand off to the owner to write `soleLeader`.
+   - TH·E·N (4 letters) beats A·T·E (3 letters), even though both use 3 cards.
+   - A tie gives `.tie`.
+   - No words at all gives `.tie`.
+4. **RoundDraft.** Tests:
+   - Typing over a counted score drops the hand.
+   - There's no suggestion while anyone's score is typed.
+   - Unset picks take the suggestion.
+   - An agreeing pick follows the cards when a word changes.
+   - An override is kept.
+   - A disabled bonus is ignored.
+   - Re-editing a saved round keeps the suggestion live.
+5. **HandDraft.** Tests:
+   - ⌫ crosses back into the previous word.
+   - ⌫ in an empty leftover tray returns to words.
+   - Next word on an empty word does nothing.
+   - A one-card word blocks `hand`.
+   - Move to leftovers fixes a one-card word.
+   - A card-count warning shows for round 5, which deals 7.
+6. **Views.**
+   - `Views/CardKeypadView.swift` holds the keys and a shared `CardTile`.
+   - `Views/HandBuilderView.swift` is the sheet. It reuses `.card()`, `BottomActionBar`, `PrimaryButtonStyle`, `Theme.gold` and `PlayerAvatar`, and sets `.fontDesign(.rounded)`.
+   - `RoundEntryView.ScoreRow` gets the link or summary, plus `.sheet(item:)` driven by a small `Identifiable` in `RoundEntryView` state. The keyboard toolbar gets its button, and the header text mentions the calculator.
+   - `BonusPickerView` gets `suggestion: BonusAward? = nil` for the sparkles mark, and its binding goes through `pick…`.
+   - Key taps get light `.sensoryFeedback`.
+   - All `#Preview`s go inside `#if DEBUG`.
+7. **Version.**
+   - In `project.yml`, set `MARKETING_VERSION: "1.1"` and `CURRENT_PROJECT_VERSION: 2`.
+   - Close Xcode and run `xcodegen generate`. New source and test files only join the project this way.
+   - ⚠️ The working tree has uncommitted Xcode 27.1 upgrade edits in `project.pbxproj` and the scheme (`LastUpgradeCheck 2710`, `STRING_CATALOG_GENERATE_SYMBOLS = YES`), and regenerating will erase them. To keep them, first add `xcodeVersion: "27.1"` under `options` and `STRING_CATALOG_GENERATE_SYMBOLS: YES` under `settings.base`. XcodeGen 2.46 supports both.
+8. **Later.** Update the "How QuiddleBot Works" artifact and the App Store "What's New" text.
+
+**Gotchas:**
+- Clear `focusedField` *before* presenting the sheet, or GameView's pinned bar and the keyboard fight.
+- Use `.interactiveDismissDisabled` while the sheet holds cards, and make Cancel confirm, so a stray swipe can't lose a hand.
+- Create sheet state in `@State` initializers, not `onAppear` (the confetti lesson).
+- `BonusPickerView`'s selection haptic will also tick when a suggestion fills in. That's fine as feedback, but it's worth knowing.
+
+## 6. Verification
+- Run `xcodebuild test -project QuiddleBot.xcodeproj -scheme QuiddleBot -destination 'platform=iOS Simulator,name=iPhone 17,OS=27.0'` before and after every step. It covers the 23 existing tests and all the new ones.
+- Walk through on the iPhone 17 simulator, with screenshots via `xcrun simctl io <id> screenshot`:
+  - A 3-player round with two counted hands and one typed: no suggestion should appear.
+  - The same round with all three counted: the suggestions appear and can be overridden.
+  - A negative hand shows "Counts as 0".
+  - A TH word decides Longest Word.
+  - Typing over a counted score clears its summary.
+  - Editing a saved round reopens its cards.
+- Repeat the row and the sheet on a 375 pt-wide simulator (iPhone SE) and at a large Dynamic Type size.
+- Seed a 1.0 `game.json` into the simulator's app container and confirm it opens unchanged.
+- Build an unsigned Release device build (`CODE_SIGNING_ALLOWED=NO`) to catch previews that use DEBUG-only code.
+- Uploading 1.1 (build 2) to TestFlight is the owner's call.
+
+## Not in v1.1
+- Marking a challenged word inside the calculator
+- A "Next player →" button
+- Deck-limit checks, such as three Zs
+- Showing the words in the scorecard
+- "Best word of the game" stats
+- Saving unsubmitted drafts across app restarts (typed scores aren't saved either today)
