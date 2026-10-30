@@ -11,6 +11,9 @@ nonisolated struct Word: Codable, Equatable, Hashable, Sendable {
 
     var points: Int { CardValues.points(ofFaces: faces) }
 
+    /// The word as it reads: "QUIZ" from QU·I·Z.
+    var text: String { faces.joined() }
+
     /// Length for the Longest Word bonus, in letters: TH·E is 3.
     var letters: Int { CardValues.letterCount(ofFaces: faces) }
 }
@@ -29,6 +32,9 @@ nonisolated struct Hand: Codable, Equatable, Sendable {
 
     /// Letters in this hand's longest word, for the Longest Word bonus. 0 with no words.
     var longestWordLetters: Int { words.map(\.letters).max() ?? 0 }
+
+    /// The first of this hand's longest words, to show why a bonus went where it did.
+    var longestWord: Word? { words.first { $0.letters == longestWordLetters } }
 
     var wordCount: Int { words.count }
 

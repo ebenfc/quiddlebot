@@ -29,6 +29,10 @@ struct SetupView: View {
                                     .transition(.move(edge: .top).combined(with: .opacity))
                             }
                         }
+
+                        Text("Enter players in seating order. Hands are counted round the table.")
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
                     }
                     .card()
 

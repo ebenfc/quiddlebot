@@ -1,5 +1,36 @@
 # Word calculator (v1.1): design
 
+> **Update, build 3: counting is now the main way to enter a round.** After testing build 2 at
+> the table, the owner made counting the default. The sections below describe build 2, where it
+> was a secondary "Count cards" link; the scoring rules, data model and `RoundDraft` rules are
+> unchanged. What changed:
+>
+> - **One button walks the round.** GameView's bottom bar says **Count Hands**, which opens
+>   `RoundCounterView` full screen on the first uncounted player. **Next: Ben →** goes round
+>   the table in seating order, and **Done** returns to the round screen. The bar then says
+>   **Next Round**.
+> - **The round screen is a summary** (`RoundEntryView`). Each player row shows their words
+>   ("QUIZ · THE · left R") and score, and tapping it reopens the counter on that player.
+>   Bonuses show as results with the reason ("Ben · CLAWS · 5 letters", or "Ada and Ben tie at
+>   4 letters, so nobody scores"), with **Change** for an override.
+> - **The rare cases live in the counter's ⋯ menu.**
+>   - **Type a score instead**: an in-app number pad with ±, so the system keyboard never
+>     appears.
+>   - **Lost a challenge**: sets the challenge penalty.
+>
+>   Number fields, the sign toggle, the flag button and every `@FocusState` are gone from the
+>   game screen.
+> - **New pure types and helpers.**
+>   - `RoundCountSession` is the counter's working copy; Cancel throws it away.
+>   - `RoundDraft.uncountedPlayers` and `isTyped` support it, and `longestWordReason` /
+>     `mostWordsReason` produce the bonus explanations.
+>   - `Scoring.topPlayers(of:)` now sits under `soleLeader`.
+>   - `GameHighlights` drives a Highlights card on Final Scores (longest word by letters, best
+>     word by points; a tie goes to the word played first).
+> - **Setup** asks for players in seating order.
+> - **Decided with the owner on 2026-10-29:** go round the table; keep typing as a fallback;
+>   add game-over highlights.
+
 ## Context
 Today each player adds up their hand in their head, and the scorekeeper types one number per player
 (`RoundDraft.scoreText` → `Round.scores`). That is where mistakes come from: the five two-letter cards,

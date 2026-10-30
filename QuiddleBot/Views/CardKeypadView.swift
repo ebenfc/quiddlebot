@@ -6,6 +6,8 @@ struct CardKeypadView: View {
     var onCard: (String) -> Void
     var onNextWord: () -> Void
     var onBackspace: () -> Void
+    /// Shorter on small screens such as the iPhone SE, so the words above stay in view.
+    var keyHeight: CGFloat = 44
 
     private static let letterRows: [[String]] = [
         ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"],
@@ -16,7 +18,6 @@ struct CardKeypadView: View {
 
     private let gap: CGFloat = 5
     private let rowGap: CGFloat = 8
-    private let keyHeight: CGFloat = 44
 
     @State private var taps = 0
 
@@ -106,21 +107,74 @@ struct CardKeypadView: View {
         .buttonStyle(KeyStyle(fill: Color(.tertiarySystemFill)))
         .frame(height: keyHeight)
     }
+}
 
-    /// A key that darkens while pressed, like the system keyboard.
-    private struct KeyStyle: ButtonStyle {
-        let fill: Color
+/// A key that darkens while pressed, like the system keyboard.
+private struct KeyStyle: ButtonStyle {
+    let fill: Color
 
-        func makeBody(configuration: Configuration) -> some View {
-            configuration.label
-                .background(fill, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
-                .overlay {
-                    RoundedRectangle(cornerRadius: 8, style: .continuous)
-                        .fill(Color.primary.opacity(configuration.isPressed ? 0.12 : 0))
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .background(fill, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+            .overlay {
+                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                    .fill(Color.primary.opacity(configuration.isPressed ? 0.12 : 0))
+            }
+            .shadow(color: .black.opacity(0.12), radius: 0, x: 0, y: 1)
+            .contentShape(Rectangle())
+    }
+}
+
+/// Digits for "Type a score instead", in the same footprint and style as the card keypad,
+/// so typing never brings up the system keyboard.
+struct NumberPadView: View {
+    var isNegative: Bool
+    var onDigit: (Int) -> Void
+    var onDelete: () -> Void
+    var onToggleSign: () -> Void
+    var keyHeight: CGFloat = 44
+
+    @State private var taps = 0
+
+    var body: some View {
+        Grid(horizontalSpacing: 6, verticalSpacing: 8) {
+            ForEach([[1, 2, 3], [4, 5, 6], [7, 8, 9]], id: \.self) { row in
+                GridRow {
+                    ForEach(row, id: \.self, content: digitKey)
                 }
-                .shadow(color: .black.opacity(0.12), radius: 0, x: 0, y: 1)
-                .contentShape(Rectangle())
+            }
+            GridRow {
+                key(fill: isNegative ? Color.red.opacity(0.16) : Color(.tertiarySystemFill),
+                    label: Image(systemName: "plus.forwardslash.minus")
+                        .foregroundStyle(isNegative ? Color.red : Color.primary),
+                    action: onToggleSign)
+                    .accessibilityLabel(isNegative ? "Negative score" : "Positive score")
+                    .accessibilityHint("Switches the score between positive and negative")
+                digitKey(0)
+                key(fill: Color(.tertiarySystemFill), label: Image(systemName: "delete.left"), action: onDelete)
+                    .accessibilityLabel("Delete last digit")
+            }
         }
+        .sensoryFeedback(.impact(flexibility: .soft, intensity: 0.6), trigger: taps)
+    }
+
+    private func digitKey(_ digit: Int) -> some View {
+        key(fill: Color(.secondarySystemGroupedBackground),
+            label: Text("\(digit)").font(.system(size: 24, weight: .medium, design: .rounded)),
+            action: { onDigit(digit) })
+    }
+
+    private func key(fill: Color, label: some View, action: @escaping () -> Void) -> some View {
+        Button {
+            taps += 1
+            action()
+        } label: {
+            label
+                .font(.system(size: 20, weight: .medium))
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+        }
+        .buttonStyle(KeyStyle(fill: fill))
+        .frame(height: keyHeight)
     }
 }
 
@@ -151,8 +205,11 @@ struct CardTile: View {
 
 #if DEBUG
 #Preview("Keypad") {
-    CardKeypadView(onCard: { _ in }, onNextWord: {}, onBackspace: {})
-        .padding()
-        .background(Color(.systemGroupedBackground))
+    VStack(spacing: 24) {
+        CardKeypadView(onCard: { _ in }, onNextWord: {}, onBackspace: {})
+        NumberPadView(isNegative: false, onDigit: { _ in }, onDelete: {}, onToggleSign: {})
+    }
+    .padding()
+    .background(Color(.systemGroupedBackground))
 }
 #endif

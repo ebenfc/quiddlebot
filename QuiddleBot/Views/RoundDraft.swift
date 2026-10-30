@@ -65,6 +65,57 @@ struct RoundDraft: Equatable {
         hands[player] = hand
     }
 
+    /// Back to "not counted yet": no number and no cards.
+    mutating func clearScore(for player: Int) {
+        scoreText[player] = ""
+        isNegative[player] = false
+        hands[player] = nil
+    }
+
+    /// Players with no score yet, counted or typed, in seat order.
+    var uncountedPlayers: [Int] { (0..<playerCount).filter { score(for: $0) == nil } }
+
+    /// Where "Count hands" starts.
+    var firstUncounted: Int? { uncountedPlayers.first }
+
+    /// A player whose score was typed rather than counted.
+    func isTyped(_ player: Int) -> Bool {
+        score(for: player) != nil && countedHand(for: player) == nil
+    }
+
+    // MARK: - Why the cards picked a bonus
+
+    /// Why Longest Word went where it did, or nil until every hand is counted.
+    func longestWordReason(names: [String]) -> String? {
+        guard let hands = allCounted else { return nil }
+        let letters = hands.map(\.longestWordLetters)
+        let top = Scoring.topPlayers(of: letters)
+        switch top.count {
+        case 0: return "Nobody laid down a word"
+        case 1: return "\(hands[top[0]].longestWord?.text ?? "") · \(letters[top[0]]) letters"
+        default: return "\(Self.list(top, names)) tie at \(letters[top[0]]) letters, so nobody scores"
+        }
+    }
+
+    /// Why Most Words went where it did, or nil until every hand is counted.
+    func mostWordsReason(names: [String]) -> String? {
+        guard let hands = allCounted else { return nil }
+        let counts = hands.map(\.wordCount)
+        let top = Scoring.topPlayers(of: counts)
+        guard let most = top.first.map({ counts[$0] }) else { return "Nobody laid down a word" }
+        let words = most == 1 ? "1 word" : "\(most) words"
+        return top.count == 1 ? words : "\(Self.list(top, names)) tie with \(words), so nobody scores"
+    }
+
+    private var allCounted: [Hand]? {
+        let hands = countedHands.compactMap { $0 }
+        return hands.count == playerCount && playerCount > 0 ? hands : nil
+    }
+
+    private static func list(_ players: [Int], _ names: [String]) -> String {
+        players.map { names[$0] }.formatted(.list(type: .and))
+    }
+
     var suggestedLongestWord: BonusAward? { Scoring.suggestedLongestWord(for: countedHands) }
     var suggestedMostWords: BonusAward? { Scoring.suggestedMostWords(for: countedHands) }
 
