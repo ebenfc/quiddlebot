@@ -52,4 +52,5 @@ QUIDDLER is a registered trademark of Cannei, LLC. This project is not affiliate
 - Default 2 players, sometimes 3 or 4. Eight rounds, hard cap.
 - 3 or 4 players: both bonuses, ties cancel.
 - 2 players: Longest Word only, unless Most Words is switched on at game start.
-- Word disputes are settled with the dictionary we agreed on, outside the app.
+- Word disputes are settled with the dictionary we agreed on. The app's word check (v1.2) is a
+  hint from a built-in list, not a ruling: it never changes a score.
