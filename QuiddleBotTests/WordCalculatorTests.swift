@@ -58,18 +58,49 @@ struct HandTests {
         #expect(try JSONDecoder().decode(Round.self, from: Data(wrongCount.utf8)).hands == [nil, nil])
     }
 
-    @Test("Counted hands survive a save and reload")
+    @Test("Counted hands survive a save and reload, table-accepted marks included")
     func handsRoundTrip() {
         let url = FileManager.default.temporaryDirectory
             .appending(path: "quiddlebot-test-\(UUID().uuidString).json")
         defer { try? FileManager.default.removeItem(at: url) }
         let counted = hand(["QU", "I", "Z"], ["TH", "E"], left: ["R"])
+        let marked = Hand(words: [Word(["Z", "A"], tableAccepted: true)], leftovers: [])
 
         let store = GameStore(fileURL: url)
         store.start(players: ["Ada", "Ben"], rules: .official(playerCount: 2))
-        store.submit(Round(scores: [31, 9], longestWord: .player(0), hands: [counted, nil]))
+        store.submit(Round(scores: [31, 16], longestWord: .player(0), hands: [counted, marked]))
 
-        #expect(GameStore(fileURL: url).game?.rounds.first?.hands == [counted, nil])
+        #expect(GameStore(fileURL: url).game?.rounds.first?.hands == [counted, marked])
+    }
+
+    @Test("A 1.1 word, with no table-accepted flag, decodes as unmarked")
+    func wordWithoutFlagDecodes() throws {
+        let word = try JSONDecoder().decode(Word.self, from: Data(#"{"faces":["Z","A"]}"#.utf8))
+        #expect(word.faces == ["Z", "A"])
+        #expect(!word.tableAccepted)
+    }
+
+    @Test("A damaged table-accepted flag costs only the mark, never the scores")
+    func damagedFlagCostsOnlyTheMark() throws {
+        let word = try JSONDecoder().decode(Word.self, from: Data(#"{"faces":["Z","A"],"tableAccepted":"yes"}"#.utf8))
+        #expect(word.faces == ["Z", "A"])
+        #expect(!word.tableAccepted)
+
+        let json = #"{"scores":[16],"hands":[{"words":[{"faces":["Z","A"],"tableAccepted":"yes"}],"leftovers":[]}]}"#
+        let round = try JSONDecoder().decode(Round.self, from: Data(json.utf8))
+        #expect(round.scores == [16])
+        #expect(round.hands.first??.words.first?.tableAccepted == false)
+    }
+
+    @Test("An unmarked word encodes exactly as 1.1 did; a marked one carries its flag")
+    func unmarkedWordEncodesLike1_1() throws {
+        let plain = try String(decoding: JSONEncoder().encode(Word(["Z", "A"])), as: UTF8.self)
+        #expect(!plain.contains("tableAccepted"))
+
+        let marked = Word(["Z", "A"], tableAccepted: true)
+        let json = try String(decoding: JSONEncoder().encode(marked), as: UTF8.self)
+        #expect(json.contains(#""tableAccepted":true"#))
+        #expect(try JSONDecoder().decode(Word.self, from: Data(json.utf8)) == marked)
     }
 }
 

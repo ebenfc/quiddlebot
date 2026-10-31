@@ -20,6 +20,10 @@ struct HandDraft: Equatable {
     private(set) var words: [[String]]
     private(set) var leftovers: [String]
     private(set) var currentWord: Int
+    /// Words the table ruled good although the built-in list lacks them, as they read ("ZA").
+    /// Keyed by text, not position, so the mark survives rows moving and lifts itself when
+    /// the cards change: a ruling on ZA says nothing about ZAP.
+    private(set) var acceptedWords: Set<String>
     var target: Target = .words
     let cardsDealt: Int
 
@@ -28,6 +32,7 @@ struct HandDraft: Equatable {
         words = (hand?.words.map(\.faces) ?? []) + [[]]
         leftovers = hand?.leftovers ?? []
         currentWord = words.count - 1
+        acceptedWords = Set(hand?.words.filter(\.tableAccepted).map(\.text) ?? [])
         self.cardsDealt = cardsDealt
     }
 
@@ -98,6 +103,24 @@ struct HandDraft: Equatable {
         dropEmptyWords()
     }
 
+    // MARK: - Word check
+
+    /// Whether the table has ruled this word good. See `WordVerdict`.
+    func isTableAccepted(_ index: Int) -> Bool {
+        words.indices.contains(index) && acceptedWords.contains(words[index].joined())
+    }
+
+    /// "Table says it's good", or taking that back. A one-card word is never a word.
+    mutating func setTableAccepted(_ accepted: Bool, forWord index: Int) {
+        guard words.indices.contains(index), words[index].count >= 2 else { return }
+        let text = words[index].joined()
+        if accepted {
+            acceptedWords.insert(text)
+        } else {
+            acceptedWords.remove(text)
+        }
+    }
+
     /// Keeps "only the current word may be empty" true, and keeps `currentWord` pointing at
     /// the same word as the ones before it disappear.
     private mutating func dropEmptyWords() {
@@ -119,7 +142,9 @@ struct HandDraft: Equatable {
 
     /// The hand as it stands, even with a mistake in it, for the running totals.
     var preview: Hand {
-        Hand(words: words.filter { !$0.isEmpty }.map(Word.init), leftovers: leftovers)
+        Hand(words: words.filter { !$0.isEmpty }
+                         .map { Word($0, tableAccepted: acceptedWords.contains($0.joined())) },
+             leftovers: leftovers)
     }
 
     var issues: [Issue] {

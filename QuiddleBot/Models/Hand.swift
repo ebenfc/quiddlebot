@@ -4,9 +4,40 @@ import Foundation
 /// Faces, not letters: a two-letter card is one card worth its own printed value.
 nonisolated struct Word: Codable, Equatable, Hashable, Sendable {
     var faces: [String]
+    /// The table ruled this word good although the built-in word list lacks it. A note on
+    /// the receipt, nothing more: scoring never reads it.
+    var tableAccepted: Bool
 
+    // Two inits rather than one with a default: `map(Word.init)` in HandDraft and the tests
+    // takes an unapplied reference, and that never fills in a default argument.
     init(_ faces: [String]) {
         self.faces = faces
+        tableAccepted = false
+    }
+
+    init(_ faces: [String], tableAccepted: Bool) {
+        self.faces = faces
+        self.tableAccepted = tableAccepted
+    }
+
+    nonisolated private enum CodingKeys: String, CodingKey {
+        case faces
+        case tableAccepted
+    }
+
+    /// 1.1 saves have no `tableAccepted`. `try?`, as in `Round.init(from:)`: the store starts
+    /// a fresh game when a save fails to load, so a damaged flag must cost only the mark.
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        faces = try c.decode([String].self, forKey: .faces)
+        tableAccepted = (try? c.decodeIfPresent(Bool.self, forKey: .tableAccepted)) ?? false
+    }
+
+    /// Writes the flag only when it is set, so an unmarked word encodes exactly as 1.1 did.
+    func encode(to encoder: Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(faces, forKey: .faces)
+        if tableAccepted { try c.encode(true, forKey: .tableAccepted) }
     }
 
     var points: Int { CardValues.points(ofFaces: faces) }

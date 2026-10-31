@@ -14,6 +14,8 @@ struct RoundCounterView: View {
     @State private var penaltyText = ""
     /// Under 700 pt tall (iPhone SE), the keys and totals shrink so the words stay in view.
     @State private var isCompact = false
+    /// The built-in word list, once it has loaded. Until then the rows show no verdicts.
+    @State private var wordList: WordList?
 
     init(players: [String], roundNumber: Int, draft: RoundDraft, startingAt player: Int,
          onDone: @escaping (RoundDraft) -> Void) {
@@ -38,7 +40,7 @@ struct RoundCounterView: View {
                         if isTyping {
                             typedNote
                         } else {
-                            HandEditorView(draft: $session.currentHand)
+                            HandEditorView(draft: $session.currentHand, wordList: wordList)
                         }
                     }
                     .padding(.horizontal, 20)
@@ -89,6 +91,11 @@ struct RoundCounterView: View {
         }
         .fontDesign(.rounded)
         .onGeometryChange(for: Bool.self) { $0.size.height < 700 } action: { isCompact = $0 }
+        .task {
+            // The first counter ever opened pays the load once, off the main actor; after
+            // that `WordList.shared` is a plain static read.
+            wordList = await Task.detached(priority: .userInitiated) { WordList.shared }.value
+        }
     }
 
     // MARK: - Players

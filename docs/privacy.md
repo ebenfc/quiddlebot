@@ -1,6 +1,6 @@
 # Privacy Policy for QuiddleBot
 
-_Last updated: October 17, 2026_
+_Last updated: October 31, 2026_
 
 QuiddleBot is a scorekeeper for the card game Quiddler. It does not collect, store, or transmit
 any personal information.
@@ -9,6 +9,8 @@ any personal information.
 - The player names you type and the scores you enter. They are saved only on your device, in the
   app's own storage, so a game survives closing the app.
 - Nothing is sent to us or to anyone else. The app makes no network connections.
+- The word check uses a word list built into the app and, for definitions, the dictionary
+  built into iOS. Both work entirely on your device; no word you enter leaves it.
 
 ## What the app does not do
 - No accounts and no sign-in.

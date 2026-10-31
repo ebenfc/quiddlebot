@@ -1,0 +1,44 @@
+# Words the frozen ENABLE1 list (c. 2000) lacks but a dictionary the table would agree on
+# accepts. One word per line, letters only, case ignored; anything after # is a comment.
+# After editing, run scripts/build-wordlist.sh and commit QuiddleBot/Resources/words.txt.
+#
+# Keep to words a general English dictionary lists as entries or inflected forms. Leave out
+# proper nouns, abbreviations and hyphenated words (the game excludes them), and leave out
+# Collins-only or slang entries a North American table may not take (te, oi, yeet, chillax).
+
+# Short words added to the Official Scrabble Players Dictionary since ENABLE1 (OSPD4 2005, OSPD6 2018)
+qi
+qis
+za
+zas
+fe
+ki
+ok
+ew
+zen
+zens
+
+# Everyday words newer than the list
+emoji
+emojis
+selfie
+selfies
+blog
+blogs
+blogged
+blogging
+blogger
+bloggers
+vlog
+vlogs
+wifi
+podcast
+podcasts
+texted
+texting
+meme
+memes
+sudoku
+bling
+hashtag
+hashtags

@@ -8,9 +8,20 @@ enum HandScrollTarget: Hashable {
 }
 
 /// One player's cards in the round counter: a note for any one-card word, the words as
-/// rows of tiles, and the leftover tray. The keypad lives in `RoundCounterView`.
+/// rows of tiles with a word-check mark, and the leftover tray. The keypad lives in
+/// `RoundCounterView`.
 struct HandEditorView: View {
     @Binding var draft: HandDraft
+    /// The built-in word list; nil (still loading, or missing) shows no marks at all.
+    var wordList: WordList? = nil
+
+    /// The word whose options sheet is open, by row.
+    nonisolated private struct WordReview: Identifiable {
+        let index: Int
+        var id: Int { index }
+    }
+
+    @State private var reviewing: WordReview?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -18,6 +29,26 @@ struct HandEditorView: View {
             wordsSection
             leftoversSection
         }
+        .sheet(item: $reviewing) { review in
+            if let verdict = verdict(for: review.index) {
+                WordVerdictSheet(word: Word(draft.words[review.index],
+                                            tableAccepted: draft.isTableAccepted(review.index)),
+                                 verdict: verdict,
+                                 onAccept: { draft.setTableAccepted($0, forWord: review.index) })
+                    .presentationDetents([.medium])
+            }
+        }
+    }
+
+    // MARK: - Word check
+
+    /// The mark for a row, or nil for a one-card word or while the list hasn't loaded.
+    private func verdict(for index: Int) -> WordVerdict? {
+        guard let wordList, draft.words.indices.contains(index), draft.words[index].count >= 2 else {
+            return nil
+        }
+        let word = Word(draft.words[index], tableAccepted: draft.isTableAccepted(index))
+        return WordVerdict(word: word, isListed: wordList.contains(word.text))
     }
 
     // MARK: - Words
@@ -71,6 +102,11 @@ struct HandEditorView: View {
                     .foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity, minHeight: 42, alignment: .leading)
             } else {
+                // Leading, not a third line on the trailing side: the rows are tile-high and
+                // the tiles already scroll, so 28 pt here costs nothing that matters.
+                if let verdict = verdict(for: index) {
+                    WordVerdictBadge(verdict: verdict) { reviewing = WordReview(index: index) }
+                }
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 4) {
                         ForEach(faces.indices, id: \.self) { position in
