@@ -26,7 +26,7 @@ project.yml               XcodeGen spec; regenerates QuiddleBot.xcodeproj
 QuiddleBot/
   Models/                 Game, Round, RuleSet, Scoring (pure), CardValues, Hand, WordList
   Resources/words.txt     the built-in word list (generated; see scripts/build-wordlist.sh)
-  DesignSystem/           "Card Table" design system: tokens (DS.*), components, #Preview catalog
+  DesignSystem/           clean-iOS design system: tokens (DS.*), components, #Preview catalog
   Store/GameStore.swift   @Observable state + JSON persistence
   Views/                  SwiftUI screens
 QuiddleBotTests/          Swift Testing suite

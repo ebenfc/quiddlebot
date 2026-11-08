@@ -1,8 +1,11 @@
-# Design system: Card Table
+# Design system: clean iOS
 
-QuiddleBot's look is a card table: felt green, bonus gold, and plain cream letter tiles. The
-full reference (tokens with contrast ratios, components with live previews, patterns) is the
-**QuiddleBot Design System** artifact on claude.ai. This file holds the rules the code relies on.
+QuiddleBot looks like a native iOS app and stays out of the way of the game: system fonts,
+system grouped backgrounds, flat cards, gray letter tiles and a keypad that matches the system
+keyboard. The only brand notes are the green accent and gold for bonuses. (It started as
+"Card Table", with cream tiles, rounded type and soft shadows; that was dropped as too themed.)
+The **QuiddleBot Design System** artifact on claude.ai still shows the old Card Table look.
+This file holds the rules the code relies on.
 
 ## Where things live
 - `QuiddleBot/DesignSystem/Tokens/`: `DS.Colors`, `DS.Typography` and `ScoreStyle`,
@@ -12,7 +15,10 @@ full reference (tokens with contrast ratios, components with live previews, patt
   `PlayerScoreRow`, `RankMedal`, `StatTile`, `SelectableChip`, `NoticeBanner`, `LetterTile`.
 - `QuiddleBot/DesignSystem/Previews/DesignSystemCatalog.swift`: every token and component in
   one #Preview, in the artifact's order.
-- Colors: `scripts/make-colors.py` is the source. Edit its table, run it, commit the colorsets.
+- Colors: brand colors (accent, bonus, status, seats, medals) come from the asset catalog;
+  `scripts/make-colors.py` is the source. Surfaces, outlines and tiles use system colors
+  (`systemGroupedBackground` and friends) in `DSColors.swift`, so their old colorsets
+  (`DSCanvas`, `DSSurface`, `DSSurfaceSunken`, `DSOutline`, `DSTile*`) are unused.
 
 ## Rules
 1. **Roles, not hues.** Code names `DS.Colors.bonusText`, never "gold". No color literals in views.
@@ -21,8 +27,10 @@ full reference (tokens with contrast ratios, components with live previews, patt
    shade. Every pair clears 4.5:1, and every color has Increase Contrast variants.
 3. **Never color alone.** Status pairs a symbol with its tone; a picked chip shows a checkmark;
    the round being edited shows a pencil; clashing initials become two letters.
-4. **Tiles are generic.** Flat cream, SF Rounded, a corner value. No frame, no ornament,
-   never Quiddler's card art (trademark: see the README).
+4. **Plain iOS first.** System font (no rounded design), flat cards with no shadow, gray
+   letter tiles with their points in the corner, and a keypad that looks like the system
+   keyboard (gray fills, plain letters, no outline, shadow or point numbers). Nothing that
+   evokes Quiddler's card art (trademark: see the README).
 5. **Glass is for chrome.** Buttons and the bottom bar get Liquid Glass on iOS 26; cards,
    tiles and keys stay solid. Everything still works on iOS 17.
 6. **Motion goes through `DS.Motion`.** Movement becomes a fade under Reduce Motion

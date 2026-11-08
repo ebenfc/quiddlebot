@@ -86,7 +86,6 @@ struct WordVerdictSheet: View {
                 .foregroundStyle(.secondary)
         }
         .padding(DS.Space.screen)
-        .fontDesign(.rounded)
         .tint(DS.Colors.accent)
         .task {
             // Let the sheet finish sliding in before the (synchronous, main-thread) check.

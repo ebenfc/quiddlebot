@@ -108,7 +108,7 @@ Designed 2026-10-29 from `0c8f366`, when 23 Swift Testing tests passed.
   - the leftover tray, tinted red
   - the keypad, pinned to the bottom
 
-  Each tile is a generic cream tile (`LetterTile`, see `docs/design-system.md`) showing the letter and a small point value. It uses no Quiddler card art.
+  Each tile is a plain gray tile (`LetterTile`, see `docs/design-system.md`) showing the letter and a small point value. It uses no Quiddler card art.
 - **Keypad (QWERTY).** It has three letter rows, plus a fourth row with QU IN ER CL TH (wider keys) and **Next word**, and ⌫. Every key shows its points small. A **Words | Leftovers** switch decides where taps go.
 - **Fixing mistakes.** Tap a tile to remove it. ⌫ removes the last card; on an empty word it steps back into the previous word. Tap a word to keep adding to it.
 - **Use 31** writes the score into the field, setting the sign toggle for a negative hand, keeps the hand alongside, and closes the sheet.

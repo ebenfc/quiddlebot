@@ -10,7 +10,7 @@ private struct DesignSystemCatalog: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: DS.Space.xxl) {
-                ScreenTitle(title: "Card Table", subtitle: "QuiddleBot design system")
+                ScreenTitle(title: "Design system", subtitle: "QuiddleBot design system")
 
                 section("Color") {
                     swatchRow([("accent", DS.Colors.accent), ("bonusFill", DS.Colors.bonusFill),
@@ -89,7 +89,6 @@ private struct DesignSystemCatalog: View {
             .padding(DS.Space.screen)
         }
         .dsCanvas()
-        .fontDesign(.rounded)
         .tint(DS.Colors.accent)
     }
 
