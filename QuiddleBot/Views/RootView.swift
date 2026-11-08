@@ -3,6 +3,14 @@ import SwiftUI
 /// Picks the screen from the store: setup, playing, or finished.
 struct RootView: View {
     @Environment(GameStore.self) private var store
+    @Environment(\.scenePhase) private var scenePhase
+
+    /// The phone sits on the table between hands, so it must not lock mid-game. One place,
+    /// driven by state: a sheet or the round counter covering the game screen doesn't turn it
+    /// off, and coming back from the background turns it on again.
+    private var keepsScreenAwake: Bool {
+        scenePhase == .active && store.game.map { !$0.isFinished } == true
+    }
 
     var body: some View {
         Group {
@@ -18,6 +26,10 @@ struct RootView: View {
         }
         // Rounded type everywhere: friendlier numbers, same system font metrics and Dynamic Type.
         .fontDesign(.rounded)
+        .tint(DS.Colors.accent)
+        .onChange(of: keepsScreenAwake, initial: true) { _, awake in
+            UIApplication.shared.isIdleTimerDisabled = awake
+        }
     }
 }
 

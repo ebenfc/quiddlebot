@@ -9,6 +9,9 @@ final class GameStore {
     private(set) var game: Game?
     /// Round being edited (1-based), or nil while entering the current round.
     var editingRound: Int?
+    /// Set when this session finishes a game, so the confetti and the success haptic play
+    /// once, for the finish itself, and not every time the app reopens on final scores.
+    private(set) var celebrationPending = false
 
     private let fileURL: URL
     private let log = Logger(subsystem: "com.ebencarey.quiddlebot", category: "store")
@@ -23,7 +26,9 @@ final class GameStore {
     func start(players: [String], rules: RuleSet) {
         game = Game(players: players, rules: rules)
         editingRound = nil
+        celebrationPending = false
         persist()
+        clearDrafts()
     }
 
     /// Records the current round. The same path handles every round, including the last,
@@ -33,9 +38,11 @@ final class GameStore {
         current.rounds.append(round)
         if current.rounds.count >= current.rules.roundCount {
             current.isFinished = true
+            celebrationPending = true
         }
         game = current
         persist()
+        clearDrafts()
     }
 
     func save(_ round: Round, forRound number: Int) {
@@ -49,7 +56,15 @@ final class GameStore {
     func endEarly() {
         game?.isFinished = true
         editingRound = nil
+        celebrationPending = true
         persist()
+        clearDrafts()
+    }
+
+    /// True once after a game finishes in this session; reading it uses it up.
+    func takeCelebration() -> Bool {
+        defer { celebrationPending = false }
+        return celebrationPending
     }
 
     /// A fresh game with the same players and rules, for "one more".
@@ -61,7 +76,58 @@ final class GameStore {
     func reset() {
         game = nil
         editingRound = nil
+        celebrationPending = false
         persist()
+        clearDrafts()
+    }
+
+    // MARK: - Rounds in progress
+
+    /// Saves the current round's unsubmitted scores and counted hands. Called when the app
+    /// goes to the background: the phone gets passed round the table, and iOS may close the
+    /// app before it comes back. Edits of earlier rounds are not kept.
+    func saveDrafts(_ drafts: [Int: RoundDraft]) {
+        guard let game, !game.isFinished,
+              let draft = drafts[game.currentRound], draft != RoundDraft(playerCount: game.players.count)
+        else {
+            clearDrafts()
+            return
+        }
+        do {
+            try FileManager.default.createDirectory(at: draftsURL.deletingLastPathComponent(),
+                                                    withIntermediateDirectories: true)
+            let data = try JSONEncoder().encode(SavedDraft(round: game.currentRound, draft: draft))
+            try data.write(to: draftsURL, options: .atomic)
+        } catch {
+            // Losing a half-counted round is a nuisance, not a reason to stop the game.
+            log.error("Could not save the round in progress: \(error.localizedDescription)")
+        }
+    }
+
+    /// The round in progress saved by `saveDrafts`, if it still fits the current game.
+    func restoredDrafts() -> [Int: RoundDraft] {
+        guard let game, !game.isFinished,
+              let data = try? Data(contentsOf: draftsURL),
+              let saved = try? JSONDecoder().decode(SavedDraft.self, from: data),
+              saved.round == game.currentRound,
+              saved.draft.playerCount == game.players.count
+        else { return [:] }
+        return [saved.round: saved.draft]
+    }
+
+    private func clearDrafts() {
+        try? FileManager.default.removeItem(at: draftsURL)
+    }
+
+    private nonisolated struct SavedDraft: Codable {
+        let round: Int
+        let draft: RoundDraft
+    }
+
+    /// Next to the game file: game.json, game-drafts.json.
+    private var draftsURL: URL {
+        let name = fileURL.deletingPathExtension().lastPathComponent + "-drafts.json"
+        return fileURL.deletingLastPathComponent().appending(path: name)
     }
 
     // MARK: - Persistence

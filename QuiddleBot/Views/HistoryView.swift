@@ -10,17 +10,18 @@ struct HistoryView: View {
     var body: some View {
         let totals = Scoring.totals(for: game)
 
-        Grid(alignment: .center, horizontalSpacing: 6, verticalSpacing: 8) {
+        Grid(alignment: .center, horizontalSpacing: DS.Space.xs + 2, verticalSpacing: DS.Space.s) {
             GridRow {
                 Text("Rd")
-                    .font(.caption.weight(.bold))
+                    .font(DS.Typography.caption.weight(.bold))
                     .foregroundStyle(.secondary)
+                    .accessibilityLabel("Round")
                 ForEach(game.players.indices, id: \.self) { player in
-                    PlayerAvatar(name: game.players[player], index: player, size: 26)
+                    PlayerAvatar(seat: player, in: game.players, size: DS.Avatar.small)
                         .frame(maxWidth: .infinity)
                 }
                 if onEdit != nil {
-                    Color.clear.frame(width: 44, height: 1)
+                    Color.clear.frame(width: DS.Size.minTap, height: 1)
                 }
             }
 
@@ -29,7 +30,7 @@ struct HistoryView: View {
             ForEach(Array(game.rounds.enumerated()), id: \.offset) { offset, round in
                 GridRow {
                     Text("\(offset + 1)")
-                        .font(.subheadline.weight(.semibold).monospacedDigit())
+                        .font(DS.Typography.label.monospacedDigit())
                         .foregroundStyle(.secondary)
                     ForEach(game.players.indices, id: \.self) { player in
                         cell(round: round, player: player)
@@ -40,11 +41,11 @@ struct HistoryView: View {
                         } label: {
                             Image(systemName: "pencil")
                                 .font(.subheadline.weight(.semibold))
-                                .frame(width: 44, height: 36)
+                                .frame(width: DS.Size.minTap, height: DS.Size.minTap)
                                 .contentShape(Rectangle())
                         }
                         .buttonStyle(.plain)
-                        .foregroundStyle(Color.accentColor)
+                        .foregroundStyle(DS.Colors.accent)
                         .accessibilityLabel("Edit round \(offset + 1)")
                     }
                 }
@@ -54,31 +55,32 @@ struct HistoryView: View {
 
             GridRow {
                 Text("Total")
-                    .font(.caption.weight(.bold))
+                    .font(DS.Typography.caption.weight(.bold))
                     .foregroundStyle(.secondary)
                 ForEach(game.players.indices, id: \.self) { player in
-                    Text("\(totals[player])")
-                        .font(.body.weight(.bold).monospacedDigit())
+                    ScoreNumeral(totals[player], style: .cellTotal)
                         .frame(maxWidth: .infinity)
                         .accessibilityLabel("\(game.players[player]) total \(totals[player])")
                 }
                 if onEdit != nil {
-                    Color.clear.frame(width: 44, height: 1)
+                    Color.clear.frame(width: DS.Size.minTap, height: 1)
                 }
             }
         }
+        // A grid of up to four players plus an edit column: beyond this size it overflows.
+        .dynamicTypeSize(...DynamicTypeSize.accessibility1)
     }
 
     private func cell(round: Round, player: Int) -> some View {
         let points = Scoring.handTotal(round: round, player: player, rules: game.rules)
         let bonus = Scoring.bonuses(in: round, for: player, rules: game.rules)
-        return HStack(spacing: 2) {
-            Text("\(points)")
-                .font(.body.monospacedDigit())
+        return HStack(spacing: DS.Space.xxs) {
+            ScoreNumeral(points, style: .cell)
             if bonus > 0 {
                 Image(systemName: "star.fill")
-                    .font(.system(size: 9, weight: .bold))
-                    .foregroundStyle(Theme.gold)
+                    .font(.caption2.weight(.bold))
+                    .imageScale(.small)
+                    .foregroundStyle(DS.Colors.bonusText)
             }
         }
         .frame(maxWidth: .infinity)

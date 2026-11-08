@@ -11,83 +11,73 @@ struct SetupView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                    header
+                VStack(alignment: .leading, spacing: DS.Space.xl) {
+                    ScreenTitle(title: "QuiddleBot", subtitle: "Scorekeeper for Quiddler")
+                        .padding(.top, DS.Space.m)
 
-                    VStack(alignment: .leading, spacing: 14) {
-                        Text("Who's playing?").font(.headline)
-                        Picker("Number of players", selection: $playerCount.animation(.snappy)) {
+                    VStack(alignment: .leading, spacing: DS.Space.l) {
+                        Text("Who's playing?")
+                            .font(DS.Typography.rowTitle)
+                            .accessibilityAddTraits(.isHeader)
+                        Picker("Number of players", selection: $playerCount.animation(DS.Motion.standard)) {
                             ForEach(2...4, id: \.self) { count in
                                 Text("\(count) players").tag(count)
                             }
                         }
                         .pickerStyle(.segmented)
 
-                        VStack(spacing: 10) {
+                        VStack(spacing: DS.Space.s) {
                             ForEach(0..<playerCount, id: \.self) { index in
                                 nameRow(index)
-                                    .transition(.move(edge: .top).combined(with: .opacity))
+                                    .motionSafeTransition(.move(edge: .top).combined(with: .opacity))
                             }
                         }
 
                         Text("Enter players in seating order. Hands are counted round the table.")
-                            .font(.footnote)
+                            .font(DS.Typography.footnote)
                             .foregroundStyle(.secondary)
                     }
-                    .card()
+                    .dsCard()
 
                     if playerCount == 2 {
-                        VStack(alignment: .leading, spacing: 6) {
+                        VStack(alignment: .leading, spacing: DS.Space.xs + 2) {
                             Toggle(isOn: $mostWordsForTwo) {
                                 Label {
                                     Text("Most Words bonus")
                                 } icon: {
-                                    Image(systemName: "star.fill").foregroundStyle(Theme.gold)
+                                    Image(systemName: "star.fill").foregroundStyle(DS.Colors.bonusText)
                                 }
                             }
                             Text("Two-player games use one bonus. Longest Word is always on; turn this on to play both.")
-                                .font(.footnote)
+                                .font(DS.Typography.footnote)
                                 .foregroundStyle(.secondary)
                         }
-                        .card()
+                        .dsCard()
                         .transition(.opacity)
                     }
 
                     rulesSummary
                 }
-                .padding(20)
+                .padding(DS.Space.screen)
             }
             .scrollDismissesKeyboard(.interactively)
-            .background(Color(.systemGroupedBackground))
-            .safeAreaInset(edge: .bottom) {
-                BottomActionBar {
-                    Button(action: start) {
-                        HStack(spacing: 8) {
-                            Text("Start Game")
-                            Image(systemName: "arrow.right")
-                        }
+            .dsCanvas()
+            .bottomActionBar {
+                Button(action: start) {
+                    HStack(spacing: DS.Space.s) {
+                        Text("Start Game")
+                        Image(systemName: "arrow.right")
                     }
-                    .buttonStyle(PrimaryButtonStyle())
                 }
+                .buttonStyle(PrimaryButtonStyle())
             }
             .toolbar(.hidden, for: .navigationBar)
         }
     }
 
-    private var header: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text("QuiddleBot")
-                .font(.largeTitle.bold())
-            Text("Scorekeeper for Quiddler")
-                .font(.title3)
-                .foregroundStyle(.secondary)
-        }
-        .padding(.top, 12)
-    }
-
     private func nameRow(_ index: Int) -> some View {
-        HStack(spacing: 12) {
-            PlayerAvatar(name: names[index].isEmpty ? "\(index + 1)" : names[index], index: index)
+        HStack(spacing: DS.Space.m) {
+            PlayerAvatar(seat: index, in: Array(names.prefix(playerCount)))
             TextField("Player \(index + 1)", text: $names[index])
                 .font(.body.weight(.medium))
                 .textInputAutocapitalization(.words)
@@ -103,32 +93,18 @@ struct SetupView: View {
                 }
                 .accessibilityLabel("Player \(index + 1) name")
         }
-        .padding(.horizontal, 12)
-        .frame(minHeight: 54)
-        .background(Color(.tertiarySystemFill),
-                    in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+        .padding(.horizontal, DS.Space.m)
+        .frame(minHeight: DS.Size.button)
+        .background(DS.Colors.surfaceSunken, in: RoundedRectangle.ds(DS.Radius.control))
     }
 
     private var rulesSummary: some View {
-        HStack(spacing: 10) {
-            summaryTile(value: "8", label: "rounds")
-            summaryTile(value: "3–10", label: "cards")
-            summaryTile(value: "+10", label: "per bonus", tint: Theme.gold)
+        HStack(spacing: DS.Space.m) {
+            StatTile(value: "8", label: "rounds")
+            StatTile(value: "3–10", label: "cards")
+            StatTile(value: "+10", label: "per bonus", isBonus: true)
         }
         .accessibilityElement(children: .combine)
-    }
-
-    private func summaryTile(value: String, label: String, tint: Color = .primary) -> some View {
-        VStack(spacing: 2) {
-            Text(value)
-                .font(.title3.weight(.bold).monospacedDigit())
-                .foregroundStyle(tint)
-            Text(label)
-                .font(.caption)
-                .foregroundStyle(.secondary)
-        }
-        .frame(maxWidth: .infinity)
-        .card(padding: 12)
     }
 
     private func start() {

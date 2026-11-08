@@ -4,9 +4,9 @@ import SwiftUI
 /// almost nothing, and it stops animating once the last piece has fallen.
 /// Callers skip it entirely when Reduce Motion is on.
 struct ConfettiView: View {
-    var duration: TimeInterval = 4.0
+    var duration: TimeInterval = DS.Motion.celebration
 
-    private static let colors: [Color] = Theme.playerColors + [Theme.gold, Color.accentColor]
+    private static let colors: [Color] = DS.Colors.players + [DS.Colors.bonusFill, DS.Colors.accent]
     private static let pieceCount = 140
 
     // Created once with the view, not in onAppear: an overlay's onAppear is not guaranteed

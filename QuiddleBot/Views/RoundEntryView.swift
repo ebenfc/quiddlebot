@@ -13,18 +13,13 @@ struct RoundEntryView: View {
     private var rules: RuleSet { game.rules }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            VStack(alignment: .leading, spacing: 4) {
-                Text(isEditing ? "Fix the scores" : "Scores this round")
-                    .font(.title3.bold())
-                Text("Count each player's cards. QuiddleBot adds them up and picks the bonuses.")
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
-            }
+        VStack(alignment: .leading, spacing: DS.Space.l) {
+            SectionHeader(title: isEditing ? "Fix the scores" : "Scores this round",
+                          subtitle: "Count each player's cards. QuiddleBot adds them up and picks the bonuses.")
 
-            VStack(spacing: 2) {
+            VStack(spacing: DS.Space.xxs) {
                 ForEach(game.players.indices, id: \.self) { player in
-                    PlayerRow(name: game.players[player], player: player, rules: rules,
+                    PlayerRow(names: game.players, player: player, rules: rules,
                               draft: draft, onTap: { onCount(player) })
                 }
             }
@@ -51,63 +46,60 @@ struct RoundEntryView: View {
                                isWaiting: !draft.uncountedPlayers.isEmpty)
             }
         }
-        .card()
+        .dsCard()
     }
 
     /// One player: their words or "Not counted yet", notes about the score, and the score.
     private struct PlayerRow: View {
-        let name: String
+        let names: [String]
         let player: Int
         let rules: RuleSet
         let draft: RoundDraft
         var onTap: () -> Void
 
+        private var name: String { names[player] }
+
         var body: some View {
             Button(action: onTap) {
-                HStack(spacing: 12) {
-                    PlayerAvatar(name: name, index: player)
+                HStack(spacing: DS.Space.m) {
+                    PlayerAvatar(seat: player, in: names)
 
-                    VStack(alignment: .leading, spacing: 3) {
-                        HStack(spacing: 6) {
+                    VStack(alignment: .leading, spacing: DS.Space.xxs) {
+                        HStack(spacing: DS.Space.xs + 2) {
                             Text(name)
-                                .font(.body.weight(.semibold))
+                                .font(DS.Typography.rowTitle)
                                 .lineLimit(1)
                             if bonusTotal > 0 {
-                                Text("★ +\(bonusTotal)")
-                                    .font(.caption.weight(.bold).monospacedDigit())
-                                    .foregroundStyle(Theme.gold)
-                                    .padding(.horizontal, 7)
-                                    .padding(.vertical, 2)
-                                    .background(Theme.gold.opacity(0.15), in: Capsule())
-                                    .transition(.scale(scale: 0.6).combined(with: .opacity))
+                                ValueBadge(text: "+\(bonusTotal)", systemImage: "star.fill",
+                                           accessibilityText: "\(bonusTotal) bonus points")
+                                    .motionSafeTransition(.scale(scale: 0.6).combined(with: .opacity))
                             }
                         }
                         Text(detail)
-                            .font(.subheadline)
-                            .foregroundStyle(score == nil ? Color.accentColor : Color.secondary)
-                            .lineLimit(1)
+                            .font(DS.Typography.detail)
+                            .foregroundStyle(score == nil ? DS.Colors.accent : Color.secondary)
+                            .lineLimit(2)
                         ForEach(notes, id: \.self) { note in
-                            Text(note)
-                                .font(.caption.weight(.semibold))
-                                .foregroundStyle(.orange)
+                            Label(note, systemImage: "exclamationmark.circle.fill")
+                                .font(DS.Typography.caption.weight(.semibold))
+                                .foregroundStyle(DS.Colors.warning)
                         }
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
 
                     if let score {
-                        Text(score, format: .number)
-                            .font(.title3.weight(.bold).monospacedDigit())
-                            .contentTransition(.numericText(value: Double(score)))
+                        ScoreNumeral(score, style: .medium)
                     }
                     Image(systemName: "chevron.right")
-                        .font(.footnote.weight(.semibold))
-                        .foregroundStyle(.tertiary)
+                        .font(DS.Typography.footnote.weight(.semibold))
+                        .foregroundStyle(.secondary)
+                        .accessibilityHidden(true)
                 }
-                .padding(.vertical, 8)
+                .padding(.vertical, DS.Space.s)
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
-            .animation(.snappy, value: bonusTotal)
+            .animation(DS.Motion.standard, value: bonusTotal)
             .accessibilityElement(children: .combine)
             .accessibilityHint(score == nil ? "Counts \(name)'s cards" : "Recounts \(name)'s cards")
         }
@@ -163,10 +155,10 @@ struct RoundEntryView: View {
                 } else if suggestion == nil && isWaiting {
                     waiting
                 } else {
-                    VStack(alignment: .leading, spacing: 8) {
+                    VStack(alignment: .leading, spacing: DS.Space.s) {
                         if suggestion == nil {
                             Text("A score was typed, so pick this bonus yourself.")
-                                .font(.caption)
+                                .font(DS.Typography.caption)
                                 .foregroundStyle(.secondary)
                         }
                         BonusPickerView(title: title, bonus: bonus, players: players,
@@ -174,46 +166,28 @@ struct RoundEntryView: View {
                     }
                 }
             }
-            .animation(.snappy, value: isChanging)
+            .animation(DS.Motion.standard, value: isChanging)
         }
 
         private func result(_ award: BonusAward, reason: String) -> some View {
-            HStack(spacing: 10) {
-                Image(systemName: "star.fill")
-                    .foregroundStyle(Theme.gold)
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(title)
-                        .font(.subheadline.weight(.semibold))
-                    Text(winner(award).map { "\($0) · \(reason)" } ?? reason)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
+            BonusHeaderRow(title: title,
+                           detail: winner(award).map { "\($0) · \(reason)" } ?? reason) {
                 if winner(award) != nil {
-                    Text("+\(bonus)")
-                        .font(.caption.weight(.bold).monospacedDigit())
-                        .foregroundStyle(Theme.gold)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 3)
-                        .background(Theme.gold.opacity(0.15), in: Capsule())
+                    ValueBadge(text: "+\(bonus)", accessibilityText: "\(bonus) points")
                 }
                 Button("Change") { isChanging = true }
-                    .font(.subheadline.weight(.semibold))
+                    .font(DS.Typography.label)
                     .buttonStyle(.borderless)
+                    .frame(minHeight: DS.Size.minTap)
                     .accessibilityHint("Pick who gets the \(title.lowercased()) bonus yourself")
             }
             .accessibilityElement(children: .combine)
         }
 
         private var waiting: some View {
-            HStack(spacing: 10) {
-                Image(systemName: "star")
-                    .foregroundStyle(Theme.gold)
-                Text(title)
-                    .font(.subheadline.weight(.semibold))
-                Spacer()
+            BonusHeaderRow(title: title, isDecided: false) {
                 Text("Picked from the cards")
-                    .font(.caption)
+                    .font(DS.Typography.caption)
                     .foregroundStyle(.secondary)
             }
             .accessibilityElement(children: .combine)

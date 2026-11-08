@@ -26,10 +26,13 @@ project.yml               XcodeGen spec; regenerates QuiddleBot.xcodeproj
 QuiddleBot/
   Models/                 Game, Round, RuleSet, Scoring (pure), CardValues, Hand, WordList
   Resources/words.txt     the built-in word list (generated; see scripts/build-wordlist.sh)
+  DesignSystem/           "Card Table" design system: tokens (DS.*), components, #Preview catalog
   Store/GameStore.swift   @Observable state + JSON persistence
   Views/                  SwiftUI screens
 QuiddleBotTests/          Swift Testing suite
-scripts/make-icon.swift   renders the app icon PNG
+scripts/make-icon.swift   renders the app icon (default, dark, tinted) and its Contents.json
+scripts/make-colors.py    writes the design-system colorsets (light, dark, Increase Contrast)
+docs/design-system.md     the design system's rules, in brief
 scripts/build-wordlist.sh builds words.txt from ENABLE1 + scripts/wordlist/additions.txt
 scripts/wordlist/additions.txt   words newer than ENABLE1; edit, rebuild, commit
 ```

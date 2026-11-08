@@ -10,28 +10,28 @@ struct WordVerdictBadge: View {
     var body: some View {
         switch verdict {
         case .found:
-            mark("checkmark.circle.fill", tint: .green)
+            mark("checkmark.circle.fill", tint: DS.Colors.positive)
                 .accessibilityLabel("In the word list")
         case .notInList:
-            Button(action: action) { mark("questionmark.circle.fill", tint: .orange) }
+            Button(action: action) { mark("questionmark.circle.fill", tint: DS.Colors.warning) }
                 .buttonStyle(.plain)
                 .accessibilityLabel("Not in the word list")
                 .accessibilityHint("Shows options")
         case .tableAccepted:
-            Button(action: action) { mark("checkmark.circle", tint: .accentColor) }
+            Button(action: action) { mark("checkmark.circle", tint: DS.Colors.accent) }
                 .buttonStyle(.plain)
                 .accessibilityLabel("Accepted by the table")
                 .accessibilityHint("Shows options")
         }
     }
 
-    /// Tile-high and at least 28 pt wide, inside the button label so the whole area taps.
+    /// A full 44 pt target, inside the button label so the whole area taps.
     private func mark(_ systemImage: String, tint: Color) -> some View {
         Image(systemName: systemImage)
             .font(.title3)
             .imageScale(.medium)
             .foregroundStyle(tint)
-            .frame(minWidth: 28, minHeight: 42)
+            .frame(minWidth: DS.Size.minTap, minHeight: DS.Size.minTap)
             .contentShape(Rectangle())
     }
 }
@@ -52,22 +52,16 @@ struct WordVerdictSheet: View {
     private var term: String { word.text.lowercased() }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 20) {
-            VStack(alignment: .leading, spacing: 4) {
-                Text(word.text)
-                    .font(.largeTitle.bold())
-                Text("\(word.points) points · \(word.letters) letters")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-            }
+        VStack(alignment: .leading, spacing: DS.Space.xl) {
+            ScreenTitle(title: word.text, subtitle: "\(word.points) points · \(word.letters) letters")
 
             Label {
                 Text(verdict == .tableAccepted ? "The table accepted this word" : "Not in the built-in word list")
             } icon: {
                 Image(systemName: verdict == .tableAccepted ? "checkmark.circle" : "questionmark.circle.fill")
-                    .foregroundStyle(verdict == .tableAccepted ? Color.accentColor : Color.orange)
+                    .foregroundStyle(verdict == .tableAccepted ? DS.Colors.accent : DS.Colors.warning)
             }
-            .font(.headline)
+            .font(DS.Typography.rowTitle)
 
             dictionaryArea
 
@@ -88,11 +82,12 @@ struct WordVerdictSheet: View {
             }
 
             Text("The check never changes the score. A lost challenge still goes through ⋯ › Lost a challenge.")
-                .font(.footnote)
+                .font(DS.Typography.footnote)
                 .foregroundStyle(.secondary)
         }
-        .padding(20)
+        .padding(DS.Space.screen)
         .fontDesign(.rounded)
+        .tint(DS.Colors.accent)
         .task {
             // Let the sheet finish sliding in before the (synchronous, main-thread) check.
             try? await Task.sleep(for: .milliseconds(300))
@@ -108,13 +103,13 @@ struct WordVerdictSheet: View {
     private var dictionaryArea: some View {
         switch hasDefinition {
         case nil:
-            HStack(spacing: 10) {
+            HStack(spacing: DS.Space.m) {
                 ProgressView()
                 Text("Checking the dictionary…")
-                    .font(.subheadline)
+                    .font(DS.Typography.detail)
                     .foregroundStyle(.secondary)
             }
-            .frame(minHeight: 54)
+            .frame(minHeight: DS.Size.button)
         case true?:
             Button("Look up in Dictionary") { showingDictionary = true }
                 .buttonStyle(SecondaryButtonStyle())
@@ -122,7 +117,7 @@ struct WordVerdictSheet: View {
             // False also means no dictionary is installed (simulators have none), so this
             // never claims the word doesn't exist.
             Text("No definition found on this device. iOS looks words up in a dictionary you download under Settings › General › Dictionary.")
-                .font(.subheadline)
+                .font(DS.Typography.detail)
                 .foregroundStyle(.secondary)
         }
     }

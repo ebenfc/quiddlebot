@@ -10,22 +10,17 @@ struct RoundNavView: View {
     private enum Status { case completed, current, editing, upcoming }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            VStack(alignment: .leading, spacing: 2) {
-                Text(title)
-                    .font(.largeTitle.bold())
-                    .contentTransition(.numericText())
-                Text(subtitle)
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-            }
-            .animation(.snappy, value: title)
+        VStack(alignment: .leading, spacing: DS.Space.m) {
+            ScreenTitle(title: title, subtitle: subtitle)
+                .animation(DS.Motion.standard, value: title)
 
-            HStack(spacing: 6) {
+            HStack(spacing: DS.Space.xs + 2) {
                 ForEach(1...game.rules.roundCount, id: \.self) { round in
                     pill(round)
                 }
             }
+            // Eight pills share one row; past this size their numbers would clip.
+            .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
         }
     }
 
@@ -48,23 +43,32 @@ struct RoundNavView: View {
         return Button {
             onSelect(round)
         } label: {
-            Text("\(round)")
-                .font(.subheadline.weight(.bold).monospacedDigit())
-                .frame(maxWidth: .infinity, minHeight: 34)
-                .foregroundStyle(foreground(for: status))
-                .background(fill(for: status), in: Capsule())
-                .overlay {
-                    if status == .current {
-                        Capsule().strokeBorder(Color.accentColor, lineWidth: 2)
-                    }
+            Group {
+                // The round being edited shows a pencil, so it differs from the current
+                // round by shape as well as color.
+                if status == .editing {
+                    Image(systemName: "pencil")
+                        .font(.subheadline.weight(.bold))
+                } else {
+                    Text("\(round)")
+                        .font(.subheadline.weight(.bold).monospacedDigit())
                 }
-                .padding(.vertical, 5)
-                .contentShape(Rectangle())
+            }
+            .frame(maxWidth: .infinity, minHeight: 34)
+            .foregroundStyle(foreground(for: status))
+            .background(fill(for: status), in: Capsule())
+            .overlay {
+                if status == .current || status == .editing {
+                    Capsule().strokeBorder(stroke(for: status), lineWidth: 2)
+                }
+            }
+            .padding(.vertical, 5)
+            .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
         .disabled(status != .completed)
         .accessibilityLabel("Round \(round), \(label(for: status))")
-        .accessibilityHint(status == .completed ? "Tap to edit" : "")
+        .accessibilityHint(status == .completed ? "Edits this round" : "")
     }
 
     private func status(for round: Int) -> Status {
@@ -76,17 +80,22 @@ struct RoundNavView: View {
 
     private func fill(for status: Status) -> Color {
         switch status {
-        case .completed: .accentColor
-        case .editing: .orange
-        case .current: Color.accentColor.opacity(0.12)
-        case .upcoming: Color(.tertiarySystemFill)
+        case .completed: DS.Colors.accent
+        case .editing: DS.Colors.tint(DS.Colors.warning)
+        case .current: DS.Colors.tint(DS.Colors.accent)
+        case .upcoming: DS.Colors.surfaceSunken
         }
+    }
+
+    private func stroke(for status: Status) -> Color {
+        status == .editing ? DS.Colors.warning : DS.Colors.accent
     }
 
     private func foreground(for status: Status) -> Color {
         switch status {
-        case .completed, .editing: .white
-        case .current: .accentColor
+        case .completed: DS.Colors.onAccent
+        case .editing: DS.Colors.warning
+        case .current: DS.Colors.accent
         case .upcoming: .secondary
         }
     }

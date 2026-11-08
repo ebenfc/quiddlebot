@@ -2,11 +2,17 @@ import SwiftUI
 
 struct GameView: View {
     @Environment(GameStore.self) private var store
+    @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     let game: Game
 
     /// Typed-but-unsubmitted input, keyed by round number, so starting an edit of an
     /// earlier round does not throw away what was typed for the current one.
     @State private var drafts: [Int: RoundDraft] = [:]
+    /// The round in progress comes back from disk once per game screen. `onAppear` runs
+    /// again whenever the round counter closes, and a round the scorekeeper just cancelled
+    /// must not return.
+    @State private var didRestore = false
     @State private var confirmEndEarly = false
     @State private var confirmNewGame = false
     /// Who the round counter opens on, while it is showing.
@@ -25,7 +31,7 @@ struct GameView: View {
         NavigationStack {
             ScrollViewReader { scroller in
                 ScrollView {
-                    VStack(alignment: .leading, spacing: 18) {
+                    VStack(alignment: .leading, spacing: DS.Space.l) {
                         RoundNavView(game: game, editingRound: store.editingRound, onSelect: beginEditing)
                         ScoreboardView(game: game)
                         RoundEntryView(game: game,
@@ -37,28 +43,31 @@ struct GameView: View {
                                 Color.clear.frame(height: 1).id(Self.roundAnchor)
                             }
                         if !game.rounds.isEmpty {
-                            VStack(alignment: .leading, spacing: 12) {
-                                Text("Scorecard").font(.title3.bold())
+                            VStack(alignment: .leading, spacing: DS.Space.m) {
+                                SectionHeader(title: "Scorecard")
                                 HistoryView(game: game, onEdit: beginEditing)
                             }
-                            .card()
+                            .dsCard()
                         }
                     }
-                    .padding(.horizontal, 20)
-                    .padding(.bottom, 20)
+                    .padding(.horizontal, DS.Space.screen)
+                    .padding(.bottom, DS.Space.screen)
                 }
                 .fullScreenCover(item: $counting, onDismiss: {
                     // Back from counting: show the round's results, not the scoreboard.
-                    withAnimation(.snappy) { scroller.scrollTo(Self.roundAnchor, anchor: .top) }
+                    withAnimation(DS.Motion.movement(reduceMotion: reduceMotion)) {
+                        scroller.scrollTo(Self.roundAnchor, anchor: .top)
+                    }
                 }) { start in
                     RoundCounterView(players: game.players,
                                      roundNumber: activeRound,
                                      draft: activeDraft,
-                                     startingAt: start.player) { drafts[activeRound] = $0 }
+                                     startingAt: start.player,
+                                     onSnapshot: saveSnapshot) { drafts[activeRound] = $0 }
                 }
             }
-            .background(Color(.systemGroupedBackground))
-            .safeAreaInset(edge: .bottom) { actionBar }
+            .dsCanvas()
+            .bottomActionBar { actionBar }
             .navigationTitle("QuiddleBot")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -71,7 +80,7 @@ struct GameView: View {
                             confirmNewGame = true
                         }
                     } label: {
-                        Label("Menu", systemImage: "ellipsis.circle")
+                        Label("Menu", systemImage: DS.Symbol.more)
                     }
                 }
             }
@@ -84,23 +93,40 @@ struct GameView: View {
                 Button("Start New Game", role: .destructive) { store.reset() }
             }
         }
-        .sensoryFeedback(.success, trigger: game.rounds.count)
-        .onAppear { UIApplication.shared.isIdleTimerDisabled = true }
-        .onDisappear { UIApplication.shared.isIdleTimerDisabled = false }
+        .sensoryFeedback(DS.Haptic.success, trigger: game.rounds.count)
+        .onAppear {
+            // After iOS closed the app mid-round, pick up the scores already counted.
+            guard !didRestore else { return }
+            didRestore = true
+            if drafts.isEmpty { drafts = store.restoredDrafts() }
+        }
+        .onChange(of: scenePhase) { _, phase in
+            // While the counter is open it saves its own, fresher copy.
+            if phase == .background && counting == nil { store.saveDrafts(drafts) }
+        }
+    }
+
+    /// The counter's progress so far, saved as the app goes to the background without
+    /// touching what's on screen: Cancel must still be able to throw it away.
+    private func saveSnapshot(_ snapshot: RoundDraft) {
+        var all = drafts
+        all[activeRound] = snapshot
+        store.saveDrafts(all)
     }
 
     private static let roundAnchor = "round"
 
     /// The main action, pinned above the home indicator. One button walks the round:
     /// Count Hands until everyone has a score, then Next Round.
+    @ViewBuilder
     private var actionBar: some View {
         let draft = activeDraft
         let round = draft.round(rules: game.rules)
         let uncounted = draft.uncountedPlayers
-        return BottomActionBar {
+        VStack(spacing: DS.Space.s) {
             if let hint = hint(round: round, uncounted: uncounted) {
                 Text(hint)
-                    .font(.footnote)
+                    .font(DS.Typography.footnote)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
             }
@@ -108,7 +134,7 @@ struct GameView: View {
                 Button {
                     startCounting(at: first)
                 } label: {
-                    HStack(spacing: 8) {
+                    HStack(spacing: DS.Space.s) {
                         Image(systemName: "square.grid.3x3.fill")
                         Text(uncounted.count == game.players.count
                              ? "Count Hands" : "Count \(game.players[first])'s Hand")
@@ -116,7 +142,7 @@ struct GameView: View {
                 }
                 .buttonStyle(PrimaryButtonStyle())
             } else if isEditing {
-                HStack(spacing: 12) {
+                HStack(spacing: DS.Space.m) {
                     Button("Cancel", action: cancelEdit)
                         .buttonStyle(SecondaryButtonStyle())
                     Button("Save Changes") {
@@ -129,7 +155,7 @@ struct GameView: View {
                 Button {
                     if let round { submit(round) }
                 } label: {
-                    HStack(spacing: 8) {
+                    HStack(spacing: DS.Space.s) {
                         Text(game.isOnFinalRound ? "Finish Game" : "Next Round")
                         Image(systemName: game.isOnFinalRound ? "flag.checkered" : "arrow.right")
                     }
@@ -138,8 +164,8 @@ struct GameView: View {
                 .disabled(round == nil)
             }
         }
-        .animation(.snappy, value: round == nil)
-        .animation(.snappy, value: uncounted)
+        .animation(DS.Motion.standard, value: round == nil)
+        .animation(DS.Motion.standard, value: uncounted)
     }
 
     /// What's still missing, when the button alone doesn't say.
@@ -170,13 +196,13 @@ struct GameView: View {
 
     private func submit(_ round: Round) {
         drafts[game.currentRound] = nil
-        withAnimation(.snappy) { store.submit(round) }
+        withAnimation(DS.Motion.standard) { store.submit(round) }
     }
 
     private func saveEdit(_ round: Round) {
         guard let editing = store.editingRound else { return }
         drafts[editing] = nil
-        withAnimation(.snappy) { store.save(round, forRound: editing) }
+        withAnimation(DS.Motion.standard) { store.save(round, forRound: editing) }
     }
 
     private func cancelEdit() {
