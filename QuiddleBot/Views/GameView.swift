@@ -9,6 +9,10 @@ struct GameView: View {
     /// Typed-but-unsubmitted input, keyed by round number, so starting an edit of an
     /// earlier round does not throw away what was typed for the current one.
     @State private var drafts: [Int: RoundDraft] = [:]
+    /// The round in progress comes back from disk once per game screen. `onAppear` runs
+    /// again whenever the round counter closes, and a round the scorekeeper just cancelled
+    /// must not return.
+    @State private var didRestore = false
     @State private var confirmEndEarly = false
     @State private var confirmNewGame = false
     /// Who the round counter opens on, while it is showing.
@@ -92,6 +96,8 @@ struct GameView: View {
         .sensoryFeedback(DS.Haptic.success, trigger: game.rounds.count)
         .onAppear {
             // After iOS closed the app mid-round, pick up the scores already counted.
+            guard !didRestore else { return }
+            didRestore = true
             if drafts.isEmpty { drafts = store.restoredDrafts() }
         }
         .onChange(of: scenePhase) { _, phase in

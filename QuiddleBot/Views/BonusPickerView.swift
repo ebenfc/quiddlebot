@@ -54,7 +54,7 @@ struct BonusPickerView: View {
                        fill: fill,
                        onFill: onFill,
                        showsDot: showsDot,
-                       badge: suggestion == value ? ("sparkles", "suggested by the counted cards") : nil) {
+                       badge: suggestion == value ? (symbol: "sparkles", label: "suggested by the counted cards") : nil) {
             selection = value
         }
     }
