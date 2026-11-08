@@ -1,8 +1,7 @@
 import SwiftUI
 
 extension DS {
-    /// Text styles, all on Dynamic Type. SF Rounded is applied once at each root
-    /// (`.fontDesign(.rounded)`), so these never name a design.
+    /// Text styles, all on Dynamic Type, in the system font.
     nonisolated enum Typography {
         /// Screen titles: "Round 4", "Ada wins!".
         static let screenTitle = Font.largeTitle.bold()

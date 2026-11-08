@@ -120,7 +120,7 @@ struct CardKeypadView: View {
 /// The system keyboard's two-tone hierarchy: letter keys lighter, function keys a step
 /// darker. The keys are tinted gray, not white, so they stand out from the bar behind them
 /// without any outline or shadow. Kept here, not in the design system's tokens, because the
-/// keypad should follow the system and not the Card Table palette.
+/// keypad should follow the system and not the brand palette.
 private enum KeyFill {
     static let letter = Color(uiColor: UIColor { traits in
         traits.userInterfaceStyle == .dark ? UIColor(white: 1, alpha: 0.30) : UIColor(white: 0, alpha: 0.07)

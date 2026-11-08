@@ -1,14 +1,16 @@
 import SwiftUI
 
-/// QuiddleBot's design system, "Card Table": felt green, bonus gold and cream letter tiles.
-/// Every token is named for its role, never its hue. The Design System artifact on claude.ai
-/// documents the same names and values; `scripts/make-colors.py` writes the color assets.
+/// QuiddleBot's design system: plain iOS, with a green accent and gold for bonuses. Surfaces,
+/// tiles and keys use the system's own colors, so the app looks like it belongs on the phone.
+/// Every token is named for its role, never its hue. `scripts/make-colors.py` writes the
+/// brand color assets (accent, bonus, status, seats, medals).
 nonisolated enum DS {}
 
 extension DS {
-    /// Colors come from the asset catalog, which carries light, dark and Increase Contrast
-    /// variants of each. A fill and the text drawn on it are always a pair (`accent` and
-    /// `onAccent`), so every pairing clears 4.5:1.
+    /// Brand colors come from the asset catalog, which carries light, dark and Increase
+    /// Contrast variants of each; surfaces and tiles come from the system, which adapts on its
+    /// own. A fill and the text drawn on it are always a pair (`accent` and `onAccent`), so
+    /// every pairing clears 4.5:1.
     nonisolated enum Colors {
         // Brand
         static let accent = Color("DSAccent")
@@ -20,15 +22,14 @@ extension DS {
         static let bonusText = Color("DSBonusText")
 
         // Surfaces
-        static let canvas = Color("DSCanvas")
-        static let surface = Color("DSSurface")
-        static let surfaceSunken = Color("DSSurfaceSunken")
-        static let outline = Color("DSOutline")
+        static let canvas = Color(uiColor: .systemGroupedBackground)
+        static let surface = Color(uiColor: .secondarySystemGroupedBackground)
+        static let surfaceSunken = Color(uiColor: .tertiarySystemFill)
+        static let outline = Color(uiColor: .separator)
 
-        // Letter tiles: cream in both appearances, like the cards on the table.
-        static let tileFace = Color("DSTileFace")
-        static let tileEdge = Color("DSTileEdge")
-        static let tileInk = Color("DSTileInk")
+        // Letter tiles: system gray with system ink.
+        static let tileFace = Color(uiColor: .tertiarySystemFill)
+        static let tileInk = Color.primary
 
         // Status
         static let positive = Color("DSPositive")

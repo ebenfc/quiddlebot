@@ -1,9 +1,8 @@
 import SwiftUI
 
-/// A raised card: the surface color, continuous corners, a soft shadow in light mode and a
-/// hairline edge in dark mode, where shadows don't show.
+/// A card: the grouped-list surface color with continuous corners. Flat, like the system's
+/// grouped lists: no shadow, no edge.
 struct CardSurface: ViewModifier {
-    @Environment(\.colorScheme) private var colorScheme
     var padding: CGFloat = DS.Space.l
 
     func body(content: Content) -> some View {
@@ -11,13 +10,6 @@ struct CardSurface: ViewModifier {
             .padding(padding)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(DS.Colors.surface, in: RoundedRectangle.ds(DS.Radius.card))
-            .overlay {
-                if colorScheme == .dark {
-                    RoundedRectangle.ds(DS.Radius.card)
-                        .strokeBorder(DS.Colors.outline.opacity(0.6), lineWidth: 1)
-                }
-            }
-            .shadow(color: .black.opacity(colorScheme == .dark ? 0 : 0.06), radius: 14, x: 0, y: 6)
     }
 }
 

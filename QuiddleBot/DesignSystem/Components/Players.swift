@@ -17,7 +17,7 @@ struct PlayerAvatar: View {
 
     var body: some View {
         Text(monogram)
-            .font(.system(size: size * (monogram.count > 1 ? 0.4 : 0.46), weight: .bold, design: .rounded))
+            .font(.system(size: size * (monogram.count > 1 ? 0.4 : 0.46), weight: .bold))
             .foregroundStyle(DS.Colors.onPlayer)
             .lineLimit(1)
             .minimumScaleFactor(0.6)

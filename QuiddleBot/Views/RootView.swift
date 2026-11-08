@@ -25,7 +25,6 @@ struct RootView: View {
             }
         }
         // Rounded type everywhere: friendlier numbers, same system font metrics and Dynamic Type.
-        .fontDesign(.rounded)
         .tint(DS.Colors.accent)
         .onChange(of: keepsScreenAwake, initial: true) { _, awake in
             UIApplication.shared.isIdleTimerDisabled = awake

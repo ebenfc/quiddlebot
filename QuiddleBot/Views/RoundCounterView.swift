@@ -96,7 +96,6 @@ struct RoundCounterView: View {
                 Text("How many points does \(name) lose? It comes off after the zero floor.")
             }
         }
-        .fontDesign(.rounded)
         .tint(DS.Colors.accent)
         .onGeometryChange(for: Bool.self) { $0.size.height < DS.Size.compactHeight } action: { isCompact = $0 }
         .onChange(of: scenePhase) { _, phase in
