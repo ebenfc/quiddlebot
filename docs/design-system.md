@@ -22,7 +22,9 @@ full reference (tokens with contrast ratios, components with live previews, patt
 3. **Never color alone.** Status pairs a symbol with its tone; a picked chip shows a checkmark;
    the round being edited shows a pencil; clashing initials become two letters.
 4. **Tiles are generic.** Flat cream, SF Rounded, a corner value. No frame, no ornament,
-   never Quiddler's card art (trademark: see the README).
+   never Quiddler's card art (trademark: see the README). **The keypad is the exception:**
+   its keys are flat and look like the system keyboard (gray fills, plain SF letters, no
+   outline, shadow or point numbers), so the cream-tile character lives in the words above it.
 5. **Glass is for chrome.** Buttons and the bottom bar get Liquid Glass on iOS 26; cards,
    tiles and keys stay solid. Everything still works on iOS 17.
 6. **Motion goes through `DS.Motion`.** Movement becomes a fade under Reduce Motion

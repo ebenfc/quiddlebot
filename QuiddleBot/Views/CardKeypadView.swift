@@ -1,7 +1,8 @@
 import SwiftUI
 
 /// The word calculator's keypad: letters where the iPhone keyboard has them, then the five
-/// two-letter cards. Every key is a small cream tile with its point value in the corner.
+/// two-letter cards. It is meant to look like the system keyboard: flat keys, plain system
+/// letters, no outline, shadow or ornament. The cards' points show on the tiles above.
 struct CardKeypadView: View {
     var onCard: (String) -> Void
     var onNextWord: () -> Void
@@ -23,8 +24,7 @@ struct CardKeypadView: View {
     /// Key labels follow Dynamic Type a little, then stop: the keys themselves keep the
     /// system keyboard's size, and long-pressing at accessibility sizes shows the large
     /// content viewer instead.
-    @ScaledMetric(relativeTo: .title3) private var faceSize: CGFloat = 20
-    @ScaledMetric(relativeTo: .caption2) private var pointSize: CGFloat = 10
+    @ScaledMetric(relativeTo: .title3) private var faceSize: CGFloat = 22
 
     var body: some View {
         // Key widths come from the ten-key top row, so every row lines up like a keyboard.
@@ -59,7 +59,7 @@ struct CardKeypadView: View {
         }
     }
 
-    /// A key is a small letter tile, the same cream card as the words it builds.
+    /// A plain letter key, like the system keyboard's.
     private func cardKey(_ face: String) -> some View {
         let isTwoLetter = face.count > 1
         let points = CardValues.points[face] ?? 0
@@ -67,20 +67,11 @@ struct CardKeypadView: View {
             taps += 1
             onCard(face)
         } label: {
-            ZStack(alignment: .bottomTrailing) {
-                Text(face)
-                    .font(.system(size: min(faceSize, 26) * (isTwoLetter ? 0.85 : 1),
-                                  weight: .semibold, design: .rounded))
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                Text("\(points)")
-                    .font(.system(size: min(pointSize, 12), weight: .bold, design: .rounded).monospacedDigit())
-                    .opacity(0.7)
-                    .padding(.trailing, 3)
-                    .padding(.bottom, DS.Space.xxs)
-            }
-            .foregroundStyle(DS.Colors.tileInk)
+            Text(face)
+                .font(.system(size: min(faceSize, 28) * (isTwoLetter ? 0.82 : 1), weight: .regular))
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
-        .buttonStyle(KeyStyle(fill: DS.Colors.tileFace, isTile: true))
+        .buttonStyle(KeyStyle(fill: KeyFill.letter))
         .frame(height: keyHeight)
         // Spell two-letter cards out so VoiceOver reads "Q U", not a made-up word.
         .accessibilityLabel("\(face.map(String.init).joined(separator: " ")), \(points) points")
@@ -98,7 +89,7 @@ struct CardKeypadView: View {
                 .font(.title3.weight(.medium))
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
-        .buttonStyle(KeyStyle(fill: DS.Colors.surfaceSunken))
+        .buttonStyle(KeyStyle(fill: KeyFill.function))
         .frame(height: keyHeight)
         .accessibilityLabel("Delete last card")
         .accessibilityShowsLargeContentViewer {
@@ -112,12 +103,12 @@ struct CardKeypadView: View {
             onNextWord()
         } label: {
             Text("Next word")
-                .font(.system(size: min(faceSize * 0.75, 19), weight: .semibold, design: .rounded))
+                .font(.system(size: min(faceSize * 0.8, 20), weight: .regular))
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
-        .buttonStyle(KeyStyle(fill: DS.Colors.surfaceSunken))
+        .buttonStyle(KeyStyle(fill: KeyFill.function))
         .frame(height: keyHeight)
         .accessibilityHint("Starts a new word")
         .accessibilityShowsLargeContentViewer {
@@ -126,28 +117,32 @@ struct CardKeypadView: View {
     }
 }
 
-/// A key that darkens while pressed, like the system keyboard. Card keys wear the tile
-/// surface; the function keys sit flat in the sunken color.
+/// The system keyboard's two-tone hierarchy: letter keys lighter, function keys a step
+/// darker. The keys are tinted gray, not white, so they stand out from the bar behind them
+/// without any outline or shadow. Kept here, not in the design system's tokens, because the
+/// keypad should follow the system and not the Card Table palette.
+private enum KeyFill {
+    static let letter = Color(uiColor: UIColor { traits in
+        traits.userInterfaceStyle == .dark ? UIColor(white: 1, alpha: 0.30) : UIColor(white: 0, alpha: 0.07)
+    })
+    static let function = Color(uiColor: UIColor { traits in
+        traits.userInterfaceStyle == .dark ? UIColor(white: 1, alpha: 0.18) : UIColor(white: 0, alpha: 0.15)
+    })
+}
+
+/// A flat key that darkens while pressed, like the system keyboard. No outline, no shadow.
 private struct KeyStyle: ButtonStyle {
     let fill: Color
-    var isTile = false
 
-    @ViewBuilder
     func makeBody(configuration: Configuration) -> some View {
-        if isTile {
-            configuration.label
-                .tileSurface(fill: fill, isPressed: configuration.isPressed)
-                .contentShape(Rectangle())
-        } else {
-            configuration.label
-                .foregroundStyle(Color.primary)
-                .background(fill, in: RoundedRectangle.ds(DS.Radius.tile))
-                .overlay {
-                    RoundedRectangle.ds(DS.Radius.tile)
-                        .fill(Color.primary.opacity(configuration.isPressed ? DS.Opacity.pressed : 0))
-                }
-                .contentShape(Rectangle())
-        }
+        configuration.label
+            .foregroundStyle(Color.primary)
+            .background(fill, in: RoundedRectangle.ds(DS.Radius.tile))
+            .overlay {
+                RoundedRectangle.ds(DS.Radius.tile)
+                    .fill(Color.primary.opacity(configuration.isPressed ? DS.Opacity.pressed : 0))
+            }
+            .contentShape(Rectangle())
     }
 }
 
@@ -171,14 +166,14 @@ struct NumberPadView: View {
                 }
             }
             GridRow {
-                key(fill: isNegative ? DS.Colors.tint(DS.Colors.negative) : DS.Colors.surfaceSunken,
+                key(fill: isNegative ? DS.Colors.tint(DS.Colors.negative) : KeyFill.function,
                     label: Image(systemName: "plus.forwardslash.minus")
                         .foregroundStyle(isNegative ? DS.Colors.negative : Color.primary),
                     action: onToggleSign)
                     .accessibilityLabel(isNegative ? "Negative score" : "Positive score")
                     .accessibilityHint("Switches the score between positive and negative")
                 digitKey(0)
-                key(fill: DS.Colors.surfaceSunken, label: Image(systemName: "delete.left"), action: onDelete)
+                key(fill: KeyFill.function, label: Image(systemName: "delete.left"), action: onDelete)
                     .accessibilityLabel("Delete last digit")
             }
         }
@@ -186,8 +181,8 @@ struct NumberPadView: View {
     }
 
     private func digitKey(_ digit: Int) -> some View {
-        key(fill: DS.Colors.surface,
-            label: Text("\(digit)").font(.system(size: min(digitSize, 30), weight: .medium, design: .rounded)),
+        key(fill: KeyFill.letter,
+            label: Text("\(digit)").font(.system(size: min(digitSize, 30), weight: .regular)),
             action: { onDigit(digit) })
             .accessibilityShowsLargeContentViewer { Text("\(digit)") }
     }
