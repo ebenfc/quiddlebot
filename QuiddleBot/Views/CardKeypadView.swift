@@ -1,13 +1,13 @@
 import SwiftUI
 
 /// The word calculator's keypad: letters where the iPhone keyboard has them, then the five
-/// two-letter cards. Every key shows its point value small, like a tile.
+/// two-letter cards. Every key is a small cream tile with its point value in the corner.
 struct CardKeypadView: View {
     var onCard: (String) -> Void
     var onNextWord: () -> Void
     var onBackspace: () -> Void
     /// Shorter on small screens such as the iPhone SE, so the words above stay in view.
-    var keyHeight: CGFloat = 44
+    var keyHeight: CGFloat = DS.Size.key
 
     private static let letterRows: [[String]] = [
         ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"],
@@ -17,9 +17,14 @@ struct CardKeypadView: View {
     private static let twoLetterCards = ["QU", "IN", "ER", "CL", "TH"]
 
     private let gap: CGFloat = 5
-    private let rowGap: CGFloat = 8
+    private let rowGap: CGFloat = DS.Space.s
 
     @State private var taps = 0
+    /// Key labels follow Dynamic Type a little, then stop: the keys themselves keep the
+    /// system keyboard's size, and long-pressing at accessibility sizes shows the large
+    /// content viewer instead.
+    @ScaledMetric(relativeTo: .title3) private var faceSize: CGFloat = 20
+    @ScaledMetric(relativeTo: .caption2) private var pointSize: CGFloat = 10
 
     var body: some View {
         // Key widths come from the ten-key top row, so every row lines up like a keyboard.
@@ -43,7 +48,7 @@ struct CardKeypadView: View {
             .frame(maxWidth: .infinity)
         }
         .frame(height: keyHeight * 4 + rowGap * 3)
-        .sensoryFeedback(.impact(flexibility: .soft, intensity: 0.6), trigger: taps)
+        .sensoryFeedback(DS.Haptic.key, trigger: taps)
     }
 
     private func letterRow(_ faces: [String], key: CGFloat) -> some View {
@@ -54,6 +59,7 @@ struct CardKeypadView: View {
         }
     }
 
+    /// A key is a small letter tile, the same cream card as the words it builds.
     private func cardKey(_ face: String) -> some View {
         let isTwoLetter = face.count > 1
         let points = CardValues.points[face] ?? 0
@@ -63,20 +69,24 @@ struct CardKeypadView: View {
         } label: {
             ZStack(alignment: .bottomTrailing) {
                 Text(face)
-                    .font(.system(size: isTwoLetter ? 17 : 20, weight: .semibold, design: .rounded))
+                    .font(.system(size: min(faceSize, 26) * (isTwoLetter ? 0.85 : 1),
+                                  weight: .semibold, design: .rounded))
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                 Text("\(points)")
-                    .font(.system(size: 9, weight: .bold, design: .rounded).monospacedDigit())
-                    .foregroundStyle(.secondary)
+                    .font(.system(size: min(pointSize, 12), weight: .bold, design: .rounded).monospacedDigit())
+                    .opacity(0.7)
                     .padding(.trailing, 3)
-                    .padding(.bottom, 2)
+                    .padding(.bottom, DS.Space.xxs)
             }
-            .foregroundStyle(isTwoLetter ? Color.accentColor : Color.primary)
+            .foregroundStyle(DS.Colors.tileInk)
         }
-        .buttonStyle(KeyStyle(fill: isTwoLetter ? Color.accentColor.opacity(0.16) : Color(.secondarySystemGroupedBackground)))
+        .buttonStyle(KeyStyle(fill: DS.Colors.tileFace, isTile: true))
         .frame(height: keyHeight)
         // Spell two-letter cards out so VoiceOver reads "Q U", not a made-up word.
         .accessibilityLabel("\(face.map(String.init).joined(separator: " ")), \(points) points")
+        .accessibilityShowsLargeContentViewer {
+            Text("\(face) \(points)")
+        }
     }
 
     private var backspaceKey: some View {
@@ -85,12 +95,15 @@ struct CardKeypadView: View {
             onBackspace()
         } label: {
             Image(systemName: "delete.left")
-                .font(.system(size: 18, weight: .medium))
+                .font(.title3.weight(.medium))
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
-        .buttonStyle(KeyStyle(fill: Color(.tertiarySystemFill)))
+        .buttonStyle(KeyStyle(fill: DS.Colors.surfaceSunken))
         .frame(height: keyHeight)
         .accessibilityLabel("Delete last card")
+        .accessibilityShowsLargeContentViewer {
+            Label("Delete", systemImage: "delete.left")
+        }
     }
 
     private var nextWordKey: some View {
@@ -99,29 +112,42 @@ struct CardKeypadView: View {
             onNextWord()
         } label: {
             Text("Next word")
-                .font(.system(size: 15, weight: .semibold, design: .rounded))
+                .font(.system(size: min(faceSize * 0.75, 19), weight: .semibold, design: .rounded))
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
-        .buttonStyle(KeyStyle(fill: Color(.tertiarySystemFill)))
+        .buttonStyle(KeyStyle(fill: DS.Colors.surfaceSunken))
         .frame(height: keyHeight)
+        .accessibilityHint("Starts a new word")
+        .accessibilityShowsLargeContentViewer {
+            Text("Next word")
+        }
     }
 }
 
-/// A key that darkens while pressed, like the system keyboard.
+/// A key that darkens while pressed, like the system keyboard. Card keys wear the tile
+/// surface; the function keys sit flat in the sunken color.
 private struct KeyStyle: ButtonStyle {
     let fill: Color
+    var isTile = false
 
+    @ViewBuilder
     func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .background(fill, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
-            .overlay {
-                RoundedRectangle(cornerRadius: 8, style: .continuous)
-                    .fill(Color.primary.opacity(configuration.isPressed ? 0.12 : 0))
-            }
-            .shadow(color: .black.opacity(0.12), radius: 0, x: 0, y: 1)
-            .contentShape(Rectangle())
+        if isTile {
+            configuration.label
+                .tileSurface(fill: fill, isPressed: configuration.isPressed)
+                .contentShape(Rectangle())
+        } else {
+            configuration.label
+                .foregroundStyle(Color.primary)
+                .background(fill, in: RoundedRectangle.ds(DS.Radius.tile))
+                .overlay {
+                    RoundedRectangle.ds(DS.Radius.tile)
+                        .fill(Color.primary.opacity(configuration.isPressed ? DS.Opacity.pressed : 0))
+                }
+                .contentShape(Rectangle())
+        }
     }
 }
 
@@ -132,36 +158,38 @@ struct NumberPadView: View {
     var onDigit: (Int) -> Void
     var onDelete: () -> Void
     var onToggleSign: () -> Void
-    var keyHeight: CGFloat = 44
+    var keyHeight: CGFloat = DS.Size.key
 
     @State private var taps = 0
+    @ScaledMetric(relativeTo: .title2) private var digitSize: CGFloat = 24
 
     var body: some View {
-        Grid(horizontalSpacing: 6, verticalSpacing: 8) {
+        Grid(horizontalSpacing: DS.Space.xs + 2, verticalSpacing: DS.Space.s) {
             ForEach([[1, 2, 3], [4, 5, 6], [7, 8, 9]], id: \.self) { row in
                 GridRow {
                     ForEach(row, id: \.self, content: digitKey)
                 }
             }
             GridRow {
-                key(fill: isNegative ? Color.red.opacity(0.16) : Color(.tertiarySystemFill),
+                key(fill: isNegative ? DS.Colors.tint(DS.Colors.negative) : DS.Colors.surfaceSunken,
                     label: Image(systemName: "plus.forwardslash.minus")
-                        .foregroundStyle(isNegative ? Color.red : Color.primary),
+                        .foregroundStyle(isNegative ? DS.Colors.negative : Color.primary),
                     action: onToggleSign)
                     .accessibilityLabel(isNegative ? "Negative score" : "Positive score")
                     .accessibilityHint("Switches the score between positive and negative")
                 digitKey(0)
-                key(fill: Color(.tertiarySystemFill), label: Image(systemName: "delete.left"), action: onDelete)
+                key(fill: DS.Colors.surfaceSunken, label: Image(systemName: "delete.left"), action: onDelete)
                     .accessibilityLabel("Delete last digit")
             }
         }
-        .sensoryFeedback(.impact(flexibility: .soft, intensity: 0.6), trigger: taps)
+        .sensoryFeedback(DS.Haptic.key, trigger: taps)
     }
 
     private func digitKey(_ digit: Int) -> some View {
-        key(fill: Color(.secondarySystemGroupedBackground),
-            label: Text("\(digit)").font(.system(size: 24, weight: .medium, design: .rounded)),
+        key(fill: DS.Colors.surface,
+            label: Text("\(digit)").font(.system(size: min(digitSize, 30), weight: .medium, design: .rounded)),
             action: { onDigit(digit) })
+            .accessibilityShowsLargeContentViewer { Text("\(digit)") }
     }
 
     private func key(fill: Color, label: some View, action: @escaping () -> Void) -> some View {
@@ -170,36 +198,11 @@ struct NumberPadView: View {
             action()
         } label: {
             label
-                .font(.system(size: 20, weight: .medium))
+                .font(.title3.weight(.medium))
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
         .buttonStyle(KeyStyle(fill: fill))
         .frame(height: keyHeight)
-    }
-}
-
-/// One card in a word or the leftover tray: its face and, small, its points.
-/// A plain rounded tile; the app never reproduces the game's card art.
-struct CardTile: View {
-    let face: String
-    var tint: Color = .accentColor
-
-    var body: some View {
-        ZStack(alignment: .bottomTrailing) {
-            Text(face)
-                .font(.system(size: 17, weight: .bold, design: .rounded))
-                .frame(width: face.count > 1 ? 42 : 32, height: 42)
-            Text("\(CardValues.points[face] ?? 0)")
-                .font(.system(size: 9, weight: .bold, design: .rounded).monospacedDigit())
-                .foregroundStyle(.secondary)
-                .padding(.trailing, 3)
-                .padding(.bottom, 2)
-        }
-        .background(tint.opacity(0.12), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
-        .overlay {
-            RoundedRectangle(cornerRadius: 8, style: .continuous)
-                .strokeBorder(tint.opacity(0.35), lineWidth: 1)
-        }
     }
 }
 
@@ -210,6 +213,6 @@ struct CardTile: View {
         NumberPadView(isNegative: false, onDigit: { _ in }, onDelete: {}, onToggleSign: {})
     }
     .padding()
-    .background(Color(.systemGroupedBackground))
+    .dsCanvas()
 }
 #endif

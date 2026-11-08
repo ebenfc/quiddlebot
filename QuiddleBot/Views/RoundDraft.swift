@@ -2,7 +2,7 @@ import Foundation
 
 /// What the scorekeeper has typed for one round, before it becomes a `Round`.
 /// Text fields hold strings; this type turns them into numbers.
-struct RoundDraft: Equatable {
+nonisolated struct RoundDraft: Equatable, Codable {
     var scoreText: [String]
     var isNegative: [Bool]
     var penaltyText: [String]

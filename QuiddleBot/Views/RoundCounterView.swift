@@ -5,9 +5,14 @@ import SwiftUI
 struct RoundCounterView: View {
     let players: [String]
     let roundNumber: Int
+    /// The scores committed so far, handed out as the app goes to the background so a
+    /// half-counted round survives iOS closing the app.
+    var onSnapshot: (RoundDraft) -> Void
     var onDone: (RoundDraft) -> Void
 
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var session: RoundCountSession
     @State private var confirmDiscard = false
     @State private var askPenalty = false
@@ -18,9 +23,11 @@ struct RoundCounterView: View {
     @State private var wordList: WordList?
 
     init(players: [String], roundNumber: Int, draft: RoundDraft, startingAt player: Int,
+         onSnapshot: @escaping (RoundDraft) -> Void = { _ in },
          onDone: @escaping (RoundDraft) -> Void) {
         self.players = players
         self.roundNumber = roundNumber
+        self.onSnapshot = onSnapshot
         self.onDone = onDone
         _session = State(initialValue: RoundCountSession(
             round: draft, cardsDealt: Game.cardsDealt(inRound: roundNumber), startingAt: player))
@@ -34,7 +41,7 @@ struct RoundCounterView: View {
         NavigationStack {
             ScrollViewReader { scroller in
                 ScrollView {
-                    VStack(alignment: .leading, spacing: 16) {
+                    VStack(alignment: .leading, spacing: DS.Space.l) {
                         summary
                             .id(HandScrollTarget.top)
                         if isTyping {
@@ -43,14 +50,14 @@ struct RoundCounterView: View {
                             HandEditorView(draft: $session.currentHand, wordList: wordList)
                         }
                     }
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 12)
-                    .animation(.snappy(duration: 0.2), value: session)
+                    .padding(.horizontal, DS.Space.screen)
+                    .padding(.vertical, DS.Space.m)
+                    .animation(DS.Motion.quick, value: session)
                 }
                 // The keypad covers the lower half, so keep wherever cards are going in view,
                 // scrolling only as far as needed; a new player starts at the top.
                 .onChange(of: session) { old, new in
-                    withAnimation(.snappy) {
+                    withAnimation(DS.Motion.movement(reduceMotion: reduceMotion)) {
                         if old.current != new.current {
                             scroller.scrollTo(HandScrollTarget.top, anchor: .top)
                         } else if new.currentHand.target == .leftovers {
@@ -61,8 +68,8 @@ struct RoundCounterView: View {
                     }
                 }
             }
-            .background(Color(.systemGroupedBackground))
-            .safeAreaInset(edge: .bottom) { keypadBar }
+            .dsCanvas()
+            .bottomActionBar(solid: true) { keypadBar }
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -90,7 +97,11 @@ struct RoundCounterView: View {
             }
         }
         .fontDesign(.rounded)
-        .onGeometryChange(for: Bool.self) { $0.size.height < 700 } action: { isCompact = $0 }
+        .tint(DS.Colors.accent)
+        .onGeometryChange(for: Bool.self) { $0.size.height < DS.Size.compactHeight } action: { isCompact = $0 }
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .background { onSnapshot(session.round) }
+        }
         .task {
             // The first counter ever opened pays the load once, off the main actor; after
             // that `WordList.shared` is a plain static read.
@@ -102,13 +113,20 @@ struct RoundCounterView: View {
 
     /// Everyone at the table: ✓ counted, # typed, a ring on whoever is being counted.
     private var playerStrip: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: DS.Space.xxs) {
             ForEach(players.indices, id: \.self) { player in
-                Button { session.select(player) } label: { stripAvatar(player) }
+                Button { session.select(player) } label: {
+                    stripAvatar(player)
+                        .frame(minWidth: DS.Size.minTap, minHeight: DS.Size.minTap)
+                        .contentShape(Rectangle())
+                }
                     .buttonStyle(.plain)
                     .disabled(player != current && !session.canLeaveCurrent)
                     .accessibilityLabel(stripLabel(player))
                     .accessibilityAddTraits(player == current ? .isSelected : [])
+                    .accessibilityShowsLargeContentViewer {
+                        Label(stripLabel(player), systemImage: "person.circle")
+                    }
             }
         }
     }
@@ -117,20 +135,21 @@ struct RoundCounterView: View {
         let isCurrent = player == current
         let isCounted = session.round.countedHand(for: player) != nil
         let isTyped = session.round.isTyped(player)
-        return PlayerAvatar(name: players[player], index: player, size: 28)
+        return PlayerAvatar(seat: player, in: players, size: DS.Avatar.strip)
             .padding(3)
             .overlay {
-                Circle().strokeBorder(Theme.playerColor(player), lineWidth: isCurrent ? 2.5 : 0)
+                Circle().strokeBorder(DS.Colors.player(player), lineWidth: isCurrent ? 2.5 : 0)
             }
             .overlay(alignment: .bottomTrailing) {
                 if isCounted || isTyped {
                     Image(systemName: isCounted ? "checkmark.circle.fill" : "number.circle.fill")
-                        .font(.system(size: 13, weight: .bold))
-                        .foregroundStyle(.white, isCounted ? Color.green : Color.gray)
+                        .font(.caption2.weight(.bold))
+                        .foregroundStyle(.white, isCounted ? DS.Colors.positive : Color.gray)
+                        .symbolEffect(.bounce, value: isCounted)
                         .offset(x: 2, y: 2)
                 }
             }
-            .opacity(isCurrent || isCounted || isTyped ? 1 : 0.5)
+            .opacity(isCurrent || isCounted || isTyped ? 1 : DS.Opacity.dimmed)
     }
 
     private func stripLabel(_ player: Int) -> String {
@@ -143,43 +162,41 @@ struct RoundCounterView: View {
 
     /// Whose hand this is and what it comes to, kept to two lines so the words get the room.
     private var summary: some View {
-        VStack(alignment: .leading, spacing: isCompact ? 4 : 8) {
-            HStack(spacing: 10) {
-                PlayerAvatar(name: name, index: current, size: isCompact ? 28 : 34)
+        VStack(alignment: .leading, spacing: isCompact ? DS.Space.xs : DS.Space.s) {
+            HStack(spacing: DS.Space.m) {
+                PlayerAvatar(seat: current, in: players, size: isCompact ? DS.Avatar.strip : DS.Avatar.regular)
                 Text("\(name)'s hand")
-                    .font(.headline)
+                    .font(DS.Typography.rowTitle)
                     .lineLimit(1)
                 Spacer(minLength: 0)
                 optionsMenu
             }
-            HStack(alignment: .firstTextBaseline, spacing: 10) {
-                Text(scoreText)
-                    .font(.system(size: isCompact ? 30 : 36, weight: .bold, design: .rounded).monospacedDigit())
-                    .contentTransition(.numericText())
-                VStack(alignment: .leading, spacing: 2) {
+            HStack(alignment: .firstTextBaseline, spacing: DS.Space.m) {
+                ScoreNumeral(score, style: isCompact ? .large : .hero)
+                VStack(alignment: .leading, spacing: DS.Space.xxs) {
                     Text(breakdown)
-                        .font(.subheadline)
+                        .font(DS.Typography.detail)
                         .foregroundStyle(.secondary)
                     if session.round.penalty(for: current) > 0 {
-                        Text("−\(session.round.penalty(for: current)) lost challenge")
-                            .font(.caption.weight(.semibold))
-                            .foregroundStyle(.orange)
+                        Label("−\(session.round.penalty(for: current)) lost challenge", systemImage: "flag.fill")
+                            .font(DS.Typography.caption.weight(.semibold))
+                            .foregroundStyle(DS.Colors.warning)
                     }
                 }
                 Spacer(minLength: 0)
                 if !isTyping { cardCount }
             }
         }
-        .card(padding: isCompact ? 12 : 16)
+        .dsCard(padding: isCompact ? DS.Space.m : DS.Space.l)
+        // The hand total is the one number read from across the table; past this size the
+        // card would push the words off an iPhone SE.
+        .dynamicTypeSize(...DynamicTypeSize.accessibility2)
         .accessibilityElement(children: .contain)
     }
 
-    private var scoreText: String {
-        if isTyping {
-            guard let score = session.round.score(for: current) else { return "–" }
-            return score.formatted()
-        }
-        return session.currentHand.preview.score.formatted()
+    /// nil while a typed score is still blank.
+    private var score: Int? {
+        isTyping ? session.round.score(for: current) : session.currentHand.preview.score
     }
 
     private var breakdown: String {
@@ -197,8 +214,8 @@ struct RoundCounterView: View {
         } icon: {
             Image(systemName: isRight ? "checkmark.circle.fill" : "exclamationmark.circle.fill")
         }
-        .font(.subheadline.weight(.semibold))
-        .foregroundStyle(isRight ? Color.green : draft.isEmpty ? Color.secondary : Color.orange)
+        .font(DS.Typography.label)
+        .foregroundStyle(isRight ? DS.Colors.positive : draft.isEmpty ? Color.secondary : DS.Colors.warning)
         .accessibilityLabel("\(draft.placedCount) of \(draft.cardsDealt) cards")
     }
 
@@ -223,65 +240,57 @@ struct RoundCounterView: View {
         } label: {
             Image(systemName: "ellipsis.circle")
                 .font(.title3)
-                .frame(width: 44, height: 44)
+                .frame(width: DS.Size.minTap, height: DS.Size.minTap)
                 .contentShape(Rectangle())
         }
         .accessibilityLabel("More options for \(name)")
     }
 
     private var typedNote: some View {
-        Label {
-            Text("Type \(name)'s score on the pad below. With a typed score, the bonuses for this round are picked by hand.")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-        } icon: {
-            Image(systemName: "number")
-                .foregroundStyle(.secondary)
-        }
-        .card()
+        NoticeBanner(text: "Type \(name)'s score on the pad below. With a typed score, the bonuses for this round are picked by hand.",
+                     systemImage: "number")
     }
 
     // MARK: - Keypad and Next
 
+    @ViewBuilder
     private var keypadBar: some View {
-        BottomActionBar {
-            if isTyping {
-                NumberPadView(isNegative: session.round.isNegative[current],
-                              onDigit: { session.typeDigit($0) },
-                              onDelete: { session.deleteDigit() },
-                              onToggleSign: { session.toggleSign() },
-                              keyHeight: isCompact ? 40 : 44)
-                    .padding(.vertical, 4)
-            } else {
-                Picker("Cards go to", selection: $session.currentHand.target) {
-                    Text("Words").tag(HandDraft.Target.words)
-                    Text("Leftovers").tag(HandDraft.Target.leftovers)
-                }
-                .pickerStyle(.segmented)
-
-                CardKeypadView(onCard: { session.currentHand.add($0) },
-                               onNextWord: { session.currentHand.nextWord() },
-                               onBackspace: { session.currentHand.backspace() },
-                               keyHeight: isCompact ? 40 : 44)
-                    .padding(.vertical, 4)
+        if isTyping {
+            NumberPadView(isNegative: session.round.isNegative[current],
+                          onDigit: { session.typeDigit($0) },
+                          onDelete: { session.deleteDigit() },
+                          onToggleSign: { session.toggleSign() },
+                          keyHeight: isCompact ? DS.Size.keyCompact : DS.Size.key)
+                .padding(.vertical, DS.Space.xs)
+        } else {
+            Picker("Cards go to", selection: $session.currentHand.target) {
+                Text("Words").tag(HandDraft.Target.words)
+                Text("Leftovers").tag(HandDraft.Target.leftovers)
             }
+            .pickerStyle(.segmented)
 
-            Button {
-                if session.nextPlayer != nil { session.advance() } else { finish() }
-            } label: {
-                HStack(spacing: 8) {
-                    if let next = session.nextPlayer {
-                        Text("Next: \(players[next])")
-                        Image(systemName: "arrow.right")
-                    } else {
-                        Text("Done")
-                        Image(systemName: "checkmark")
-                    }
-                }
-            }
-            .buttonStyle(PrimaryButtonStyle())
-            .disabled(!session.canLeaveCurrent)
+            CardKeypadView(onCard: { session.currentHand.add($0) },
+                           onNextWord: { session.currentHand.nextWord() },
+                           onBackspace: { session.currentHand.backspace() },
+                           keyHeight: isCompact ? DS.Size.keyCompact : DS.Size.key)
+                .padding(.vertical, DS.Space.xs)
         }
+
+        Button {
+            if session.nextPlayer != nil { session.advance() } else { finish() }
+        } label: {
+            HStack(spacing: DS.Space.s) {
+                if let next = session.nextPlayer {
+                    Text("Next: \(players[next])")
+                    Image(systemName: "arrow.right")
+                } else {
+                    Text("Done")
+                    Image(systemName: "checkmark")
+                }
+            }
+        }
+        .buttonStyle(PrimaryButtonStyle())
+        .disabled(!session.canLeaveCurrent)
     }
 
     private func finish() {

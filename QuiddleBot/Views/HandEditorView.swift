@@ -24,7 +24,7 @@ struct HandEditorView: View {
     @State private var reviewing: WordReview?
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: DS.Space.l) {
             ForEach(shortWords, id: \.self, content: shortWordNote)
             wordsSection
             leftoversSection
@@ -36,6 +36,7 @@ struct HandEditorView: View {
                                  verdict: verdict,
                                  onAccept: { draft.setTableAccepted($0, forWord: review.index) })
                     .presentationDetents([.medium])
+                    .presentationDragIndicator(.visible)
             }
         }
     }
@@ -60,27 +61,18 @@ struct HandEditorView: View {
     }
 
     private func shortWordNote(_ index: Int) -> some View {
-        HStack(spacing: 12) {
-            Image(systemName: "exclamationmark.triangle.fill")
-                .foregroundStyle(.orange)
-            Text("“\(draft.words[index].joined())” is one card. Words need at least two.")
-                .font(.subheadline)
-                .frame(maxWidth: .infinity, alignment: .leading)
-            Button("Move to leftovers") { draft.moveWordToLeftovers(index) }
-                .font(.subheadline.weight(.semibold))
-                .buttonStyle(.borderless)
-        }
-        .padding(14)
-        .background(Color.orange.opacity(0.12),
-                    in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+        NoticeBanner(text: "“\(draft.words[index].joined())” is one card. Words need at least two.",
+                     systemImage: "exclamationmark.triangle.fill",
+                     tone: .warning,
+                     actionTitle: "Move to leftovers") { draft.moveWordToLeftovers(index) }
     }
 
     private var wordsSection: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: DS.Space.s) {
             sectionHeader("Words", points: draft.preview.wordPoints)
             ForEach(draft.words.indices, id: \.self, content: wordRow)
         }
-        .card()
+        .dsCard()
     }
 
     /// The first word with the most letters gets the star: it is what Longest Word compares.
@@ -95,39 +87,45 @@ struct HandEditorView: View {
         let word = Word(faces)
         let isCurrent = draft.target == .words && draft.currentWord == index
 
-        return HStack(spacing: 10) {
+        return HStack(spacing: DS.Space.s) {
             if faces.isEmpty {
                 Text(draft.words.count == 1 ? "Tap the cards of a word" : "Next word")
-                    .font(.subheadline)
+                    .font(DS.Typography.detail)
                     .foregroundStyle(.secondary)
-                    .frame(maxWidth: .infinity, minHeight: 42, alignment: .leading)
+                    .frame(maxWidth: .infinity, minHeight: DS.Size.tile, alignment: .leading)
+                    .accessibilityAddTraits(isCurrent ? [] : .isButton)
             } else {
                 // Leading, not a third line on the trailing side: the rows are tile-high and
-                // the tiles already scroll, so 28 pt here costs nothing that matters.
+                // the tiles already scroll, so a 44 pt target here costs nothing that matters.
                 if let verdict = verdict(for: index) {
                     WordVerdictBadge(verdict: verdict) { reviewing = WordReview(index: index) }
                 }
                 ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 4) {
+                    HStack(spacing: DS.Space.xs) {
                         ForEach(faces.indices, id: \.self) { position in
                             Button {
                                 draft.removeCard(word: index, at: position)
                             } label: {
-                                CardTile(face: faces[position])
+                                LetterTile(face: faces[position])
                             }
                             .buttonStyle(.plain)
                             .accessibilityLabel(faces[position])
                             .accessibilityHint("Removes this card")
+                            // Selecting a row is a tap on its background, which VoiceOver
+                            // can't reach past the tiles; offer it on every tile instead.
+                            .accessibilityAction(named: "Add cards to this word") { draft.selectWord(index) }
                         }
                     }
+                    .padding(.vertical, DS.Space.xxs)
                 }
-                VStack(alignment: .trailing, spacing: 2) {
-                    Text("\(word.points)")
-                        .font(.headline.monospacedDigit())
+                VStack(alignment: .trailing, spacing: DS.Space.xxs) {
+                    ScoreNumeral(word.points, style: .small)
                     if index == longestWordIndex {
-                        Text("★ \(word.letters) letters")
+                        Label("\(word.letters) letters", systemImage: "star.fill")
+                            .labelStyle(.titleAndIcon)
                             .font(.caption2.weight(.bold))
-                            .foregroundStyle(Theme.gold)
+                            .foregroundStyle(DS.Colors.bonusText)
+                            .accessibilityLabel("Longest word, \(word.letters) letters")
                     } else {
                         Text("\(word.letters) letters")
                             .font(.caption2)
@@ -137,10 +135,10 @@ struct HandEditorView: View {
                 .fixedSize()
             }
         }
-        .padding(8)
+        .padding(DS.Space.s)
         .background {
-            RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .strokeBorder(isCurrent ? Color.accentColor : Color(.separator).opacity(0.5),
+            RoundedRectangle.ds(DS.Radius.control)
+                .strokeBorder(isCurrent ? DS.Colors.accent : DS.Colors.outline,
                               style: StrokeStyle(lineWidth: isCurrent ? 2 : 1, dash: faces.isEmpty ? [5, 4] : []))
         }
         .contentShape(Rectangle())
@@ -153,35 +151,35 @@ struct HandEditorView: View {
 
     private var leftoversSection: some View {
         let isTarget = draft.target == .leftovers
-        return VStack(alignment: .leading, spacing: 8) {
+        return VStack(alignment: .leading, spacing: DS.Space.s) {
             sectionHeader("Leftovers", points: -draft.preview.leftoverPoints)
             if draft.leftovers.isEmpty {
                 Text(isTarget ? "Tap the cards you couldn't use" : "Cards you couldn't use go here")
-                    .font(.subheadline)
+                    .font(DS.Typography.detail)
                     .foregroundStyle(.secondary)
-                    .frame(maxWidth: .infinity, minHeight: 42, alignment: .leading)
+                    .frame(maxWidth: .infinity, minHeight: DS.Size.tile, alignment: .leading)
+                    .accessibilityAddTraits(isTarget ? [] : .isButton)
             } else {
                 ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 4) {
+                    HStack(spacing: DS.Space.xs) {
                         ForEach(draft.leftovers.indices, id: \.self) { position in
                             Button {
                                 draft.removeLeftover(at: position)
                             } label: {
-                                CardTile(face: draft.leftovers[position], tint: .red)
+                                LetterTile(face: draft.leftovers[position], tone: .leftover)
                             }
                             .buttonStyle(.plain)
                             .accessibilityLabel(draft.leftovers[position])
                             .accessibilityHint("Removes this card")
+                            .accessibilityAction(named: "Put cards in leftovers") { draft.target = .leftovers }
                         }
                     }
+                    .padding(.vertical, DS.Space.xxs)
                 }
             }
         }
-        .card()
-        .overlay {
-            RoundedRectangle(cornerRadius: Theme.cornerRadius, style: .continuous)
-                .strokeBorder(Color.accentColor, lineWidth: isTarget ? 2 : 0)
-        }
+        .dsCard()
+        .selectionOutline(isTarget, radius: DS.Radius.card)
         .contentShape(Rectangle())
         .onTapGesture { draft.target = .leftovers }
         .id(HandScrollTarget.leftovers)
@@ -189,11 +187,13 @@ struct HandEditorView: View {
 
     private func sectionHeader(_ title: String, points: Int) -> some View {
         HStack {
-            Text(title).font(.headline)
+            Text(title)
+                .font(DS.Typography.rowTitle)
+                .accessibilityAddTraits(.isHeader)
             Spacer()
             Text(points, format: .number.sign(strategy: .always(includingZero: false)))
-                .font(.headline.monospacedDigit())
-                .foregroundStyle(points < 0 ? Color.red : Color.secondary)
+                .font(ScoreStyle.small.font)
+                .foregroundStyle(points < 0 ? DS.Colors.negative : Color.secondary)
         }
     }
 }

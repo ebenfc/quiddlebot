@@ -5,45 +5,46 @@ struct GameOverView: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     let game: Game
 
+    /// True only when this game finished just now, not when the app reopens on final scores.
+    @State private var isCelebrating = false
+
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(spacing: 22) {
+                VStack(spacing: DS.Space.xl) {
                     hero
                     standingsCard
                     if let highlights = GameHighlights(game: game) {
                         highlightsCard(highlights)
                     }
                     if !game.rounds.isEmpty {
-                        VStack(alignment: .leading, spacing: 12) {
-                            Text("Scorecard").font(.title3.bold())
+                        VStack(alignment: .leading, spacing: DS.Space.m) {
+                            SectionHeader(title: "Scorecard")
                             HistoryView(game: game)
                         }
-                        .card()
+                        .dsCard()
                     }
                 }
-                .padding(20)
+                .padding(DS.Space.screen)
             }
-            .background(Color(.systemGroupedBackground))
-            .safeAreaInset(edge: .bottom) {
-                BottomActionBar {
-                    HStack(spacing: 12) {
-                        Button("New Players") { store.reset() }
-                            .buttonStyle(SecondaryButtonStyle())
-                        Button {
-                            withAnimation(.snappy) { store.rematch() }
-                        } label: {
-                            HStack(spacing: 8) {
-                                Image(systemName: "arrow.clockwise")
-                                Text("Rematch")
-                            }
+            .dsCanvas()
+            .bottomActionBar {
+                HStack(spacing: DS.Space.m) {
+                    Button("New Players") { store.reset() }
+                        .buttonStyle(SecondaryButtonStyle())
+                    Button {
+                        withAnimation(DS.Motion.standard) { store.rematch() }
+                    } label: {
+                        HStack(spacing: DS.Space.s) {
+                            Image(systemName: "arrow.clockwise")
+                            Text("Rematch")
                         }
-                        .buttonStyle(PrimaryButtonStyle())
                     }
+                    .buttonStyle(PrimaryButtonStyle())
                 }
             }
             .overlay {
-                if !reduceMotion {
+                if isCelebrating && !reduceMotion {
                     ConfettiView()
                         .allowsHitTesting(false)
                         .ignoresSafeArea()
@@ -52,38 +53,31 @@ struct GameOverView: View {
             .navigationTitle("Final Scores")
             .navigationBarTitleDisplayMode(.inline)
         }
-        .sensoryFeedback(.success, trigger: game.isFinished)
+        // Fires on the change from false to true, which `onAppear` makes once per finish.
+        .sensoryFeedback(DS.Haptic.success, trigger: isCelebrating)
+        .onAppear {
+            if store.takeCelebration() { isCelebrating = true }
+        }
     }
 
     private var winner: Int? { Scoring.winner(for: game) }
 
     private var hero: some View {
-        VStack(spacing: 10) {
+        VStack(spacing: DS.Space.m) {
             ZStack {
                 Circle()
-                    .fill(Theme.gold.gradient)
+                    .fill(DS.Colors.bonusFill)
                     .frame(width: 92, height: 92)
-                    .shadow(color: Theme.gold.opacity(0.45), radius: 18, x: 0, y: 6)
+                    .shadow(color: DS.Colors.bonusFill.opacity(0.45), radius: 18, x: 0, y: 6)
                 Image(systemName: winner == nil ? "equal" : "trophy.fill")
                     .font(.system(size: 40, weight: .bold))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(DS.Colors.onBonus)
+                    .symbolEffect(.bounce, value: isCelebrating)
             }
-            .padding(.top, 8)
+            .padding(.top, DS.Space.s)
             .accessibilityHidden(true)
 
-            Text(headline)
-                .font(.largeTitle.bold())
-                .multilineTextAlignment(.center)
-
-            if let margin = Scoring.margin(for: game) {
-                Text("by ^[\(margin) point](inflect: true)")
-                    .font(.title3)
-                    .foregroundStyle(.secondary)
-            } else {
-                Text("Shared at the top")
-                    .font(.title3)
-                    .foregroundStyle(.secondary)
-            }
+            ScreenTitle(title: headline, subtitle: marginText, alignment: .center)
         }
     }
 
@@ -92,45 +86,32 @@ struct GameOverView: View {
         return "It's a tie!"
     }
 
+    private var marginText: String {
+        guard let margin = Scoring.margin(for: game) else { return "Shared at the top" }
+        return margin == 1 ? "by 1 point" : "by \(margin) points"
+    }
+
     private var standingsCard: some View {
         let standings = Scoring.standings(for: game)
-        return VStack(spacing: 6) {
+        return VStack(spacing: DS.Space.xs) {
             ForEach(standings) { standing in
-                HStack(spacing: 12) {
-                    Text("\(standing.rank)")
-                        .font(.subheadline.weight(.bold).monospacedDigit())
-                        .foregroundStyle(.white)
-                        .frame(width: 28, height: 28)
-                        .background(medalColor(for: standing.rank).gradient, in: Circle())
-                    PlayerAvatar(name: standing.name, index: standing.player, size: 36)
-                    Text(standing.name)
-                        .font(standing.rank == 1 ? .headline : .body)
-                        .lineLimit(1)
-                    Spacer()
-                    Text("\(standing.total)")
-                        .font(.title2.weight(.bold).monospacedDigit())
-                }
-                .padding(.horizontal, 12)
-                .padding(.vertical, 10)
-                .background {
-                    if standing.rank == 1 {
-                        RoundedRectangle(cornerRadius: 16, style: .continuous)
-                            .fill(Theme.gold.opacity(0.12))
-                    }
-                }
-                .accessibilityElement(children: .combine)
-                .accessibilityLabel("Rank \(standing.rank), \(standing.name), \(standing.total) points")
+                PlayerScoreRow(names: game.players,
+                               seat: standing.player,
+                               total: standing.total,
+                               rank: standing.rank,
+                               isLeader: standing.rank == 1,
+                               avatarSize: DS.Avatar.regular)
             }
         }
-        .card(padding: 8)
+        .dsCard(padding: DS.Space.s)
     }
 
     /// The game's standout words, from the counted hands. Hidden for a game of typed scores.
     private func highlightsCard(_ highlights: GameHighlights) -> some View {
         let longest = highlights.longestWord
         let best = highlights.bestWord
-        return VStack(alignment: .leading, spacing: 16) {
-            Text("Highlights").font(.title3.bold())
+        return VStack(alignment: .leading, spacing: DS.Space.l) {
+            SectionHeader(title: "Highlights")
             if longest == best {
                 // One word won both: say it once.
                 highlight("Longest and best word", longest,
@@ -140,49 +121,31 @@ struct GameOverView: View {
                 highlight("Best word", best, detail: "\(best.word.points) points")
             }
         }
-        .card()
+        .dsCard()
     }
 
     private func highlight(_ title: String, _ pick: GameHighlights.Pick, detail: String) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack(spacing: 8) {
-                Image(systemName: "star.fill")
-                    .foregroundStyle(Theme.gold)
-                Text(title)
-                    .font(.subheadline.weight(.semibold))
-                Spacer()
-                Text(detail)
-                    .font(.caption.weight(.bold).monospacedDigit())
-                    .foregroundStyle(Theme.gold)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 3)
-                    .background(Theme.gold.opacity(0.15), in: Capsule())
+        VStack(alignment: .leading, spacing: DS.Space.s) {
+            BonusHeaderRow(title: title) {
+                ValueBadge(text: detail)
             }
             ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 4) {
+                HStack(spacing: DS.Space.xs) {
                     ForEach(pick.word.faces.indices, id: \.self) { position in
-                        CardTile(face: pick.word.faces[position], tint: Theme.playerColor(pick.player))
+                        LetterTile(face: pick.word.faces[position])
                     }
                 }
+                .padding(.bottom, DS.Space.xxs)
             }
-            HStack(spacing: 6) {
-                PlayerAvatar(name: game.players[pick.player], index: pick.player, size: 20)
+            HStack(spacing: DS.Space.xs + 2) {
+                PlayerAvatar(seat: pick.player, in: game.players, size: DS.Avatar.tiny)
                 Text("\(game.players[pick.player]) · round \(pick.round)")
-                    .font(.caption)
+                    .font(DS.Typography.caption)
                     .foregroundStyle(.secondary)
             }
         }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("\(title): \(pick.word.text), \(detail), \(game.players[pick.player]), round \(pick.round)")
-    }
-
-    private func medalColor(for rank: Int) -> Color {
-        switch rank {
-        case 1: Theme.gold
-        case 2: Color(.systemGray2)
-        case 3: Color(red: 0.72, green: 0.45, blue: 0.20)
-        default: Color(.systemGray4)
-        }
     }
 }
 
